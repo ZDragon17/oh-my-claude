@@ -18,6 +18,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.0] - 2025-01-15 🎉
+
+### 🎊 首个正式版发布 / First Stable Release
+
+经过多次迭代和完善，oh-my-claude 正式发布 1.0.0 稳定版！
+
+After multiple iterations and improvements, oh-my-claude officially releases version 1.0.0!
+
+### Added / 新增
+
+#### 📦 npm 包发布 / npm Package Release
+
+- **npm 包名**: `claude-pangu`（盘古开天辟地）
+- **安装命令**: `npx claude-pangu install`
+- 支持 npm / bun / pnpm 安装
+- 双命令入口：`claude-pangu` 和 `oh-my-claude` 都可使用
+
+### Changed / 变更
+
+- npm 包名从 `oh-my-claude` 更改为 `claude-pangu`（因原名已被占用）
+- README 安装文档更新，npm/npx 安装方式提升为首选推荐
+- 安装方式重新编号（共 6 种安装方式）
+
+### Highlights / 亮点
+
+- ✅ **18 个专业 Agent** - 覆盖软件开发全生命周期
+- ✅ **6 种安装方式** - npm/npx、curl/PowerShell 一键安装、Homebrew、Scoop、手动安装
+- ✅ **中英双语支持** - 所有命令和响应支持中英文
+- ✅ **智能 Hook 系统** - Todo 强制执行、关键词自动激活
+- ✅ **可视化进度面板** - ASCII 进度条和任务追踪
+- ✅ **跨平台兼容** - Windows、macOS、Linux 全支持
+
+---
+
 ## [0.9.0] - 2025-01-15
 
 ### Added / 新增
@@ -502,6 +536,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 1.0.0 | 2025-01-15 | 🎉 First stable release, npm package `claude-pangu` / 首个正式版，npm 包 `claude-pangu` |
+| 0.9.0 | 2025-01-15 | 3 new agents (LiBai, GuKaiZhi, ChangE) / 新增李白、顾恺之、嫦娥 |
 | 0.8.2 | 2025-01-15 | CLI enhancements (update, verify), dev tools / CLI 增强，开发者工具 |
 | 0.8.1 | 2025-01-15 | Multiple install methods / 多种安装方式 |
 | 0.8.0 | 2025-01-15 | 3 new agents (BaoZheng, WeiZheng, CangJie) / 新增包拯、魏征、仓颉 |

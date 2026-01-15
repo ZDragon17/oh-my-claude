@@ -1,12 +1,12 @@
 {
     "$schema": "https://raw.githubusercontent.com/ScoopInstaller/Scoop/master/schema.json",
-    "version": "0.8.2",
+    "version": "1.0.0",
     "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture",
     "homepage": "https://github.com/ZDragon17/oh-my-claude",
     "license": "MIT",
-    "url": "https://github.com/ZDragon17/oh-my-claude/archive/refs/tags/v0.8.2.zip",
+    "url": "https://github.com/ZDragon17/oh-my-claude/archive/refs/tags/v1.0.0.zip",
     "hash": "PLACEHOLDER_HASH",
-    "extract_dir": "oh-my-claude-0.8.2",
+    "extract_dir": "oh-my-claude-1.0.0",
     "installer": {
         "script": [
             "$pluginDir = \"$env:USERPROFILE\\.claude\\plugins\\oh-my-claude\"",

@@ -1,10 +1,12 @@
 {
-  "name": "oh-my-claude",
-  "version": "0.9.0",
-  "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture",
+  "name": "claude-pangu",
+  "version": "1.0.0",
+  "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture (原名 oh-my-claude)",
   "keywords": [
     "claude-code",
     "claude",
+    "pangu",
+    "oh-my-claude",
     "agent",
     "orchestration",
     "chinese-culture",
@@ -23,6 +25,7 @@
   },
   "homepage": "https://github.com/ZDragon17/oh-my-claude#readme",
   "bin": {
+    "claude-pangu": "./scripts/cli.js",
     "oh-my-claude": "./scripts/cli.js"
   },
   "files": [

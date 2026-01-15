@@ -102,7 +102,24 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 
 提供多种安装方式，选择最适合你的：
 
-### 方式一：一键安装（推荐）
+### 方式一：npm / npx（推荐）
+
+```bash
+# 使用 npx 直接安装（无需全局安装）
+npx claude-pangu install
+
+# 或全局安装后使用
+npm install -g claude-pangu
+claude-pangu install
+
+# 也可以使用 bun / pnpm
+bunx claude-pangu install
+pnpm dlx claude-pangu install
+```
+
+> 💡 **包名说明**: npm 包名为 `claude-pangu`（盘古开天辟地），项目名仍为 `oh-my-claude`
+
+### 方式二：一键安装
 
 **macOS / Linux:**
 
@@ -116,7 +133,7 @@ curl -fsSL https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts
 irm https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.ps1 | iex
 ```
 
-### 方式二：Homebrew (macOS)
+### 方式四：Homebrew (macOS)
 
 ```bash
 # 添加 tap（首次使用）
@@ -129,7 +146,7 @@ brew install oh-my-claude
 claude plugins install ~/.claude/plugins/oh-my-claude
 ```
 
-### 方式三：Scoop (Windows)
+### 方式五：Scoop (Windows)
 
 ```powershell
 # 添加 bucket（首次使用）
@@ -142,7 +159,7 @@ scoop install oh-my-claude
 claude plugins install $env:USERPROFILE\.claude\plugins\oh-my-claude
 ```
 
-### 方式四：手动安装
+### 方式六：手动安装
 
 ```bash
 # 克隆项目

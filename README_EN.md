@@ -101,7 +101,24 @@ All commands support both Chinese and English:
 
 Multiple installation methods available - choose what works best for you:
 
-### Option 1: One-line Install (Recommended)
+### Option 1: npm / npx (Recommended)
+
+```bash
+# Use npx for direct install (no global installation required)
+npx claude-pangu install
+
+# Or install globally then use
+npm install -g claude-pangu
+claude-pangu install
+
+# Also works with bun / pnpm
+bunx claude-pangu install
+pnpm dlx claude-pangu install
+```
+
+> 💡 **Package Name Note**: The npm package is named `claude-pangu` (Pangu, the creator god in Chinese mythology who separated heaven and earth), while the project name remains `oh-my-claude`
+
+### Option 2: One-line Install
 
 **macOS / Linux:**
 
@@ -115,7 +132,7 @@ curl -fsSL https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts
 irm https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.ps1 | iex
 ```
 
-### Option 2: Homebrew (macOS)
+### Option 4: Homebrew (macOS)
 
 ```bash
 # Add tap (first time only)
@@ -128,7 +145,7 @@ brew install oh-my-claude
 claude plugins install ~/.claude/plugins/oh-my-claude
 ```
 
-### Option 3: Scoop (Windows)
+### Option 5: Scoop (Windows)
 
 ```powershell
 # Add bucket (first time only)
@@ -141,7 +158,7 @@ scoop install oh-my-claude
 claude plugins install $env:USERPROFILE\.claude\plugins\oh-my-claude
 ```
 
-### Option 4: Manual Installation
+### Option 6: Manual Installation
 
 ```bash
 # Clone the project
