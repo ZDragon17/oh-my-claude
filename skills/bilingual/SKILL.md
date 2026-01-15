@@ -20,6 +20,7 @@ description: |
 | `/luban` | `/鲁班` `/巧工` | `/qiaogong` `/craft` `/frontend` | 鲁班 | 精工巧匠，代码实现 |
 | `/wukong` | `/悟空` `/火眼` | `/huoyan` `/explore` `/scout` | 悟空 | 代码侦察，快速探索 |
 | `/bianque` | `/扁鹊` `/望闻` | `/wangwen` `/debug` `/diagnose` | 扁鹊 | Bug 诊断，问题修复 |
+| `/team` | `/协作` `/合作` `/团队` | `/teamwork` | 愚公 | 多 Agent 团队协作 |
 
 > **说明**: `/yugong` 和 `/yishan` 是完全等价的命令，都启动愚公移山模式。
 

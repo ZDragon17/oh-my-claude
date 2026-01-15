@@ -11,10 +11,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] / 未发布
 
+### Planned / 计划中
+
+- More agents (墨子、孙子...) / 更多 Agent
+- Visual progress dashboard / 可视化进度面板
+
+---
+
+## [0.2.0] - 2025-01-15
+
 ### Added / 新增
-- More agents planned (墨子、孙子...) / 更多 Agent 计划中
-- Agent collaboration improvements / Agent 协作增强
-- More hook events support / 更多 Hook 事件支持
+
+#### 🤝 Agent 协作增强 / Agent Collaboration
+
+- **Agent 调用语法** - 使用 `@agent_name` 在 Agent 间调用协作
+  - `@wukong` - 召唤悟空探索代码
+  - `@zhuge` - 召唤诸葛设计架构
+  - `@luban` - 召唤鲁班实现代码
+  - `@bianque` - 召唤扁鹊诊断问题
+  - `@yugong` - 召唤愚公编排任务
+
+- **协作响应格式** - 标准化的任务交接格式
+
+- **协作决策树** - 根据任务类型自动选择合适的 Agent
+
+#### ⚡ 新命令 / New Commands
+
+- `/team` (`/teamwork`, `/协作`, `/合作`, `/团队`) - 启动多 Agent 团队协作模式
+  - 愚公作为主编排者协调各专家
+  - 支持链式协作和并行协作
+  - 自动任务分配和结果汇总
+
+#### 🪝 Hook 增强 / Hook Enhancements
+
+- **团队协作关键词检测** - 检测 "团队"、"协作"、"teamwork" 等关键词
+- 自动提示使用 `/team` 命令
+
+### Changed / 变更
+
+- 更新 Agent 定义文件，添加协作响应格式
+- 增强 AGENT_PROTOCOL.md 协作协议文档
+- 更新 bilingual skill 支持 /team 命令别名
+
+### Documentation / 文档
+
+- 新增协作场景示例（新功能开发、Bug 修复、架构重构）
+- 新增链式协作和并行协作的流程图
+- 更新命令速查表
 
 ---
 
@@ -81,6 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 0.2.0 | 2025-01-15 | Agent collaboration & /team command / Agent 协作增强和 /team 命令 |
 | 0.1.0 | 2025-01-15 | Initial release with 5 agents / 首次发布，包含 5 个 Agent |
 
 ---

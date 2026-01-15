@@ -300,7 +300,7 @@ Legendary doctor from the Warring States period who created the four diagnostic 
 ## 🗺️ Roadmap
 
 - [x] v0.1.0 - Basic agent system (5 agents)
-- [ ] v0.2.0 - Enhanced agent collaboration
+- [x] v0.2.0 - Enhanced agent collaboration (`@agent` syntax, `/team` command)
 - [ ] v0.3.0 - More agents (Mozi, Sunzi...)
 - [ ] v0.4.0 - Visual progress dashboard
 - [ ] v1.0.0 - Stable release

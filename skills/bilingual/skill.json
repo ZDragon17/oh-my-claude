@@ -11,7 +11,8 @@
     "/zhuge": ["/longzhong", "/strategy", "/consult", "/诸葛", "/隆中"],
     "/luban": ["/qiaogong", "/craft", "/frontend", "/鲁班", "/巧工"],
     "/wukong": ["/huoyan", "/explore", "/scout", "/悟空", "/火眼"],
-    "/bianque": ["/wangwen", "/debug", "/diagnose", "/扁鹊", "/望闻"]
+    "/bianque": ["/wangwen", "/debug", "/diagnose", "/扁鹊", "/望闻"],
+    "/team": ["/teamwork", "/协作", "/合作", "/团队"]
   },
   "keywordTriggers": {
     "yugong_mode": [

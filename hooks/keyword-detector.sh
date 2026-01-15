@@ -76,5 +76,15 @@ EOF
     exit 0
 fi
 
+# 检测团队协作关键词
+if echo "$prompt_lower" | grep -qE '(团队|协作|合作|teamwork|team[-_]?work|collaborate|协同|多人)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n🤝 **团队协作提示**\n\n检测到协作相关需求，建议：\n- 使用 /team 命令启动团队协作模式\n- 愚公将作为主编排者，协调各专家共同完成任务\n- 支持调用：@wukong @zhuge @luban @bianque\n"
+}
+EOF
+    exit 0
+fi
+
 # 无特殊关键词，正常继续
 exit 0
