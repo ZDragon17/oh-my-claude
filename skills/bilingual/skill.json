@@ -1,0 +1,37 @@
+{
+  "name": "bilingual",
+  "version": "1.0.0",
+  "description": "中英双语命令支持 - Bilingual command support for oh-my-claude",
+  "keywords": ["bilingual", "i18n", "chinese", "english", "dual-language"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+  "commandAliases": {
+    "/yugong": ["/yishan", "/persist", "/ultrawork", "/ulw", "/愚公", "/移山"],
+    "/zhuge": ["/longzhong", "/strategy", "/consult", "/诸葛", "/隆中"],
+    "/luban": ["/qiaogong", "/craft", "/frontend", "/鲁班", "/巧工"],
+    "/wukong": ["/huoyan", "/explore", "/scout", "/悟空", "/火眼"],
+    "/bianque": ["/wangwen", "/debug", "/diagnose", "/扁鹊", "/望闻"]
+  },
+  "keywordTriggers": {
+    "yugong_mode": [
+      "ultrawork", "ulw", "移山", "yishan", "persist", "愚公", "yugong"
+    ],
+    "zhuge_mode": [
+      "架构", "设计", "策略", "architecture", "design", "strategy",
+      "诸葛", "zhuge", "consult", "规划", "planning"
+    ],
+    "luban_mode": [
+      "前端", "组件", "UI", "frontend", "component", "craft",
+      "鲁班", "luban", "巧工", "qiaogong"
+    ],
+    "wukong_mode": [
+      "搜索", "查找", "探索", "search", "find", "explore",
+      "悟空", "wukong", "火眼", "huoyan", "定位", "locate"
+    ],
+    "bianque_mode": [
+      "fix bug", "fix error", "debug", "调试", "报错", "异常",
+      "exception", "扁鹊", "bianque", "诊断", "diagnose"
+    ]
+  }
+}
