@@ -1,0 +1,144 @@
+# oh-my-claude PowerShell 安装脚本
+# 用法: irm https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.ps1 | iex
+# 或者: Invoke-WebRequest -Uri "..." -OutFile install.ps1; .\install.ps1
+
+#Requires -Version 5.1
+
+$ErrorActionPreference = "Stop"
+
+# 配置
+$Repo = "ZDragon17/oh-my-claude"
+$PluginName = "oh-my-claude"
+$InstallDir = Join-Path $env:USERPROFILE ".claude\plugins\$PluginName"
+
+# 输出函数
+function Write-Info($msg) { Write-Host "ℹ️  $msg" -ForegroundColor Blue }
+function Write-Success($msg) { Write-Host "✅ $msg" -ForegroundColor Green }
+function Write-Warn($msg) { Write-Host "⚠️  $msg" -ForegroundColor Yellow }
+function Write-Err($msg) { Write-Host "❌ $msg" -ForegroundColor Red; exit 1 }
+
+# 显示横幅
+function Show-Banner {
+    Write-Host ""
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "🏔️  oh-my-claude 安装程序" -ForegroundColor Cyan
+    Write-Host "   基于中国传统文化的 Claude Code 智能编排插件" -ForegroundColor Cyan
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host ""
+}
+
+# 检查依赖
+function Test-Dependencies {
+    Write-Info "检查依赖..."
+
+    # 检查 git
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+        Write-Err "需要 git，请先安装: https://git-scm.com/"
+    }
+
+    # 检查 Claude Code
+    if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {
+        Write-Warn "未检测到 Claude Code CLI"
+        Write-Warn "请先安装 Claude Code: https://claude.ai/code"
+        Write-Warn "安装后重新运行此脚本"
+        exit 1
+    }
+
+    Write-Success "依赖检查通过"
+}
+
+# 下载并安装
+function Install-Plugin {
+    Write-Info "正在下载 oh-my-claude..."
+
+    # 创建临时目录
+    $TmpDir = Join-Path $env:TEMP "oh-my-claude-$(Get-Random)"
+    New-Item -ItemType Directory -Path $TmpDir -Force | Out-Null
+
+    try {
+        # 克隆仓库
+        git clone --depth 1 "https://github.com/$Repo.git" $TmpDir 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Err "下载失败，请检查网络连接"
+        }
+
+        Write-Success "下载完成"
+
+        # 创建安装目录
+        Write-Info "正在安装插件..."
+        $ParentDir = Split-Path $InstallDir -Parent
+        if (-not (Test-Path $ParentDir)) {
+            New-Item -ItemType Directory -Path $ParentDir -Force | Out-Null
+        }
+
+        # 如果已存在，先删除
+        if (Test-Path $InstallDir) {
+            Write-Warn "检测到已有安装，正在更新..."
+            Remove-Item -Path $InstallDir -Recurse -Force
+        }
+
+        # 复制文件
+        New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+
+        $Dirs = @("agents", "commands", "hooks", "skills", ".claude-plugin")
+        foreach ($Dir in $Dirs) {
+            $Src = Join-Path $TmpDir $Dir
+            $Dest = Join-Path $InstallDir $Dir
+            if (Test-Path $Src) {
+                Copy-Item -Path $Src -Destination $Dest -Recurse -Force
+            }
+        }
+
+        # 复制其他文件
+        $Files = @("README.md", "README_EN.md", "LICENSE")
+        foreach ($File in $Files) {
+            $Src = Join-Path $TmpDir $File
+            $Dest = Join-Path $InstallDir $File
+            if (Test-Path $Src) {
+                Copy-Item -Path $Src -Destination $Dest -Force
+            }
+        }
+
+        Write-Success "插件文件安装完成"
+        Write-Info "安装位置: $InstallDir"
+
+        # 注册插件
+        Write-Info "正在注册插件..."
+        try {
+            claude plugins install $InstallDir 2>$null
+            Write-Success "插件注册成功"
+        } catch {
+            Write-Warn "自动注册失败，请手动运行:"
+            Write-Host "  claude plugins install $InstallDir"
+        }
+    }
+    finally {
+        # 清理临时目录
+        if (Test-Path $TmpDir) {
+            Remove-Item -Path $TmpDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+# 显示完成信息
+function Show-Success {
+    Write-Host ""
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
+    Write-Host "🎉 安装完成!" -ForegroundColor Green
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "快速开始:" -ForegroundColor Cyan
+    Write-Host "  /yishan 或 /愚公  - 愚公移山模式（大规模任务）"
+    Write-Host "  /zhuge 或 /诸葛   - 诸葛顾问（架构设计）"
+    Write-Host "  /bianque 或 /扁鹊 - 扁鹊诊断（调试问题）"
+    Write-Host ""
+    Write-Host "查看所有 Agent:" -ForegroundColor Cyan
+    Write-Host "  https://github.com/$Repo#-agent-列表"
+    Write-Host ""
+}
+
+# 主程序
+Show-Banner
+Test-Dependencies
+Install-Plugin
+Show-Success

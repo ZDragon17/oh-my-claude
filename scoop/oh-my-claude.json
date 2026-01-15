@@ -1,0 +1,57 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ScoopInstaller/Scoop/master/schema.json",
+    "version": "0.8.1",
+    "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture",
+    "homepage": "https://github.com/ZDragon17/oh-my-claude",
+    "license": "MIT",
+    "url": "https://github.com/ZDragon17/oh-my-claude/archive/refs/tags/v0.8.1.zip",
+    "hash": "PLACEHOLDER_HASH",
+    "extract_dir": "oh-my-claude-0.8.1",
+    "installer": {
+        "script": [
+            "$pluginDir = \"$env:USERPROFILE\\.claude\\plugins\\oh-my-claude\"",
+            "if (Test-Path $pluginDir) { Remove-Item -Path $pluginDir -Recurse -Force }",
+            "New-Item -ItemType Directory -Path $pluginDir -Force | Out-Null",
+            "$dirs = @('agents', 'commands', 'hooks', 'skills', '.claude-plugin')",
+            "foreach ($dir in $dirs) {",
+            "    $src = \"$dir_$dir\"",
+            "    if (Test-Path $src) { Copy-Item -Path $src -Destination $pluginDir -Recurse -Force }",
+            "}",
+            "$files = @('README.md', 'README_EN.md', 'LICENSE')",
+            "foreach ($file in $files) {",
+            "    $src = \"$dir_$file\"",
+            "    if (Test-Path $src) { Copy-Item -Path $src -Destination $pluginDir -Force }",
+            "}",
+            "Write-Host 'oh-my-claude 已安装到:' $pluginDir -ForegroundColor Green",
+            "Write-Host '请运行: claude plugins install' $pluginDir -ForegroundColor Yellow"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$pluginDir = \"$env:USERPROFILE\\.claude\\plugins\\oh-my-claude\"",
+            "if (Test-Path $pluginDir) {",
+            "    Remove-Item -Path $pluginDir -Recurse -Force",
+            "    Write-Host 'oh-my-claude 已卸载' -ForegroundColor Green",
+            "}"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/ZDragon17/oh-my-claude"
+    },
+    "autoupdate": {
+        "url": "https://github.com/ZDragon17/oh-my-claude/archive/refs/tags/v$version.zip",
+        "extract_dir": "oh-my-claude-$version"
+    },
+    "notes": [
+        "oh-my-claude 已安装!",
+        "",
+        "请运行以下命令完成插件注册:",
+        "  claude plugins install $env:USERPROFILE\\.claude\\plugins\\oh-my-claude",
+        "",
+        "快速开始:",
+        "  /yishan 或 /愚公  - 愚公移山模式",
+        "  /zhuge 或 /诸葛   - 诸葛顾问",
+        "",
+        "更多信息: https://github.com/ZDragon17/oh-my-claude"
+    ]
+}

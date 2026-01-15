@@ -97,7 +97,66 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 
 ## 📦 安装
 
-### 方式一：克隆安装
+提供多种安装方式，选择最适合你的：
+
+### 方式一：一键安装（推荐）
+
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.sh | bash
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.ps1 | iex
+```
+
+### 方式二：npm / bun / pnpm
+
+```bash
+# npm
+npx oh-my-claude install
+
+# 或全局安装
+npm install -g oh-my-claude
+oh-my-claude install
+
+# bun
+bunx oh-my-claude install
+
+# pnpm
+pnpm dlx oh-my-claude install
+```
+
+### 方式三：Homebrew (macOS)
+
+```bash
+# 添加 tap（首次使用）
+brew tap ZDragon17/oh-my-claude https://github.com/ZDragon17/oh-my-claude
+
+# 安装
+brew install oh-my-claude
+
+# 注册插件
+claude plugins install ~/.claude/plugins/oh-my-claude
+```
+
+### 方式四：Scoop (Windows)
+
+```powershell
+# 添加 bucket（首次使用）
+scoop bucket add oh-my-claude https://github.com/ZDragon17/oh-my-claude
+
+# 安装
+scoop install oh-my-claude
+
+# 注册插件
+claude plugins install $env:USERPROFILE\.claude\plugins\oh-my-claude
+```
+
+### 方式五：手动安装
 
 ```bash
 # 克隆项目
@@ -109,11 +168,6 @@ cd oh-my-claude
 # 安装为 Claude Code 插件
 claude plugins install .
 ```
-
-### 方式二：手动安装
-
-1. 将 `oh-my-claude` 目录复制到 `~/.claude/plugins/`
-2. 重启 Claude Code
 
 ### 验证安装
 
@@ -197,43 +251,57 @@ claude plugins install .
 ```
 oh-my-claude/
 ├── .claude-plugin/
-│   └── plugin.json          # 插件配置
+│   └── plugin.json           # 插件配置
 ├── .github/                  # GitHub 配置
-│   ├── ISSUE_TEMPLATE/      # Issue 模板
-│   │   ├── bug_report.md
-│   │   ├── feature_request.md
-│   │   └── new_agent.md
+│   ├── ISSUE_TEMPLATE/       # Issue 模板
 │   └── PULL_REQUEST_TEMPLATE.md
-├── agents/                   # Agent 定义
-│   ├── yugong.md            # 愚公 - 主编排
-│   ├── zhuge.md             # 诸葛 - 战略顾问
-│   ├── luban.md             # 鲁班 - 精工巧匠
-│   ├── wukong.md            # 悟空 - 代码侦察
-│   └── bianque.md           # 扁鹊 - Bug 诊断
+├── agents/                   # Agent 定义 (15 个)
+│   ├── yugong.md             # 愚公 - 主编排
+│   ├── zhuge.md              # 诸葛 - 战略顾问
+│   ├── luban.md              # 鲁班 - 精工巧匠
+│   ├── wukong.md             # 悟空 - 代码侦察
+│   ├── bianque.md            # 扁鹊 - Bug 诊断
+│   ├── mozi.md               # 墨子 - 安全审计
+│   ├── sunzi.md              # 孙子 - 性能优化
+│   ├── simaqian.md           # 司马迁 - 文档撰写
+│   ├── zhenghe.md            # 郑和 - API 集成
+│   ├── zhangheng.md          # 张衡 - 系统监控
+│   ├── libing.md             # 李冰 - DevOps
+│   ├── laozi.md              # 老子 - Clean Code
+│   ├── baozheng.md           # 包拯 - 测试专家
+│   ├── weizheng.md           # 魏征 - 代码审查
+│   └── cangjie.md            # 仓颉 - 数据库设计
 ├── commands/                 # 斜杠命令
-│   ├── yugong.md            # /yugong 愚公模式
-│   ├── yishan.md            # /yishan 移山模式
-│   ├── zhuge.md             # /zhuge 顾问模式
-│   ├── luban.md             # /luban 巧工模式
-│   ├── wukong.md            # /wukong 侦察模式
-│   └── bianque.md           # /bianque 诊断模式
+│   ├── yugong.md             # /yugong 愚公模式
+│   ├── yishan.md             # /yishan 移山模式
+│   ├── team.md               # /team 团队协作
+│   ├── progress.md           # /progress 进度面板
+│   └── ...                   # 其他 Agent 命令
+├── scripts/                  # 安装脚本
+│   ├── cli.js                # CLI 命令行工具
+│   ├── install.sh            # Bash 一键安装
+│   ├── install.ps1           # PowerShell 安装
+│   └── postinstall.js        # npm 安装后脚本
+├── homebrew/                 # Homebrew 配置
+│   └── oh-my-claude.rb       # Homebrew Formula
+├── scoop/                    # Scoop 配置
+│   └── oh-my-claude.json     # Scoop manifest
 ├── skills/                   # 技能定义
-│   └── bilingual/           # 双语支持
-│       ├── skill.json       # 技能配置
-│       └── SKILL.md
+│   ├── bilingual/            # 双语支持
+│   └── progress/             # 进度面板
 ├── hooks/                    # Hook 脚本
-│   ├── hooks.json           # Hook 配置
-│   ├── todo-enforcer.sh     # Todo 强制执行
-│   └── keyword-detector.sh  # 关键词检测
+│   ├── hooks.json            # Hook 配置
+│   ├── todo-enforcer.sh      # Todo 强制执行
+│   ├── keyword-detector.sh   # 关键词检测
+│   └── progress-notifier.sh  # 进度通知
 ├── docs/                     # 文档
-│   └── AGENT_PROTOCOL.md    # Agent 协作协议
-├── .gitattributes           # Git 属性配置
-├── CONTRIBUTING.md          # 贡献指南
-├── CODE_OF_CONDUCT.md       # 行为准则
-├── CHANGELOG.md             # 变更日志
-├── LICENSE                  # MIT 许可证
-├── README.md                # 中文文档
-└── README_EN.md             # English documentation
+│   └── AGENT_PROTOCOL.md     # Agent 协作协议
+├── package.json              # npm 包配置
+├── CHANGELOG.md              # 变更日志
+├── CONTRIBUTING.md           # 贡献指南
+├── LICENSE                   # MIT 许可证
+├── README.md                 # 中文文档
+└── README_EN.md              # English documentation
 ```
 
 ## 🎯 命令速查

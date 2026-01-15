@@ -1,0 +1,47 @@
+{
+  "name": "oh-my-claude",
+  "version": "0.8.1",
+  "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture",
+  "keywords": [
+    "claude-code",
+    "claude",
+    "agent",
+    "orchestration",
+    "chinese-culture",
+    "multi-agent",
+    "productivity",
+    "automation"
+  ],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZDragon17/oh-my-claude.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ZDragon17/oh-my-claude/issues"
+  },
+  "homepage": "https://github.com/ZDragon17/oh-my-claude#readme",
+  "bin": {
+    "oh-my-claude": "./scripts/cli.js"
+  },
+  "files": [
+    "agents/",
+    "commands/",
+    "hooks/",
+    "skills/",
+    ".claude-plugin/",
+    "scripts/",
+    "README.md",
+    "README_EN.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "install-plugin": "node scripts/install.js",
+    "uninstall-plugin": "node scripts/uninstall.js",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

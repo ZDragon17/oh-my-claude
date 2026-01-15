@@ -18,6 +18,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.1] - 2025-01-15
+
+### Added / 新增
+
+#### 📦 多种安装方式 / Multiple Installation Methods
+
+- **一键安装脚本 / One-line Install Scripts**
+  - Bash 脚本 (macOS/Linux): `curl -fsSL ... | bash`
+  - PowerShell 脚本 (Windows): `irm ... | iex`
+
+- **npm/bun/pnpm 支持 / npm/bun/pnpm Support**
+  - `npx oh-my-claude install`
+  - `bunx oh-my-claude install`
+  - `pnpm dlx oh-my-claude install`
+
+- **Homebrew 支持 (macOS) / Homebrew Support**
+  - `brew tap ZDragon17/oh-my-claude && brew install oh-my-claude`
+
+- **Scoop 支持 (Windows) / Scoop Support**
+  - `scoop bucket add oh-my-claude && scoop install oh-my-claude`
+
+#### 🛠️ CLI 工具 / CLI Tool
+
+- 新增 `oh-my-claude` CLI 命令
+- 支持 `install`, `uninstall`, `version`, `help` 子命令
+- 跨平台支持 (Windows, macOS, Linux)
+
+### Changed / 变更
+
+- 更新 README 安装文档，提供 5 种安装方式
+- 新增 `scripts/` 目录存放安装脚本
+- 新增 `homebrew/` 目录存放 Homebrew Formula
+- 新增 `scoop/` 目录存放 Scoop manifest
+
+---
+
 ## [0.8.0] - 2025-01-15
 
 ### Added / 新增

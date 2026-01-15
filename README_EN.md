@@ -99,7 +99,66 @@ All commands support both Chinese and English:
 
 ## 📦 Installation
 
-### Option 1: Clone and Install
+Multiple installation methods available - choose what works best for you:
+
+### Option 1: One-line Install (Recommended)
+
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.sh | bash
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.ps1 | iex
+```
+
+### Option 2: npm / bun / pnpm
+
+```bash
+# npm
+npx oh-my-claude install
+
+# Or install globally
+npm install -g oh-my-claude
+oh-my-claude install
+
+# bun
+bunx oh-my-claude install
+
+# pnpm
+pnpm dlx oh-my-claude install
+```
+
+### Option 3: Homebrew (macOS)
+
+```bash
+# Add tap (first time only)
+brew tap ZDragon17/oh-my-claude https://github.com/ZDragon17/oh-my-claude
+
+# Install
+brew install oh-my-claude
+
+# Register plugin
+claude plugins install ~/.claude/plugins/oh-my-claude
+```
+
+### Option 4: Scoop (Windows)
+
+```powershell
+# Add bucket (first time only)
+scoop bucket add oh-my-claude https://github.com/ZDragon17/oh-my-claude
+
+# Install
+scoop install oh-my-claude
+
+# Register plugin
+claude plugins install $env:USERPROFILE\.claude\plugins\oh-my-claude
+```
+
+### Option 5: Manual Installation
 
 ```bash
 # Clone the project
@@ -111,11 +170,6 @@ cd oh-my-claude
 # Install as Claude Code plugin
 claude plugins install .
 ```
-
-### Option 2: Manual Installation
-
-1. Copy the `oh-my-claude` directory to `~/.claude/plugins/`
-2. Restart Claude Code
 
 ### Verify Installation
 
@@ -199,43 +253,57 @@ LuBan will carefully:
 ```
 oh-my-claude/
 ├── .claude-plugin/
-│   └── plugin.json          # Plugin configuration
+│   └── plugin.json           # Plugin configuration
 ├── .github/                  # GitHub configuration
-│   ├── ISSUE_TEMPLATE/      # Issue templates
-│   │   ├── bug_report.md
-│   │   ├── feature_request.md
-│   │   └── new_agent.md
+│   ├── ISSUE_TEMPLATE/       # Issue templates
 │   └── PULL_REQUEST_TEMPLATE.md
-├── agents/                   # Agent definitions
-│   ├── yugong.md            # YuGong - Main orchestrator
-│   ├── zhuge.md             # ZhuGe - Strategic advisor
-│   ├── luban.md             # LuBan - Master craftsman
-│   ├── wukong.md            # WuKong - Code scout
-│   └── bianque.md           # BianQue - Bug diagnosis
+├── agents/                   # Agent definitions (15 agents)
+│   ├── yugong.md             # YuGong - Main orchestrator
+│   ├── zhuge.md              # ZhuGe - Strategic advisor
+│   ├── luban.md              # LuBan - Master craftsman
+│   ├── wukong.md             # WuKong - Code scout
+│   ├── bianque.md            # BianQue - Bug diagnosis
+│   ├── mozi.md               # MoZi - Security audit
+│   ├── sunzi.md              # SunZi - Performance optimization
+│   ├── simaqian.md           # SimaQian - Documentation
+│   ├── zhenghe.md            # ZhengHe - API integration
+│   ├── zhangheng.md          # ZhangHeng - System monitoring
+│   ├── libing.md             # LiBing - DevOps
+│   ├── laozi.md              # LaoZi - Clean Code
+│   ├── baozheng.md           # BaoZheng - Testing expert
+│   ├── weizheng.md           # WeiZheng - Code review
+│   └── cangjie.md            # CangJie - Database design
 ├── commands/                 # Slash commands
-│   ├── yugong.md            # /yugong YuGong mode
-│   ├── yishan.md            # /yishan moving mountains mode
-│   ├── zhuge.md             # /zhuge advisor mode
-│   ├── luban.md             # /luban craftsman mode
-│   ├── wukong.md            # /wukong scout mode
-│   └── bianque.md           # /bianque diagnostic mode
+│   ├── yugong.md             # /yugong YuGong mode
+│   ├── yishan.md             # /yishan moving mountains mode
+│   ├── team.md               # /team team collaboration
+│   ├── progress.md           # /progress dashboard
+│   └── ...                   # Other agent commands
+├── scripts/                  # Installation scripts
+│   ├── cli.js                # CLI command-line tool
+│   ├── install.sh            # Bash one-line install
+│   ├── install.ps1           # PowerShell install
+│   └── postinstall.js        # npm post-install script
+├── homebrew/                 # Homebrew configuration
+│   └── oh-my-claude.rb       # Homebrew Formula
+├── scoop/                    # Scoop configuration
+│   └── oh-my-claude.json     # Scoop manifest
 ├── skills/                   # Skill definitions
-│   └── bilingual/           # Bilingual support
-│       ├── skill.json       # Skill configuration
-│       └── SKILL.md
+│   ├── bilingual/            # Bilingual support
+│   └── progress/             # Progress dashboard
 ├── hooks/                    # Hook scripts
-│   ├── hooks.json           # Hook configuration
-│   ├── todo-enforcer.sh     # Todo enforcement
-│   └── keyword-detector.sh  # Keyword detection
+│   ├── hooks.json            # Hook configuration
+│   ├── todo-enforcer.sh      # Todo enforcement
+│   ├── keyword-detector.sh   # Keyword detection
+│   └── progress-notifier.sh  # Progress notification
 ├── docs/                     # Documentation
-│   └── AGENT_PROTOCOL.md    # Agent collaboration protocol
-├── .gitattributes           # Git attributes configuration
-├── CONTRIBUTING.md          # Contribution guide
-├── CODE_OF_CONDUCT.md       # Code of conduct
-├── CHANGELOG.md             # Changelog
-├── LICENSE                  # MIT License
-├── README.md                # 中文文档 (Chinese)
-└── README_EN.md             # English documentation
+│   └── AGENT_PROTOCOL.md     # Agent collaboration protocol
+├── package.json              # npm package configuration
+├── CHANGELOG.md              # Changelog
+├── CONTRIBUTING.md           # Contribution guide
+├── LICENSE                   # MIT License
+├── README.md                 # 中文文档 (Chinese)
+└── README_EN.md              # English documentation
 ```
 
 ## 🎯 Command Reference
