@@ -156,5 +156,35 @@ EOF
     exit 0
 fi
 
+# 检测测试关键词
+if echo "$prompt_lower" | grep -qE '(测试|单元测试|集成测试|test|unit[-_]?test|integration[-_]?test|tdd|jest|vitest|pytest|包拯|baozheng|开封|coverage|覆盖率)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n⚖️ **包拯测试提示**\n\n检测到测试相关需求，建议：\n- 使用 /baozheng 命令进入测试模式\n- 包拯擅长：单元测试、集成测试、TDD、测试覆盖率分析\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测代码审查关键词
+if echo "$prompt_lower" | grep -qE '(审查|code[-_]?review|review|cr|pr|pull[-_]?request|魏征|weizheng|谏|规范检查)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n🪞 **魏征审查提示**\n\n检测到代码审查相关需求，建议：\n- 使用 /weizheng 命令进入审查模式\n- 魏征擅长：代码审查、规范检查、最佳实践指导\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测数据库关键词
+if echo "$prompt_lower" | grep -qE '(数据库|database|sql|表设计|索引|index|migration|mysql|postgresql|仓颉|cangjie|造字|数据建模|schema)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n📊 **仓颉数据库提示**\n\n检测到数据库相关需求，建议：\n- 使用 /cangjie 命令进入数据库模式\n- 仓颉擅长：数据建模、表结构设计、SQL 优化、数据库迁移\n"
+}
+EOF
+    exit 0
+fi
+
 # 无特殊关键词，正常继续
 exit 0

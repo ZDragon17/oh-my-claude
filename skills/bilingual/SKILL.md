@@ -27,6 +27,9 @@ description: |
 | `/zhangheng` | `/张衡` `/地动仪` `/监控` | `/didongyi` `/monitor` `/observe` | 张衡 | 系统监控，可观测性 |
 | `/libing` | `/李冰` `/都江堰` `/运维` | `/dujiangyan` `/devops` `/cicd` | 李冰 | DevOps，基础设施 |
 | `/laozi` | `/老子` `/道德经` `/简洁` `/至简` | `/daodejing` `/simplify` `/clean` | 老子 | 代码简化，Clean Code |
+| `/baozheng` | `/包拯` `/开封` `/测试` | `/kaifeng` `/test` `/tdd` | 包拯 | 测试专家，TDD |
+| `/weizheng` | `/魏征` `/谏` `/审查` | `/jian` `/review` `/cr` | 魏征 | 代码审查，规范检查 |
+| `/cangjie` | `/仓颉` `/造字` `/数据库` | `/zaozi` `/database` `/db` `/sql` | 仓颉 | 数据库设计，SQL 优化 |
 | `/team` | `/协作` `/合作` `/团队` | `/teamwork` | 愚公 | 多 Agent 团队协作 |
 
 ### 工具命令
@@ -88,6 +91,18 @@ description: |
 ### 老子简洁模式
 - `简洁`, `简化`, `重构`, `KISS`, `YAGNI`, `DRY`, `clean code`, `代码异味`, `code smell`, `老子`, `laozi`, `道德经`, `至简`, `simplify`
 - 建议召唤老子 Agent 进行代码简化和 Clean Code 审查
+
+### 包拯测试模式
+- `测试`, `单元测试`, `集成测试`, `test`, `unit test`, `integration test`, `TDD`, `jest`, `vitest`, `pytest`, `包拯`, `baozheng`, `开封`, `coverage`
+- 建议召唤包拯 Agent 进行测试设计和覆盖分析
+
+### 魏征审查模式
+- `审查`, `code review`, `review`, `CR`, `PR`, `pull request`, `魏征`, `weizheng`, `谏`, `规范检查`
+- 建议召唤魏征 Agent 进行代码审查
+
+### 仓颉数据库模式
+- `数据库`, `database`, `SQL`, `表设计`, `索引`, `index`, `migration`, `MySQL`, `PostgreSQL`, `仓颉`, `cangjie`, `造字`, `数据建模`
+- 建议召唤仓颉 Agent 进行数据库设计和 SQL 优化
 
 ## 使用示例
 

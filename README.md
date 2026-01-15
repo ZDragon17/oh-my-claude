@@ -53,6 +53,9 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 | 🔭 | **张衡** (ZhangHeng) | 系统监控，可观测性 | `/zhangheng` `/monitor` |
 | 🌊 | **李冰** (LiBing) | DevOps，基础设施 | `/libing` `/devops` |
 | ☯️ | **老子** (LaoZi) | 代码简化，Clean Code | `/laozi` `/simplify` |
+| ⚖️ | **包拯** (BaoZheng) | 测试专家，TDD | `/baozheng` `/test` |
+| 🪞 | **魏征** (WeiZheng) | 代码审查，规范检查 | `/weizheng` `/review` |
+| 📊 | **仓颉** (CangJie) | 数据库设计，SQL 优化 | `/cangjie` `/db` |
 
 ### 🔄 愚公移山模式
 
@@ -251,6 +254,9 @@ oh-my-claude/
 | `/zhangheng` | `/didongyi` `/monitor` `/observe` `/张衡` `/监控` | 召唤张衡监控 |
 | `/libing` | `/dujiangyan` `/devops` `/cicd` `/李冰` `/运维` | 召唤李冰 DevOps |
 | `/laozi` | `/daodejing` `/simplify` `/clean` `/老子` `/简洁` `/至简` | 召唤老子简洁大师 |
+| `/baozheng` | `/kaifeng` `/test` `/tdd` `/包拯` `/测试` | 召唤包拯测试专家 |
+| `/weizheng` | `/jian` `/review` `/cr` `/魏征` `/审查` | 召唤魏征代码审查 |
+| `/cangjie` | `/zaozi` `/database` `/db` `/sql` `/仓颉` `/数据库` | 召唤仓颉数据库专家 |
 
 ### 工具命令
 
@@ -274,6 +280,9 @@ oh-my-claude/
 | `监控` `日志` `告警` `追踪` `monitor` `logging` `alert` `张衡` `zhangheng` | 张衡监控提示 |
 | `DevOps` `CI/CD` `部署` `运维` `docker` `kubernetes` `李冰` `libing` | 李冰 DevOps 提示 |
 | `简洁` `简化` `重构` `KISS` `YAGNI` `DRY` `clean code` `老子` `laozi` `至简` | 老子简洁提示 |
+| `测试` `单元测试` `test` `TDD` `jest` `pytest` `coverage` `包拯` `baozheng` | 包拯测试提示 |
+| `审查` `code review` `review` `CR` `PR` `魏征` `weizheng` | 魏征审查提示 |
+| `数据库` `database` `SQL` `表设计` `索引` `migration` `仓颉` `cangjie` | 仓颉数据库提示 |
 
 ## 🔧 配置
 
@@ -343,6 +352,15 @@ model: sonnet
 ### 老子 (LaoZi)
 道家学派创始人，著有《道德经》。他提出"道法自然"、"无为而治"的哲学思想，强调"大道至简"——最高深的道理往往是最简单的。老子的智慧在于：去除繁杂，回归本质。
 
+### 包拯 (BaoZheng)
+北宋名臣，人称"包青天"、"包公"。以铁面无私、明察秋毫著称，任开封府尹时公正严明，不畏权贵。龙头铡、虎头铡、狗头铡象征对各阶层的公正执法，体现"公正无私、明察秋毫"的精神。
+
+### 魏征 (WeiZheng)
+唐代著名谏臣，辅佐唐太宗开创贞观之治。以直言敢谏著称，唐太宗称其为"镜子"。"以铜为镜，可以正衣冠；以人为镜，可以明得失"，体现"直言不讳、明辨是非"的精神。
+
+### 仓颉 (CangJie)
+传说中的造字始祖，黄帝时期史官。相传他有四只眼睛，仰观天象、俯察鸟兽之迹，创造了汉字。体现"观察规律、创造结构"的智慧。
+
 ## 🗺️ 路线图
 
 - [x] v0.1.0 - 基础 Agent 体系（5 个 Agent）
@@ -352,6 +370,7 @@ model: sonnet
 - [x] v0.5.0 - 更多 Agent（司马迁）
 - [x] v0.6.0 - 更多 Agent（郑和、张衡、李冰）
 - [x] v0.7.0 - 更多 Agent（老子）
+- [x] v0.8.0 - 更多 Agent（包拯、魏征、仓颉）
 - [ ] v1.0.0 - 稳定版发布
 
 ## 🤝 贡献

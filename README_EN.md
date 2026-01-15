@@ -55,6 +55,9 @@ Specialized agents based on Chinese cultural figures:
 | 🔭 | **ZhangHeng** (张衡) | Monitoring, observability | `/zhangheng` `/monitor` |
 | 🌊 | **LiBing** (李冰) | DevOps, infrastructure | `/libing` `/devops` |
 | ☯️ | **LaoZi** (老子) | Code simplicity, Clean Code | `/laozi` `/simplify` |
+| ⚖️ | **BaoZheng** (包拯) | Testing expert, TDD | `/baozheng` `/test` |
+| 🪞 | **WeiZheng** (魏征) | Code review, standards | `/weizheng` `/review` |
+| 📊 | **CangJie** (仓颉) | Database design, SQL optimization | `/cangjie` `/db` |
 
 ### 🔄 YuGong Moving Mountains Mode
 
@@ -253,6 +256,9 @@ oh-my-claude/
 | `/zhangheng` | `/didongyi` `/monitor` `/observe` | Summon ZhangHeng monitor |
 | `/libing` | `/dujiangyan` `/devops` `/cicd` | Summon LiBing DevOps |
 | `/laozi` | `/daodejing` `/simplify` `/clean` | Summon LaoZi simplicity master |
+| `/baozheng` | `/kaifeng` `/test` `/tdd` | Summon BaoZheng testing expert |
+| `/weizheng` | `/jian` `/review` `/cr` | Summon WeiZheng code reviewer |
+| `/cangjie` | `/zaozi` `/database` `/db` `/sql` | Summon CangJie database expert |
 
 ### Tool Commands
 
@@ -276,6 +282,9 @@ Including these keywords in any prompt auto-activates the corresponding mode:
 | `监控` `日志` `告警` `monitor` `logging` `alert` `张衡` `zhangheng` | ZhangHeng monitoring hint |
 | `DevOps` `CI/CD` `部署` `docker` `kubernetes` `李冰` `libing` | LiBing DevOps hint |
 | `简洁` `simplify` `refactor` `KISS` `YAGNI` `DRY` `clean code` `老子` `laozi` | LaoZi simplicity hint |
+| `test` `unit test` `TDD` `jest` `pytest` `coverage` `包拯` `baozheng` | BaoZheng testing hint |
+| `code review` `review` `CR` `PR` `魏征` `weizheng` | WeiZheng review hint |
+| `database` `SQL` `schema` `index` `migration` `仓颉` `cangjie` | CangJie database hint |
 
 ## 🔧 Configuration
 
@@ -345,6 +354,15 @@ Governor of Shu during the Warring States period who directed the construction o
 ### LaoZi (老子) - The Simplicity Master
 Founder of Taoism and author of the "Tao Te Ching." He advocated "following the way of nature" and "governing through non-action," emphasizing "the greatest truths are the simplest." LaoZi's wisdom lies in: removing complexity and returning to essence.
 
+### BaoZheng (包拯) - The Impartial Judge
+A famous official of the Northern Song Dynasty, known as "Lord Bao" or "Justice Bao." Renowned for his impartiality and keen judgment, he served as the Prefect of Kaifeng with strict fairness. His three guillotines (Dragon, Tiger, and Dog) symbolize equal justice for all classes, embodying "impartiality and keen insight."
+
+### WeiZheng (魏征) - The Loyal Advisor
+A famous minister of the Tang Dynasty who helped Emperor Taizong establish the prosperous Zhenguan era. Known for his straightforward advice, Emperor Taizong called him a "mirror." "Using bronze as a mirror, one can straighten one's clothes; using people as a mirror, one can understand gains and losses."
+
+### CangJie (仓颉) - The Character Creator
+The legendary creator of Chinese characters, who served as a historian during the Yellow Emperor's era. Said to have four eyes, he observed celestial patterns above and animal tracks below to create Chinese characters, embodying "observing patterns and creating structure."
+
 ## 🗺️ Roadmap
 
 - [x] v0.1.0 - Basic agent system (5 agents)
@@ -354,6 +372,7 @@ Founder of Taoism and author of the "Tao Te Ching." He advocated "following the 
 - [x] v0.5.0 - More agents (SimaQian)
 - [x] v0.6.0 - More agents (ZhengHe, ZhangHeng, LiBing)
 - [x] v0.7.0 - More agents (LaoZi)
+- [x] v0.8.0 - More agents (BaoZheng, WeiZheng, CangJie)
 - [ ] v1.0.0 - Stable release
 
 ## 🤝 Contributing

@@ -20,7 +20,10 @@
     "/zhenghe": ["/xiyang", "/api", "/integrate", "/郑和", "/西洋", "/接口"],
     "/zhangheng": ["/didongyi", "/monitor", "/observe", "/张衡", "/地动仪", "/监控"],
     "/libing": ["/dujiangyan", "/devops", "/cicd", "/李冰", "/都江堰", "/运维"],
-    "/laozi": ["/daodejing", "/simplify", "/clean", "/老子", "/道德经", "/简洁", "/至简"]
+    "/laozi": ["/daodejing", "/simplify", "/clean", "/老子", "/道德经", "/简洁", "/至简"],
+    "/baozheng": ["/kaifeng", "/test", "/tdd", "/包拯", "/开封", "/测试"],
+    "/weizheng": ["/jian", "/review", "/cr", "/魏征", "/谏", "/审查"],
+    "/cangjie": ["/zaozi", "/database", "/db", "/sql", "/仓颉", "/造字", "/数据库"]
   },
   "keywordTriggers": {
     "yugong_mode": [
@@ -69,6 +72,18 @@
     "laozi_mode": [
       "简洁", "简化", "重构", "KISS", "YAGNI", "DRY", "clean code",
       "代码异味", "code smell", "老子", "laozi", "道德经", "至简", "simplify"
+    ],
+    "baozheng_mode": [
+      "测试", "单元测试", "集成测试", "test", "unit test", "integration test",
+      "TDD", "jest", "vitest", "pytest", "包拯", "baozheng", "开封", "coverage"
+    ],
+    "weizheng_mode": [
+      "审查", "code review", "review", "CR", "PR", "pull request",
+      "魏征", "weizheng", "谏", "规范检查"
+    ],
+    "cangjie_mode": [
+      "数据库", "database", "SQL", "表设计", "索引", "index", "migration",
+      "MySQL", "PostgreSQL", "仓颉", "cangjie", "造字", "数据建模"
     ]
   }
 }

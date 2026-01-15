@@ -18,6 +18,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.0] - 2025-01-15
+
+### Added / 新增
+
+#### 🎭 新 Agent / New Agents
+
+- **包拯 (BaoZheng)** - 测试专家 / Testing Expert
+  - 单元测试设计和实现 / Unit test design and implementation
+  - 集成测试和 E2E 测试 / Integration and E2E testing
+  - TDD 测试驱动开发指导 / TDD guidance
+  - 测试覆盖率分析 / Test coverage analysis
+
+- **魏征 (WeiZheng)** - 代码审查专家 / Code Review Expert
+  - 代码规范检查 / Code standards checking
+  - 逻辑审查和设计评审 / Logic and design review
+  - 最佳实践指导 / Best practices guidance
+  - 分级反馈（MUST/SHOULD/COULD/NICE）/ Graded feedback
+
+- **仓颉 (CangJie)** - 数据库专家 / Database Expert
+  - 数据建模和表结构设计 / Data modeling and schema design
+  - SQL 查询优化 / SQL query optimization
+  - 数据库迁移策略 / Database migration strategies
+  - 索引设计和性能调优 / Index design and performance tuning
+
+#### ⚡ 新命令 / New Commands
+
+- `/baozheng` (`/kaifeng`, `/test`, `/tdd`, `/包拯`, `/开封`, `/测试`) - 包拯测试模式
+- `/weizheng` (`/jian`, `/review`, `/cr`, `/魏征`, `/谏`, `/审查`) - 魏征代码审查模式
+- `/cangjie` (`/zaozi`, `/database`, `/db`, `/sql`, `/仓颉`, `/造字`, `/数据库`) - 仓颉数据库模式
+
+#### 🪝 Hook 增强 / Hook Enhancements
+
+- **测试关键词检测** - 检测 "测试"、"test"、"TDD"、"coverage" 等关键词
+- **审查关键词检测** - 检测 "审查"、"review"、"CR"、"PR" 等关键词
+- **数据库关键词检测** - 检测 "数据库"、"SQL"、"索引"、"migration" 等关键词
+
+### Changed / 变更
+
+- Agent 数量从 12 个增加到 15 个
+- 更新 bilingual skill 支持新命令别名
+- 更新 keyword-detector hook 支持新关键词
+
+---
+
 ## [0.7.0] - 2025-01-15
 
 ### Added / 新增
@@ -297,6 +341,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 0.8.0 | 2025-01-15 | 3 new agents (BaoZheng, WeiZheng, CangJie) / 新增包拯、魏征、仓颉 |
 | 0.7.0 | 2025-01-15 | LaoZi agent (code simplicity) / 老子简洁之道大师 |
 | 0.6.0 | 2025-01-15 | 3 new agents (ZhengHe, ZhangHeng, LiBing) / 新增郑和、张衡、李冰 |
 | 0.5.0 | 2025-01-15 | SimaQian agent (documentation) / 司马迁文档史官 |
