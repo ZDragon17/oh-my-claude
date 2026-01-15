@@ -116,24 +116,7 @@ curl -fsSL https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts
 irm https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.ps1 | iex
 ```
 
-### 方式二：npm / bun / pnpm
-
-```bash
-# npm
-npx oh-my-claude install
-
-# 或全局安装
-npm install -g oh-my-claude
-oh-my-claude install
-
-# bun
-bunx oh-my-claude install
-
-# pnpm
-pnpm dlx oh-my-claude install
-```
-
-### 方式三：Homebrew (macOS)
+### 方式二：Homebrew (macOS)
 
 ```bash
 # 添加 tap（首次使用）
@@ -146,7 +129,7 @@ brew install oh-my-claude
 claude plugins install ~/.claude/plugins/oh-my-claude
 ```
 
-### 方式四：Scoop (Windows)
+### 方式三：Scoop (Windows)
 
 ```powershell
 # 添加 bucket（首次使用）
@@ -159,7 +142,7 @@ scoop install oh-my-claude
 claude plugins install $env:USERPROFILE\.claude\plugins\oh-my-claude
 ```
 
-### 方式五：手动安装
+### 方式四：手动安装
 
 ```bash
 # 克隆项目

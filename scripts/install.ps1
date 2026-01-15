@@ -69,12 +69,20 @@ function Invoke-GitCloneWithRetry {
                 Remove-Item -Path $DestDir -Recurse -Force -ErrorAction SilentlyContinue
             }
 
-            # 尝试克隆
-            $output = git clone --depth 1 $RepoUrl $DestDir 2>&1
-            if ($LASTEXITCODE -eq 0) {
-                return $true
+            # 尝试克隆（使用 Start-Process 避免 stderr 问题）
+            $process = Start-Process -FilePath "git" -ArgumentList "clone", "--depth", "1", $RepoUrl, $DestDir -Wait -PassThru -NoNewWindow -RedirectStandardError "$env:TEMP\git-clone-err.txt" -RedirectStandardOutput "$env:TEMP\git-clone-out.txt"
+
+            if ($process.ExitCode -eq 0) {
+                # 验证目录确实创建了
+                if (Test-Path $DestDir) {
+                    return $true
+                }
             }
-            $lastError = $output
+
+            # 读取错误输出
+            if (Test-Path "$env:TEMP\git-clone-err.txt") {
+                $lastError = Get-Content "$env:TEMP\git-clone-err.txt" -Raw -ErrorAction SilentlyContinue
+            }
         } catch {
             $lastError = $_.Exception.Message
         }
