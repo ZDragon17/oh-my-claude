@@ -146,5 +146,15 @@ EOF
     exit 0
 fi
 
+# 检测代码简化关键词
+if echo "$prompt_lower" | grep -qE '(简洁|简化|重构|refactor|kiss|yagni|dry|clean[-_]?code|代码异味|code[-_]?smell|老子|laozi|道德经|至简|simplify)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n☯️ **老子简洁之道提示**\n\n检测到代码简化/重构相关需求，建议：\n- 使用 /laozi 命令进入简洁之道模式\n- 老子擅长：代码简化、Clean Code、KISS/YAGNI/DRY 原则、重构优化\n"
+}
+EOF
+    exit 0
+fi
+
 # 无特殊关键词，正常继续
 exit 0

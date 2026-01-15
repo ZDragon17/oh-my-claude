@@ -18,6 +18,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.0] - 2025-01-15
+
+### Added / 新增
+
+#### 🎭 新 Agent / New Agent
+
+- **老子 (LaoZi)** - 简洁之道大师 / Code Simplicity Master
+  - 代码简化（识别并简化过度复杂的代码）/ Code simplification
+  - Clean Code 原则检查 / Clean Code principle checking
+  - KISS、YAGNI、DRY 原则应用 / KISS, YAGNI, DRY principles
+  - 代码异味检测与重构建议 / Code smell detection and refactoring
+
+#### ⚡ 新命令 / New Commands
+
+- `/laozi` (`/daodejing`, `/simplify`, `/clean`, `/老子`, `/道德经`, `/简洁`, `/至简`) - 老子简洁之道模式
+
+#### 🪝 Hook 增强 / Hook Enhancements
+
+- **代码简化关键词检测** - 检测 "简洁"、"简化"、"重构"、"KISS"、"clean code" 等关键词
+
+### Changed / 变更
+
+- Agent 数量从 11 个增加到 12 个
+- 更新 bilingual skill 支持新命令别名
+- 更新 keyword-detector hook 支持代码简化关键词
+
+---
+
 ## [0.6.0] - 2025-01-15
 
 ### Added / 新增
@@ -269,6 +297,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 0.7.0 | 2025-01-15 | LaoZi agent (code simplicity) / 老子简洁之道大师 |
 | 0.6.0 | 2025-01-15 | 3 new agents (ZhengHe, ZhangHeng, LiBing) / 新增郑和、张衡、李冰 |
 | 0.5.0 | 2025-01-15 | SimaQian agent (documentation) / 司马迁文档史官 |
 | 0.4.0 | 2025-01-15 | Visual progress dashboard / 可视化进度面板 |

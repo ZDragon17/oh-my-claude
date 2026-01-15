@@ -26,6 +26,7 @@ description: |
 | `/zhenghe` | `/郑和` `/西洋` `/接口` | `/xiyang` `/api` `/integrate` | 郑和 | API 集成，外部服务 |
 | `/zhangheng` | `/张衡` `/地动仪` `/监控` | `/didongyi` `/monitor` `/observe` | 张衡 | 系统监控，可观测性 |
 | `/libing` | `/李冰` `/都江堰` `/运维` | `/dujiangyan` `/devops` `/cicd` | 李冰 | DevOps，基础设施 |
+| `/laozi` | `/老子` `/道德经` `/简洁` `/至简` | `/daodejing` `/simplify` `/clean` | 老子 | 代码简化，Clean Code |
 | `/team` | `/协作` `/合作` `/团队` | `/teamwork` | 愚公 | 多 Agent 团队协作 |
 
 ### 工具命令
@@ -83,6 +84,10 @@ description: |
 ### 李冰 DevOps 模式
 - `DevOps`, `CI/CD`, `部署`, `运维`, `docker`, `kubernetes`, `容器`, `terraform`, `基础设施`, `流水线`, `pipeline`, `李冰`, `libing`
 - 建议召唤李冰 Agent 进行 DevOps 配置
+
+### 老子简洁模式
+- `简洁`, `简化`, `重构`, `KISS`, `YAGNI`, `DRY`, `clean code`, `代码异味`, `code smell`, `老子`, `laozi`, `道德经`, `至简`, `simplify`
+- 建议召唤老子 Agent 进行代码简化和 Clean Code 审查
 
 ## 使用示例
 

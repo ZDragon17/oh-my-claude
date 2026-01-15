@@ -52,6 +52,7 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 | ⛵ | **郑和** (ZhengHe) | API 集成，外部服务 | `/zhenghe` `/api` |
 | 🔭 | **张衡** (ZhangHeng) | 系统监控，可观测性 | `/zhangheng` `/monitor` |
 | 🌊 | **李冰** (LiBing) | DevOps，基础设施 | `/libing` `/devops` |
+| ☯️ | **老子** (LaoZi) | 代码简化，Clean Code | `/laozi` `/simplify` |
 
 ### 🔄 愚公移山模式
 
@@ -249,6 +250,7 @@ oh-my-claude/
 | `/zhenghe` | `/xiyang` `/api` `/integrate` `/郑和` `/接口` | 召唤郑和 API |
 | `/zhangheng` | `/didongyi` `/monitor` `/observe` `/张衡` `/监控` | 召唤张衡监控 |
 | `/libing` | `/dujiangyan` `/devops` `/cicd` `/李冰` `/运维` | 召唤李冰 DevOps |
+| `/laozi` | `/daodejing` `/simplify` `/clean` `/老子` `/简洁` `/至简` | 召唤老子简洁大师 |
 
 ### 工具命令
 
@@ -271,6 +273,7 @@ oh-my-claude/
 | `API` `接口` `集成` `对接` `integrate` `webhook` `sdk` `郑和` `zhenghe` | 郑和 API 提示 |
 | `监控` `日志` `告警` `追踪` `monitor` `logging` `alert` `张衡` `zhangheng` | 张衡监控提示 |
 | `DevOps` `CI/CD` `部署` `运维` `docker` `kubernetes` `李冰` `libing` | 李冰 DevOps 提示 |
+| `简洁` `简化` `重构` `KISS` `YAGNI` `DRY` `clean code` `老子` `laozi` `至简` | 老子简洁提示 |
 
 ## 🔧 配置
 
@@ -337,6 +340,9 @@ model: sonnet
 ### 李冰 (LiBing)
 战国时期蜀郡太守，主持修建都江堰水利工程。都江堰历经两千多年仍在发挥作用，体现了"顺势而为、分而治之"的工程智慧，被誉为世界水利史上的奇迹。
 
+### 老子 (LaoZi)
+道家学派创始人，著有《道德经》。他提出"道法自然"、"无为而治"的哲学思想，强调"大道至简"——最高深的道理往往是最简单的。老子的智慧在于：去除繁杂，回归本质。
+
 ## 🗺️ 路线图
 
 - [x] v0.1.0 - 基础 Agent 体系（5 个 Agent）
@@ -345,6 +351,7 @@ model: sonnet
 - [x] v0.4.0 - 可视化进度面板（`/progress` 命令）
 - [x] v0.5.0 - 更多 Agent（司马迁）
 - [x] v0.6.0 - 更多 Agent（郑和、张衡、李冰）
+- [x] v0.7.0 - 更多 Agent（老子）
 - [ ] v1.0.0 - 稳定版发布
 
 ## 🤝 贡献

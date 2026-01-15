@@ -19,7 +19,8 @@
     "/simaqian": ["/shiji", "/document", "/doc", "/司马迁", "/史记"],
     "/zhenghe": ["/xiyang", "/api", "/integrate", "/郑和", "/西洋", "/接口"],
     "/zhangheng": ["/didongyi", "/monitor", "/observe", "/张衡", "/地动仪", "/监控"],
-    "/libing": ["/dujiangyan", "/devops", "/cicd", "/李冰", "/都江堰", "/运维"]
+    "/libing": ["/dujiangyan", "/devops", "/cicd", "/李冰", "/都江堰", "/运维"],
+    "/laozi": ["/daodejing", "/simplify", "/clean", "/老子", "/道德经", "/简洁", "/至简"]
   },
   "keywordTriggers": {
     "yugong_mode": [
@@ -64,6 +65,10 @@
     "libing_mode": [
       "DevOps", "CI/CD", "部署", "运维", "docker", "kubernetes", "容器",
       "terraform", "基础设施", "流水线", "pipeline", "李冰", "libing"
+    ],
+    "laozi_mode": [
+      "简洁", "简化", "重构", "KISS", "YAGNI", "DRY", "clean code",
+      "代码异味", "code smell", "老子", "laozi", "道德经", "至简", "simplify"
     ]
   }
 }

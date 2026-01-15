@@ -54,6 +54,7 @@ Specialized agents based on Chinese cultural figures:
 | ⛵ | **ZhengHe** (郑和) | API integration, external services | `/zhenghe` `/api` |
 | 🔭 | **ZhangHeng** (张衡) | Monitoring, observability | `/zhangheng` `/monitor` |
 | 🌊 | **LiBing** (李冰) | DevOps, infrastructure | `/libing` `/devops` |
+| ☯️ | **LaoZi** (老子) | Code simplicity, Clean Code | `/laozi` `/simplify` |
 
 ### 🔄 YuGong Moving Mountains Mode
 
@@ -251,6 +252,7 @@ oh-my-claude/
 | `/zhenghe` | `/xiyang` `/api` `/integrate` | Summon ZhengHe API expert |
 | `/zhangheng` | `/didongyi` `/monitor` `/observe` | Summon ZhangHeng monitor |
 | `/libing` | `/dujiangyan` `/devops` `/cicd` | Summon LiBing DevOps |
+| `/laozi` | `/daodejing` `/simplify` `/clean` | Summon LaoZi simplicity master |
 
 ### Tool Commands
 
@@ -273,6 +275,7 @@ Including these keywords in any prompt auto-activates the corresponding mode:
 | `API` `接口` `集成` `integrate` `webhook` `sdk` `郑和` `zhenghe` | ZhengHe API hint |
 | `监控` `日志` `告警` `monitor` `logging` `alert` `张衡` `zhangheng` | ZhangHeng monitoring hint |
 | `DevOps` `CI/CD` `部署` `docker` `kubernetes` `李冰` `libing` | LiBing DevOps hint |
+| `简洁` `simplify` `refactor` `KISS` `YAGNI` `DRY` `clean code` `老子` `laozi` | LaoZi simplicity hint |
 
 ## 🔧 Configuration
 
@@ -339,6 +342,9 @@ Outstanding scientist and astronomer of the Eastern Han Dynasty. Invented the wo
 ### LiBing (李冰) - The Water Engineer
 Governor of Shu during the Warring States period who directed the construction of the Dujiangyan irrigation system. This engineering marvel has functioned for over 2,000 years, embodying the wisdom of "working with nature and divide-and-conquer," recognized as a miracle in the history of water conservancy.
 
+### LaoZi (老子) - The Simplicity Master
+Founder of Taoism and author of the "Tao Te Ching." He advocated "following the way of nature" and "governing through non-action," emphasizing "the greatest truths are the simplest." LaoZi's wisdom lies in: removing complexity and returning to essence.
+
 ## 🗺️ Roadmap
 
 - [x] v0.1.0 - Basic agent system (5 agents)
@@ -347,6 +353,7 @@ Governor of Shu during the Warring States period who directed the construction o
 - [x] v0.4.0 - Visual progress dashboard (`/progress` command)
 - [x] v0.5.0 - More agents (SimaQian)
 - [x] v0.6.0 - More agents (ZhengHe, ZhangHeng, LiBing)
+- [x] v0.7.0 - More agents (LaoZi)
 - [ ] v1.0.0 - Stable release
 
 ## 🤝 Contributing
