@@ -30,6 +30,9 @@ description: |
 | `/baozheng` | `/包拯` `/开封` `/测试` | `/kaifeng` `/test` `/tdd` | 包拯 | 测试专家，TDD |
 | `/weizheng` | `/魏征` `/谏` `/审查` | `/jian` `/review` `/cr` | 魏征 | 代码审查，规范检查 |
 | `/cangjie` | `/仓颉` `/造字` `/数据库` | `/zaozi` `/database` `/db` `/sql` | 仓颉 | 数据库设计，SQL 优化 |
+| `/libai` | `/李白` `/需求` `/用户故事` | `/poet` `/requirements` | 李白 | 需求分析，用户故事 |
+| `/gukaizhi` | `/顾恺之` `/界面` `/美学` | `/painter` `/ui` `/ux` | 顾恺之 | UI/UX 设计，界面美学 |
+| `/change` | `/嫦娥` `/云端` `/月宫` | `/moon` `/cloud` `/serverless` | 嫦娥 | 云原生，Serverless |
 | `/team` | `/协作` `/合作` `/团队` | `/teamwork` | 愚公 | 多 Agent 团队协作 |
 
 ### 工具命令
@@ -103,6 +106,18 @@ description: |
 ### 仓颉数据库模式
 - `数据库`, `database`, `SQL`, `表设计`, `索引`, `index`, `migration`, `MySQL`, `PostgreSQL`, `仓颉`, `cangjie`, `造字`, `数据建模`
 - 建议召唤仓颉 Agent 进行数据库设计和 SQL 优化
+
+### 李白需求模式
+- `需求`, `用户故事`, `PRD`, `功能规划`, `requirements`, `user story`, `feature spec`, `李白`, `libai`, `poet`
+- 建议召唤李白 Agent 进行需求分析和用户故事提炼
+
+### 顾恺之设计模式
+- `界面`, `美学`, `UX`, `用户体验`, `视觉设计`, `交互设计`, `顾恺之`, `gukaizhi`, `painter`, `配色`, `布局`
+- 建议召唤顾恺之 Agent 进行 UI/UX 设计
+
+### 嫦娥云端模式
+- `云原生`, `cloud native`, `serverless`, `无服务器`, `Lambda`, `函数计算`, `嫦娥`, `change`, `moon`, `云端`, `FaaS`
+- 建议召唤嫦娥 Agent 进行云原生架构和 Serverless 部署
 
 ## 使用示例
 

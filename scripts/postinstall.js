@@ -19,11 +19,11 @@ ${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━
 
 ${colors.yellow}请运行以下命令完成安装:${colors.reset}
 
-  ${colors.green}npx oh-my-claude install${colors.reset}
+  ${colors.green}npx claude-pangu install${colors.reset}
 
 或者如果你全局安装了:
 
-  ${colors.green}oh-my-claude install${colors.reset}
+  ${colors.green}claude-pangu install${colors.reset}
 
 ${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}
 `);

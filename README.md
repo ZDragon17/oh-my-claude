@@ -133,7 +133,7 @@ curl -fsSL https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts
 irm https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.ps1 | iex
 ```
 
-### 方式四：Homebrew (macOS)
+### 方式三：Homebrew (macOS)
 
 ```bash
 # 添加 tap（首次使用）
@@ -146,7 +146,7 @@ brew install oh-my-claude
 claude plugins install ~/.claude/plugins/oh-my-claude
 ```
 
-### 方式五：Scoop (Windows)
+### 方式四：Scoop (Windows)
 
 ```powershell
 # 添加 bucket（首次使用）
@@ -159,7 +159,7 @@ scoop install oh-my-claude
 claude plugins install $env:USERPROFILE\.claude\plugins\oh-my-claude
 ```
 
-### 方式六：手动安装
+### 方式五：手动安装
 
 ```bash
 # 克隆项目
@@ -258,7 +258,7 @@ oh-my-claude/
 ├── .github/                  # GitHub 配置
 │   ├── ISSUE_TEMPLATE/       # Issue 模板
 │   └── PULL_REQUEST_TEMPLATE.md
-├── agents/                   # Agent 定义 (15 个)
+├── agents/                   # Agent 定义 (18 个)
 │   ├── yugong.md             # 愚公 - 主编排
 │   ├── zhuge.md              # 诸葛 - 战略顾问
 │   ├── luban.md              # 鲁班 - 精工巧匠
@@ -447,7 +447,8 @@ model: sonnet
 - [x] v0.6.0 - 更多 Agent（郑和、张衡、李冰）
 - [x] v0.7.0 - 更多 Agent（老子）
 - [x] v0.8.0 - 更多 Agent（包拯、魏征、仓颉）
-- [ ] v1.0.0 - 稳定版发布
+- [x] v0.9.0 - 更多 Agent（李白、顾恺之、嫦娥）
+- [x] v1.0.0 - 首个正式版发布 🎉
 
 ## 🤝 贡献
 

@@ -186,5 +186,35 @@ EOF
     exit 0
 fi
 
+# 检测需求分析关键词
+if echo "$prompt_lower" | grep -qE '(需求|用户故事|prd|功能规划|requirements|user[-_]?story|feature[-_]?spec|李白|libai|poet)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n✨ **李白需求提示**\n\n检测到需求分析相关需求，建议：\n- 使用 /libai 命令进入需求炼金师模式\n- 李白擅长：需求挖掘、用户故事、功能规划、PRD 文档\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测 UI/UX 设计关键词
+if echo "$prompt_lower" | grep -qE '(界面|美学|ux|用户体验|视觉设计|交互设计|顾恺之|gukaizhi|painter|配色|layout|布局)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n🎨 **顾恺之设计提示**\n\n检测到 UI/UX 设计相关需求，建议：\n- 使用 /gukaizhi 命令进入界面美学师模式\n- 顾恺之擅长：视觉设计、交互设计、组件设计、用户体验优化\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测云原生/Serverless 关键词
+if echo "$prompt_lower" | grep -qE '(云原生|cloud[-_]?native|serverless|无服务器|lambda|函数计算|嫦娥|change|moon|云端|faas)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n🌙 **嫦娥云端提示**\n\n检测到云原生/Serverless 相关需求，建议：\n- 使用 /change 命令进入云端仙子模式\n- 嫦娥擅长：云原生架构、Serverless 部署、云服务集成、成本优化\n"
+}
+EOF
+    exit 0
+fi
+
 # 无特殊关键词，正常继续
 exit 0
