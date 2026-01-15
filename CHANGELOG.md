@@ -13,8 +13,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned / 计划中
 
-- More agents (墨子、孙子...) / 更多 Agent
 - Visual progress dashboard / 可视化进度面板
+- More agents (司马迁...) / 更多 Agent
+
+---
+
+## [0.3.0] - 2025-01-15
+
+### Added / 新增
+
+#### 🎭 新 Agent / New Agents
+
+- **墨子 (MoZi)** - 安全防御专家 / Security Defense Expert
+  - 漏洞检测（SQL 注入、XSS、CSRF 等）/ Vulnerability detection
+  - 防御性编程建议 / Defensive programming advice
+  - OWASP Top 10 安全审计 / OWASP Top 10 security audit
+  - 安全加固方案 / Security hardening solutions
+
+- **孙子 (SunZi)** - 性能优化专家 / Performance Optimization Expert
+  - 性能分析和瓶颈定位 / Performance analysis and bottleneck identification
+  - 优化策略制定（缓存、异步、索引等）/ Optimization strategies
+  - 资源使用分析 / Resource usage analysis
+  - 优化效果验证 / Optimization verification
+
+#### ⚡ 新命令 / New Commands
+
+- `/mozi` (`/security`, `/audit`, `/墨子`, `/安全`) - 墨子安全审计模式
+- `/sunzi` (`/performance`, `/perf`, `/孙子`, `/性能`, `/优化`) - 孙子性能优化模式
+
+#### 🪝 Hook 增强 / Hook Enhancements
+
+- **安全关键词检测** - 检测 "安全"、"漏洞"、"security" 等关键词
+- **性能关键词检测** - 检测 "性能"、"优化"、"performance" 等关键词
+
+### Changed / 变更
+
+- Agent 数量从 5 个增加到 7 个
+- 更新团队协作支持新 Agent（@mozi、@sunzi）
+- 更新 bilingual skill 支持新命令别名
 
 ---
 
@@ -124,6 +160,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 0.3.0 | 2025-01-15 | 2 new agents (MoZi, SunZi) / 新增墨子、孙子 Agent |
 | 0.2.0 | 2025-01-15 | Agent collaboration & /team command / Agent 协作增强和 /team 命令 |
 | 0.1.0 | 2025-01-15 | Initial release with 5 agents / 首次发布，包含 5 个 Agent |
 

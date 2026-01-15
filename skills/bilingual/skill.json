@@ -12,7 +12,9 @@
     "/luban": ["/qiaogong", "/craft", "/frontend", "/鲁班", "/巧工"],
     "/wukong": ["/huoyan", "/explore", "/scout", "/悟空", "/火眼"],
     "/bianque": ["/wangwen", "/debug", "/diagnose", "/扁鹊", "/望闻"],
-    "/team": ["/teamwork", "/协作", "/合作", "/团队"]
+    "/team": ["/teamwork", "/协作", "/合作", "/团队"],
+    "/mozi": ["/security", "/audit", "/墨子", "/安全"],
+    "/sunzi": ["/performance", "/perf", "/孙子", "/性能", "/优化"]
   },
   "keywordTriggers": {
     "yugong_mode": [
@@ -33,6 +35,14 @@
     "bianque_mode": [
       "fix bug", "fix error", "debug", "调试", "报错", "异常",
       "exception", "扁鹊", "bianque", "诊断", "diagnose"
+    ],
+    "mozi_mode": [
+      "安全", "漏洞", "注入", "security", "vulnerability", "injection",
+      "墨子", "mozi", "audit", "审计", "XSS", "CSRF", "防御"
+    ],
+    "sunzi_mode": [
+      "性能", "优化", "慢", "performance", "optimize", "slow",
+      "孙子", "sunzi", "perf", "瓶颈", "bottleneck", "缓存", "cache"
     ]
   }
 }

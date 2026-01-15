@@ -48,6 +48,8 @@ Specialized agents based on Chinese cultural figures:
 | 🔧 | **LuBan** (鲁班) | Master craftsman, implementation | `/luban` `/qiaogong` |
 | 🔍 | **WuKong** (悟空) | Code scout, fast exploration | `/wukong` `/huoyan` |
 | 🩺 | **BianQue** (扁鹊) | Bug diagnosis, problem fixing | `/bianque` `/wangwen` |
+| 🛡️ | **MoZi** (墨子) | Security audit, defensive programming | `/mozi` `/security` |
+| ⚔️ | **SunZi** (孙子) | Performance optimization, tuning | `/sunzi` `/perf` |
 
 ### 🔄 YuGong Moving Mountains Mode
 
@@ -239,6 +241,8 @@ oh-my-claude/
 | `/luban` | `/qiaogong` `/craft` `/frontend` | Summon LuBan craftsman |
 | `/wukong` | `/huoyan` `/explore` `/scout` | Summon WuKong scout |
 | `/bianque` | `/wangwen` `/debug` `/diagnose` | Summon BianQue diagnostician |
+| `/mozi` | `/security` `/audit` | Summon MoZi security expert |
+| `/sunzi` | `/performance` `/perf` | Summon SunZi performance expert |
 
 ### Keyword Triggers
 
@@ -249,6 +253,8 @@ Including these keywords in any prompt auto-activates the corresponding mode:
 | `ultrawork` `ulw` `移山` `yishan` `persist` `愚公` `yugong` | YuGong mode |
 | `架构` `设计` `策略` `architecture` `design` `strategy` `诸葛` `zhuge` `consult` `规划` `planning` | ZhuGe advisor hint |
 | `fix bug` `fix error` `debug` `调试` `报错` `异常` `exception` `扁鹊` `bianque` `诊断` `diagnose` | BianQue diagnostic hint |
+| `安全` `漏洞` `注入` `security` `vulnerability` `injection` `墨子` `mozi` `audit` | MoZi security hint |
+| `性能` `优化` `慢` `performance` `optimize` `slow` `孙子` `sunzi` `perf` `bottleneck` | SunZi performance hint |
 
 ## 🔧 Configuration
 
@@ -297,11 +303,17 @@ The Monkey King from "Journey to the West." Possesses fiery golden eyes that see
 ### BianQue (扁鹊) - Divine Physician
 Legendary doctor from the Warring States period who created the four diagnostic methods (望闻问切 - observe, listen, inquire, examine). Known for miraculous healing abilities.
 
+### MoZi (墨子) - The Defensive Master
+Founder of Mohism, advocating "universal love and non-aggression." Expert in defensive warfare and fortification strategies, renowned for his defensive wisdom.
+
+### SunZi (孙子) - The Strategic Master
+Author of "The Art of War," famous for "Know yourself and know your enemy, and you will never be defeated." A globally recognized classic on military strategy emphasizing analysis and planning.
+
 ## 🗺️ Roadmap
 
 - [x] v0.1.0 - Basic agent system (5 agents)
 - [x] v0.2.0 - Enhanced agent collaboration (`@agent` syntax, `/team` command)
-- [ ] v0.3.0 - More agents (Mozi, Sunzi...)
+- [x] v0.3.0 - More agents (MoZi, SunZi)
 - [ ] v0.4.0 - Visual progress dashboard
 - [ ] v1.0.0 - Stable release
 

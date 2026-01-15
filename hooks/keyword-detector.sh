@@ -80,7 +80,27 @@ fi
 if echo "$prompt_lower" | grep -qE '(团队|协作|合作|teamwork|team[-_]?work|collaborate|协同|多人)'; then
     cat << 'EOF'
 {
-  "systemMessage": "\n\n🤝 **团队协作提示**\n\n检测到协作相关需求，建议：\n- 使用 /team 命令启动团队协作模式\n- 愚公将作为主编排者，协调各专家共同完成任务\n- 支持调用：@wukong @zhuge @luban @bianque\n"
+  "systemMessage": "\n\n🤝 **团队协作提示**\n\n检测到协作相关需求，建议：\n- 使用 /team 命令启动团队协作模式\n- 愚公将作为主编排者，协调各专家共同完成任务\n- 支持调用：@wukong @zhuge @luban @bianque @mozi @sunzi\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测安全关键词
+if echo "$prompt_lower" | grep -qE '(安全|漏洞|注入|security|vulnerab|injection|墨子|mozi|audit|审计|xss|csrf|防御)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n🛡️ **墨子安全提示**\n\n检测到安全相关问题，建议：\n- 使用 /mozi 命令进入安全审计模式\n- 墨子擅长：漏洞检测、防御性编程、安全加固\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测性能关键词
+if echo "$prompt_lower" | grep -qE '(性能|优化|慢|performance|optimize|slow|孙子|sunzi|perf|瓶颈|bottleneck|缓存|cache)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n⚔️ **孙子性能提示**\n\n检测到性能相关问题，建议：\n- 使用 /sunzi 命令进入性能优化模式\n- 孙子擅长：性能分析、瓶颈定位、优化策略\n"
 }
 EOF
     exit 0

@@ -20,6 +20,8 @@ description: |
 | `/luban` | `/鲁班` `/巧工` | `/qiaogong` `/craft` `/frontend` | 鲁班 | 精工巧匠，代码实现 |
 | `/wukong` | `/悟空` `/火眼` | `/huoyan` `/explore` `/scout` | 悟空 | 代码侦察，快速探索 |
 | `/bianque` | `/扁鹊` `/望闻` | `/wangwen` `/debug` `/diagnose` | 扁鹊 | Bug 诊断，问题修复 |
+| `/mozi` | `/墨子` `/安全` | `/security` `/audit` | 墨子 | 安全审计，防御编程 |
+| `/sunzi` | `/孙子` `/性能` `/优化` | `/performance` `/perf` | 孙子 | 性能优化，系统调优 |
 | `/team` | `/协作` `/合作` `/团队` | `/teamwork` | 愚公 | 多 Agent 团队协作 |
 
 > **说明**: `/yugong` 和 `/yishan` 是完全等价的命令，都启动愚公移山模式。
@@ -47,6 +49,14 @@ description: |
 ### 扁鹊诊断模式
 - `fix bug`, `fix error`, `debug`, `调试`, `报错`, `异常`, `exception`, `扁鹊`, `bianque`, `诊断`, `diagnose`
 - 建议召唤扁鹊 Agent 进行诊断
+
+### 墨子安全模式
+- `安全`, `漏洞`, `注入`, `security`, `vulnerability`, `injection`, `墨子`, `mozi`, `audit`, `审计`, `XSS`, `CSRF`, `防御`
+- 建议召唤墨子 Agent 进行安全审计
+
+### 孙子性能模式
+- `性能`, `优化`, `慢`, `performance`, `optimize`, `slow`, `孙子`, `sunzi`, `perf`, `瓶颈`, `bottleneck`, `缓存`, `cache`
+- 建议召唤孙子 Agent 进行性能优化
 
 ## 使用示例
 

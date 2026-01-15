@@ -46,6 +46,8 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 | 🔧 | **鲁班** (LuBan) | 精工巧匠，代码实现 | `/luban` `/qiaogong` |
 | 🔍 | **悟空** (WuKong) | 代码侦察，快速探索 | `/wukong` `/huoyan` |
 | 🩺 | **扁鹊** (BianQue) | Bug 诊断，问题修复 | `/bianque` `/wangwen` |
+| 🛡️ | **墨子** (MoZi) | 安全审计，防御编程 | `/mozi` `/security` |
+| ⚔️ | **孙子** (SunZi) | 性能优化，系统调优 | `/sunzi` `/perf` |
 
 ### 🔄 愚公移山模式
 
@@ -237,6 +239,8 @@ oh-my-claude/
 | `/luban` | `/qiaogong` `/craft` `/frontend` | 召唤鲁班巧匠 |
 | `/wukong` | `/huoyan` `/explore` `/scout` | 召唤悟空侦察 |
 | `/bianque` | `/wangwen` `/debug` `/diagnose` | 召唤扁鹊诊断 |
+| `/mozi` | `/security` `/audit` `/安全` | 召唤墨子安全 |
+| `/sunzi` | `/performance` `/perf` `/性能` `/优化` | 召唤孙子性能 |
 
 ### 关键词触发
 
@@ -247,6 +251,8 @@ oh-my-claude/
 | `ultrawork` `ulw` `移山` `yishan` `persist` `愚公` `yugong` | 愚公移山模式 |
 | `架构` `设计` `策略` `architecture` `design` `strategy` `诸葛` `zhuge` `consult` `规划` `planning` | 诸葛顾问提示 |
 | `fix bug` `fix error` `debug` `调试` `报错` `异常` `exception` `扁鹊` `bianque` `诊断` `diagnose` | 扁鹊诊断提示 |
+| `安全` `漏洞` `注入` `security` `vulnerability` `injection` `墨子` `mozi` `audit` `审计` | 墨子安全提示 |
+| `性能` `优化` `慢` `performance` `optimize` `slow` `孙子` `sunzi` `perf` `瓶颈` `bottleneck` | 孙子性能提示 |
 
 ## 🔧 配置
 
@@ -295,11 +301,17 @@ model: sonnet
 ### 扁鹊 (BianQue)
 战国时期神医，创立望闻问切四诊法。医术高超，能起死回生。
 
+### 墨子 (MoZi)
+墨家学派创始人，主张"兼爱非攻"。精通防御工事和守城策略，以防御智慧著称。
+
+### 孙子 (SunZi)
+《孙子兵法》作者，"知己知彼，百战不殆"。世界公认的军事战略经典，强调分析和策略。
+
 ## 🗺️ 路线图
 
 - [x] v0.1.0 - 基础 Agent 体系（5 个 Agent）
 - [x] v0.2.0 - Agent 协作增强（`@agent` 调用语法、`/team` 命令）
-- [ ] v0.3.0 - 更多 Agent（墨子、孙子...）
+- [x] v0.3.0 - 更多 Agent（墨子、孙子）
 - [ ] v0.4.0 - 可视化进度面板
 - [ ] v1.0.0 - 稳定版发布
 
