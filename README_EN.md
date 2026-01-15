@@ -50,6 +50,7 @@ Specialized agents based on Chinese cultural figures:
 | 🩺 | **BianQue** (扁鹊) | Bug diagnosis, problem fixing | `/bianque` `/wangwen` |
 | 🛡️ | **MoZi** (墨子) | Security audit, defensive programming | `/mozi` `/security` |
 | ⚔️ | **SunZi** (孙子) | Performance optimization, tuning | `/sunzi` `/perf` |
+| 📜 | **SimaQian** (司马迁) | Documentation, change logging | `/simaqian` `/doc` |
 
 ### 🔄 YuGong Moving Mountains Mode
 
@@ -243,6 +244,7 @@ oh-my-claude/
 | `/bianque` | `/wangwen` `/debug` `/diagnose` | Summon BianQue diagnostician |
 | `/mozi` | `/security` `/audit` | Summon MoZi security expert |
 | `/sunzi` | `/performance` `/perf` | Summon SunZi performance expert |
+| `/simaqian` | `/shiji` `/document` `/doc` | Summon SimaQian historian |
 
 ### Tool Commands
 
@@ -261,6 +263,7 @@ Including these keywords in any prompt auto-activates the corresponding mode:
 | `fix bug` `fix error` `debug` `调试` `报错` `异常` `exception` `扁鹊` `bianque` `诊断` `diagnose` | BianQue diagnostic hint |
 | `安全` `漏洞` `注入` `security` `vulnerability` `injection` `墨子` `mozi` `audit` | MoZi security hint |
 | `性能` `优化` `慢` `performance` `optimize` `slow` `孙子` `sunzi` `perf` `bottleneck` | SunZi performance hint |
+| `文档` `注释` `记录` `document` `comment` `readme` `changelog` `司马迁` `simaqian` `史记` | SimaQian documentation hint |
 
 ## 🔧 Configuration
 
@@ -315,13 +318,16 @@ Founder of Mohism, advocating "universal love and non-aggression." Expert in def
 ### SunZi (孙子) - The Strategic Master
 Author of "The Art of War," famous for "Know yourself and know your enemy, and you will never be defeated." A globally recognized classic on military strategy emphasizing analysis and planning.
 
+### SimaQian (司马迁) - The Grand Historian
+Western Han dynasty historian, honored as the "Sage of History." Author of "Records of the Grand Historian" (Shiji), which pioneered the biographical form of historical writing. Famous for "investigating the relationship between heaven and man, and understanding the changes from past to present."
+
 ## 🗺️ Roadmap
 
 - [x] v0.1.0 - Basic agent system (5 agents)
 - [x] v0.2.0 - Enhanced agent collaboration (`@agent` syntax, `/team` command)
 - [x] v0.3.0 - More agents (MoZi, SunZi)
 - [x] v0.4.0 - Visual progress dashboard (`/progress` command)
-- [ ] v0.5.0 - More agents (Sima Qian...)
+- [x] v0.5.0 - More agents (SimaQian)
 - [ ] v1.0.0 - Stable release
 
 ## 🤝 Contributing

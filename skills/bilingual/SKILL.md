@@ -22,6 +22,7 @@ description: |
 | `/bianque` | `/扁鹊` `/望闻` | `/wangwen` `/debug` `/diagnose` | 扁鹊 | Bug 诊断，问题修复 |
 | `/mozi` | `/墨子` `/安全` | `/security` `/audit` | 墨子 | 安全审计，防御编程 |
 | `/sunzi` | `/孙子` `/性能` `/优化` | `/performance` `/perf` | 孙子 | 性能优化，系统调优 |
+| `/simaqian` | `/司马迁` `/史记` | `/shiji` `/document` `/doc` | 司马迁 | 文档撰写，变更记录 |
 | `/team` | `/协作` `/合作` `/团队` | `/teamwork` | 愚公 | 多 Agent 团队协作 |
 
 ### 工具命令
@@ -63,6 +64,10 @@ description: |
 ### 孙子性能模式
 - `性能`, `优化`, `慢`, `performance`, `optimize`, `slow`, `孙子`, `sunzi`, `perf`, `瓶颈`, `bottleneck`, `缓存`, `cache`
 - 建议召唤孙子 Agent 进行性能优化
+
+### 司马迁文档模式
+- `文档`, `注释`, `记录`, `document`, `comment`, `readme`, `changelog`, `history`, `司马迁`, `simaqian`, `史记`, `shiji`
+- 建议召唤司马迁 Agent 进行文档撰写
 
 ## 使用示例
 

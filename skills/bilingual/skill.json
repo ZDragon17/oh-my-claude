@@ -15,7 +15,8 @@
     "/team": ["/teamwork", "/协作", "/合作", "/团队"],
     "/mozi": ["/security", "/audit", "/墨子", "/安全"],
     "/sunzi": ["/performance", "/perf", "/孙子", "/性能", "/优化"],
-    "/progress": ["/进度", "/dashboard", "/面板", "/status", "/进展"]
+    "/progress": ["/进度", "/dashboard", "/面板", "/status", "/进展"],
+    "/simaqian": ["/shiji", "/document", "/doc", "/司马迁", "/史记"]
   },
   "keywordTriggers": {
     "yugong_mode": [
@@ -44,6 +45,10 @@
     "sunzi_mode": [
       "性能", "优化", "慢", "performance", "optimize", "slow",
       "孙子", "sunzi", "perf", "瓶颈", "bottleneck", "缓存", "cache"
+    ],
+    "simaqian_mode": [
+      "文档", "注释", "记录", "document", "comment", "readme",
+      "changelog", "history", "司马迁", "simaqian", "史记", "shiji"
     ]
   }
 }

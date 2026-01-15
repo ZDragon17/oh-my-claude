@@ -106,5 +106,15 @@ EOF
     exit 0
 fi
 
+# 检测文档关键词
+if echo "$prompt_lower" | grep -qE '(文档|注释|记录|document|comment|readme|changelog|history|司马迁|simaqian|史记|shiji)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n📜 **司马迁文档提示**\n\n检测到文档相关需求，建议：\n- 使用 /simaqian 命令进入文档模式\n- 司马迁擅长：技术文档撰写、变更记录、代码注释\n"
+}
+EOF
+    exit 0
+fi
+
 # 无特殊关键词，正常继续
 exit 0

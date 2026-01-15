@@ -13,8 +13,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned / 计划中
 
-- More agents (司马迁...) / 更多 Agent
 - Agent memory persistence / Agent 记忆持久化
+- More agents / 更多 Agent
+
+---
+
+## [0.5.0] - 2025-01-15
+
+### Added / 新增
+
+#### 🎭 新 Agent / New Agent
+
+- **司马迁 (SimaQian)** - 文档史官 / Documentation Historian
+  - 技术文档撰写（README、API 文档、架构文档）/ Technical documentation
+  - 变更记录（CHANGELOG、Release Notes）/ Change logging
+  - 代码注释（JSDoc、TSDoc）/ Code comments
+  - 知识整理（ADR、FAQ）/ Knowledge organization
+
+#### ⚡ 新命令 / New Commands
+
+- `/simaqian` (`/shiji`, `/document`, `/doc`, `/司马迁`, `/史记`) - 司马迁文档模式
+
+#### 🪝 Hook 增强 / Hook Enhancements
+
+- **文档关键词检测** - 检测 "文档"、"注释"、"document"、"changelog" 等关键词
+
+### Changed / 变更
+
+- Agent 数量从 7 个增加到 8 个
+- 更新 bilingual skill 支持新命令别名
+- 更新 keyword-detector hook 支持文档关键词
 
 ---
 
@@ -197,6 +225,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 0.5.0 | 2025-01-15 | SimaQian agent (documentation) / 司马迁文档史官 |
 | 0.4.0 | 2025-01-15 | Visual progress dashboard / 可视化进度面板 |
 | 0.3.0 | 2025-01-15 | 2 new agents (MoZi, SunZi) / 新增墨子、孙子 Agent |
 | 0.2.0 | 2025-01-15 | Agent collaboration & /team command / Agent 协作增强和 /team 命令 |

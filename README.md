@@ -48,6 +48,7 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 | 🩺 | **扁鹊** (BianQue) | Bug 诊断，问题修复 | `/bianque` `/wangwen` |
 | 🛡️ | **墨子** (MoZi) | 安全审计，防御编程 | `/mozi` `/security` |
 | ⚔️ | **孙子** (SunZi) | 性能优化，系统调优 | `/sunzi` `/perf` |
+| 📜 | **司马迁** (SimaQian) | 文档撰写，变更记录 | `/simaqian` `/doc` |
 
 ### 🔄 愚公移山模式
 
@@ -241,6 +242,7 @@ oh-my-claude/
 | `/bianque` | `/wangwen` `/debug` `/diagnose` | 召唤扁鹊诊断 |
 | `/mozi` | `/security` `/audit` `/安全` | 召唤墨子安全 |
 | `/sunzi` | `/performance` `/perf` `/性能` `/优化` | 召唤孙子性能 |
+| `/simaqian` | `/shiji` `/document` `/doc` `/司马迁` `/史记` | 召唤司马迁史官 |
 
 ### 工具命令
 
@@ -259,6 +261,7 @@ oh-my-claude/
 | `fix bug` `fix error` `debug` `调试` `报错` `异常` `exception` `扁鹊` `bianque` `诊断` `diagnose` | 扁鹊诊断提示 |
 | `安全` `漏洞` `注入` `security` `vulnerability` `injection` `墨子` `mozi` `audit` `审计` | 墨子安全提示 |
 | `性能` `优化` `慢` `performance` `optimize` `slow` `孙子` `sunzi` `perf` `瓶颈` `bottleneck` | 孙子性能提示 |
+| `文档` `注释` `记录` `document` `comment` `readme` `changelog` `司马迁` `simaqian` `史记` | 司马迁文档提示 |
 
 ## 🔧 配置
 
@@ -313,13 +316,16 @@ model: sonnet
 ### 孙子 (SunZi)
 《孙子兵法》作者，"知己知彼，百战不殆"。世界公认的军事战略经典，强调分析和策略。
 
+### 司马迁 (SimaQian)
+西汉史学家，被誉为"史圣"。著有《史记》，开创纪传体通史先河，"究天人之际，通古今之变，成一家之言"。
+
 ## 🗺️ 路线图
 
 - [x] v0.1.0 - 基础 Agent 体系（5 个 Agent）
 - [x] v0.2.0 - Agent 协作增强（`@agent` 调用语法、`/team` 命令）
 - [x] v0.3.0 - 更多 Agent（墨子、孙子）
 - [x] v0.4.0 - 可视化进度面板（`/progress` 命令）
-- [ ] v0.5.0 - 更多 Agent（司马迁...）
+- [x] v0.5.0 - 更多 Agent（司马迁）
 - [ ] v1.0.0 - 稳定版发布
 
 ## 🤝 贡献
