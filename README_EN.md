@@ -281,9 +281,12 @@ oh-my-claude/
 │   └── ...                   # Other agent commands
 ├── scripts/                  # Installation scripts
 │   ├── cli.js                # CLI command-line tool
+│   ├── install.js            # Standalone install script
+│   ├── uninstall.js          # Standalone uninstall script
 │   ├── install.sh            # Bash one-line install
 │   ├── install.ps1           # PowerShell install
-│   └── postinstall.js        # npm post-install script
+│   ├── postinstall.js        # npm post-install script
+│   └── sync-version.js       # Version sync tool
 ├── homebrew/                 # Homebrew configuration
 │   └── oh-my-claude.rb       # Homebrew Formula
 ├── scoop/                    # Scoop configuration
@@ -298,9 +301,11 @@ oh-my-claude/
 │   └── progress-notifier.sh  # Progress notification
 ├── docs/                     # Documentation
 │   └── AGENT_PROTOCOL.md     # Agent collaboration protocol
+├── .npmignore                # npm publish exclude config
 ├── package.json              # npm package configuration
 ├── CHANGELOG.md              # Changelog
 ├── CONTRIBUTING.md           # Contribution guide
+├── TROUBLESHOOTING.md        # Troubleshooting guide
 ├── LICENSE                   # MIT License
 ├── README.md                 # 中文文档 (Chinese)
 └── README_EN.md              # English documentation

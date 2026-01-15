@@ -1,10 +1,24 @@
 {
   "$schema": "https://code.claude.com/plugin-schema.json",
   "name": "oh-my-claude",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture",
   "author": "ZDragon17",
-  "repository": "https://github.com/ZDragon17/oh-my-claude",
+  "contributors": [
+    {
+      "name": "ZDragon17",
+      "url": "https://github.com/ZDragon17"
+    }
+  ],
+  "homepage": "https://github.com/ZDragon17/oh-my-claude#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZDragon17/oh-my-claude.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ZDragon17/oh-my-claude/issues"
+  },
+  "license": "MIT",
   "keywords": [
     "claude-code",
     "agent",
@@ -16,13 +30,30 @@
     "luban",
     "wukong",
     "bianque",
+    "libai",
+    "gukaizhi",
+    "change",
     "productivity",
     "automation",
     "task-management",
     "debugging",
     "architecture",
     "code-quality",
+    "ui-ux",
+    "devops",
+    "cloud",
+    "requirements",
     "bilingual"
   ],
-  "license": "MIT"
+  "engines": {
+    "claude": ">=1.0.0",
+    "node": ">=16.0.0"
+  },
+  "os": ["darwin", "linux", "win32"],
+  "dependencies": {
+    "optional": {
+      "jq": ">=1.6",
+      "bash": ">=4.0"
+    }
+  }
 }

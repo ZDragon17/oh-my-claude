@@ -56,6 +56,9 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 | ⚖️ | **包拯** (BaoZheng) | 测试专家，TDD | `/baozheng` `/test` |
 | 🪞 | **魏征** (WeiZheng) | 代码审查，规范检查 | `/weizheng` `/review` |
 | 📊 | **仓颉** (CangJie) | 数据库设计，SQL 优化 | `/cangjie` `/db` |
+| ✨ | **李白** (LiBai) | 需求分析，用户故事 | `/libai` `/poet` |
+| 🎨 | **顾恺之** (GuKaiZhi) | UI/UX 设计，界面美学 | `/gukaizhi` `/painter` |
+| 🌙 | **嫦娥** (ChangE) | 云服务，DevOps 部署 | `/change` `/cloud` |
 
 ### 🔄 愚公移山模式
 
@@ -279,9 +282,12 @@ oh-my-claude/
 │   └── ...                   # 其他 Agent 命令
 ├── scripts/                  # 安装脚本
 │   ├── cli.js                # CLI 命令行工具
+│   ├── install.js            # 独立安装脚本
+│   ├── uninstall.js          # 独立卸载脚本
 │   ├── install.sh            # Bash 一键安装
 │   ├── install.ps1           # PowerShell 安装
-│   └── postinstall.js        # npm 安装后脚本
+│   ├── postinstall.js        # npm 安装后脚本
+│   └── sync-version.js       # 版本同步工具
 ├── homebrew/                 # Homebrew 配置
 │   └── oh-my-claude.rb       # Homebrew Formula
 ├── scoop/                    # Scoop 配置
@@ -296,9 +302,11 @@ oh-my-claude/
 │   └── progress-notifier.sh  # 进度通知
 ├── docs/                     # 文档
 │   └── AGENT_PROTOCOL.md     # Agent 协作协议
+├── .npmignore                # npm 发布排除配置
 ├── package.json              # npm 包配置
 ├── CHANGELOG.md              # 变更日志
 ├── CONTRIBUTING.md           # 贡献指南
+├── TROUBLESHOOTING.md        # 故障排查指南
 ├── LICENSE                   # MIT 许可证
 ├── README.md                 # 中文文档
 └── README_EN.md              # English documentation

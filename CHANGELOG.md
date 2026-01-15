@@ -14,7 +14,132 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned / 计划中
 
 - Agent memory persistence / Agent 记忆持久化
-- More agents / 更多 Agent
+- More specialized agents / 更多专业 Agent
+
+---
+
+## [0.9.0] - 2025-01-15
+
+### Added / 新增
+
+#### 🎭 新增 Agent / New Agents
+
+- **李白 (LiBai)** - 需求炼金师 Agent
+  - 需求分析与梳理
+  - 用户故事编写
+  - 产品功能规划
+  - 模糊想法具象化
+  - 命令: `/libai` `/poet`
+
+- **顾恺之 (GuKaiZhi)** - 界面美学师 Agent
+  - UI 界面设计评审
+  - 用户体验优化建议
+  - 组件设计与样式规范
+  - 设计系统构建
+  - 命令: `/gukaizhi` `/painter`
+
+- **嫦娥 (ChangE)** - 云端仙子 Agent
+  - 云服务架构设计 (AWS/Azure/GCP/阿里云)
+  - DevOps 流水线配置
+  - 容器化与 Kubernetes 部署
+  - 基础设施即代码 (IaC)
+  - 命令: `/change` `/cloud`
+
+现在 Agent 总数：**18 个**，覆盖软件开发全生命周期。
+
+---
+
+## [0.8.2] - 2025-01-15
+
+### Added / 新增
+
+#### 🛠️ CLI 命令增强 / CLI Command Enhancements
+
+- **`update` 命令** - 更新插件到最新版本
+  - 别名: `upgrade`, `up`
+  - 自动检测版本差异
+  - 智能更新（保留用户配置）
+
+- **`verify` 命令** - 验证安装是否正确
+  - 别名: `check`, `doctor`
+  - 检查目录结构完整性
+  - 验证核心文件存在
+  - 检查 Claude Code CLI 可用性
+
+#### 📄 开发者工具 / Developer Tools
+
+- **版本同步脚本** (`scripts/sync-version.js`)
+  - 一键同步所有配置文件中的版本号
+  - 支持 package.json、cli.js、Homebrew、Scoop
+  - 自动验证版本号格式
+
+- **故障排查文档** (`TROUBLESHOOTING.md`)
+  - 常见安装问题及解决方案
+  - 运行时问题排查指南
+  - 权限问题处理
+  - 完全重装步骤
+
+- **npm 发布优化** (`.npmignore`)
+  - 排除开发文件，减小包体积
+  - 保留核心插件文件
+
+#### 🔒 安全增强 / Security Enhancements
+
+- **并发锁机制** - 防止多个 CLI 实例同时操作导致数据损坏
+  - 使用文件锁实现互斥
+  - 支持锁超时和陈旧锁检测
+  - 可重入锁（同一进程多次获取）
+
+- **命令注入防护** - 使用 `spawnSync` 替代 `execSync`
+  - 禁用 shell 模式，参数数组传递
+  - 适用于 `registerPlugin` 和 `uninstall` 函数
+
+- **路径遍历防护增强** - `todo-enforcer.sh` 使用 `realpath/readlink`
+  - 规范化路径后再验证
+  - 防止符号链接绕过
+
+- **日志脱敏** - `logErrorToFile` 函数自动脱敏敏感信息
+  - 替换用户主目录路径
+  - 替换用户名
+  - 隐藏长 hex/base64 字符串（可能是 token）
+
+### Fixed / 修复
+
+- 修复 Scoop manifest 中变量引用错误 (`$dir_$dir` → `Join-Path`)
+- 修复 plugin.json 版本号与 package.json 不一致问题
+- 修复 verify 命令中 manifest 路径错误（`manifest.json` → `plugin.json`）
+- 改进全局错误处理，始终显示完整堆栈信息
+- 添加错误日志文件记录（位于临时目录）
+- 添加安装回滚机制，失败时自动恢复（cli.js/install.sh/install.ps1 三处统一实现）
+- 加强 hook 脚本路径安全验证（防止命令注入和路径遍历攻击）
+- 修复 todo-enforcer.sh 在 Windows/WSL/Git Bash 环境下路径验证问题
+
+### Changed / 变更
+
+- CLI 帮助信息更新，展示新命令
+- 未知命令现在会显示错误提示并输出帮助
+- 重构 cli.js，抽取 `executeWithRollback` 公共函数消除重复代码
+- 安装脚本增加重试机制（3 次重试 + 指数退避）
+- 安装失败时提供详细的故障排除建议
+- plugin.json 添加完整元数据（contributors、repository、engines 等）
+- 卸载命令增加确认提示（可用 `-y` 跳过）
+- 错误信息增加用户友好的说明（EACCES/EPERM/ENOSPC 等错误码映射为中文提示）
+
+### Performance / 性能优化
+
+- **大文件流式复制** - 超过 1MB 的文件使用流式复制
+  - 减少内存占用
+  - 保留文件时间戳
+
+- **进度反馈机制** - `ProgressIndicator` 类
+  - 交互式终端显示进度条
+  - 非交互式终端显示步骤日志
+  - 显示操作耗时
+
+- **代码质量改进**
+  - 提取硬编码魔数为常量（锁超时、缓冲区大小等）
+  - 空目录处理优化（可选保留空目录）
+  - GitHub 仓库地址统一为常量
 
 ---
 
@@ -377,6 +502,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 0.8.2 | 2025-01-15 | CLI enhancements (update, verify), dev tools / CLI 增强，开发者工具 |
+| 0.8.1 | 2025-01-15 | Multiple install methods / 多种安装方式 |
 | 0.8.0 | 2025-01-15 | 3 new agents (BaoZheng, WeiZheng, CangJie) / 新增包拯、魏征、仓颉 |
 | 0.7.0 | 2025-01-15 | LaoZi agent (code simplicity) / 老子简洁之道大师 |
 | 0.6.0 | 2025-01-15 | 3 new agents (ZhengHe, ZhangHeng, LiBing) / 新增郑和、张衡、李冰 |

@@ -47,6 +47,72 @@ function Test-Dependencies {
     Write-Success "依赖检查通过"
 }
 
+# 带重试的 Git 克隆
+function Invoke-GitCloneWithRetry {
+    param(
+        [string]$RepoUrl,
+        [string]$DestDir,
+        [int]$MaxRetries = 3,
+        [int]$DelaySeconds = 5
+    )
+
+    $attempt = 0
+    $lastError = $null
+
+    while ($attempt -lt $MaxRetries) {
+        $attempt++
+        Write-Info "下载尝试 $attempt/$MaxRetries..."
+
+        try {
+            # 清理目标目录（如果存在）
+            if (Test-Path $DestDir) {
+                Remove-Item -Path $DestDir -Recurse -Force -ErrorAction SilentlyContinue
+            }
+
+            # 尝试克隆
+            $output = git clone --depth 1 $RepoUrl $DestDir 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                return $true
+            }
+            $lastError = $output
+        } catch {
+            $lastError = $_.Exception.Message
+        }
+
+        if ($attempt -lt $MaxRetries) {
+            Write-Warn "下载失败，${DelaySeconds} 秒后重试..."
+            Start-Sleep -Seconds $DelaySeconds
+            # 指数退避
+            $DelaySeconds = $DelaySeconds * 2
+        }
+    }
+
+    # 所有重试都失败
+    Write-Host ""
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Red
+    Write-Host "下载失败，请尝试以下解决方案：" -ForegroundColor Red
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "1. 检查网络连接" -ForegroundColor Yellow
+    Write-Host "   ping github.com"
+    Write-Host ""
+    Write-Host "2. 检查 Git 配置" -ForegroundColor Yellow
+    Write-Host "   git config --global http.sslVerify false  # 临时禁用 SSL 验证"
+    Write-Host ""
+    Write-Host "3. 使用代理（如有）" -ForegroundColor Yellow
+    Write-Host "   git config --global http.proxy http://your-proxy:port"
+    Write-Host ""
+    Write-Host "4. 手动下载" -ForegroundColor Yellow
+    Write-Host "   访问: https://github.com/$Repo/releases"
+    Write-Host "   下载 zip 后解压到: $InstallDir"
+    Write-Host ""
+    if ($lastError) {
+        Write-Host "错误详情: $lastError" -ForegroundColor Gray
+    }
+
+    return $false
+}
+
 # 下载并安装
 function Install-Plugin {
     Write-Info "正在下载 oh-my-claude..."
@@ -56,10 +122,9 @@ function Install-Plugin {
     New-Item -ItemType Directory -Path $TmpDir -Force | Out-Null
 
     try {
-        # 克隆仓库
-        git clone --depth 1 "https://github.com/$Repo.git" $TmpDir 2>$null
-        if ($LASTEXITCODE -ne 0) {
-            Write-Err "下载失败，请检查网络连接"
+        # 带重试的克隆
+        if (-not (Invoke-GitCloneWithRetry -RepoUrl "https://github.com/$Repo.git" -DestDir $TmpDir)) {
+            exit 1
         }
 
         Write-Success "下载完成"
@@ -71,45 +136,81 @@ function Install-Plugin {
             New-Item -ItemType Directory -Path $ParentDir -Force | Out-Null
         }
 
-        # 如果已存在，先删除
+        # 备份变量（用于回滚）
+        $BackupDir = $null
+
+        # 如果已存在，先备份（而不是直接删除）
         if (Test-Path $InstallDir) {
-            Write-Warn "检测到已有安装，正在更新..."
-            Remove-Item -Path $InstallDir -Recurse -Force
+            Write-Warn "检测到已有安装，正在备份..."
+            $BackupDir = "$InstallDir.backup-$(Get-Date -Format 'yyyyMMddHHmmss')"
+            Move-Item -Path $InstallDir -Destination $BackupDir -Force
         }
 
-        # 复制文件
-        New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+        $InstallSuccess = $false
 
-        $Dirs = @("agents", "commands", "hooks", "skills", ".claude-plugin")
-        foreach ($Dir in $Dirs) {
-            $Src = Join-Path $TmpDir $Dir
-            $Dest = Join-Path $InstallDir $Dir
-            if (Test-Path $Src) {
-                Copy-Item -Path $Src -Destination $Dest -Recurse -Force
-            }
-        }
-
-        # 复制其他文件
-        $Files = @("README.md", "README_EN.md", "LICENSE")
-        foreach ($File in $Files) {
-            $Src = Join-Path $TmpDir $File
-            $Dest = Join-Path $InstallDir $File
-            if (Test-Path $Src) {
-                Copy-Item -Path $Src -Destination $Dest -Force
-            }
-        }
-
-        Write-Success "插件文件安装完成"
-        Write-Info "安装位置: $InstallDir"
-
-        # 注册插件
-        Write-Info "正在注册插件..."
         try {
-            claude plugins install $InstallDir 2>$null
-            Write-Success "插件注册成功"
+            # 复制文件
+            New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+
+            $Dirs = @("agents", "commands", "hooks", "skills", ".claude-plugin")
+            foreach ($Dir in $Dirs) {
+                $Src = Join-Path $TmpDir $Dir
+                $Dest = Join-Path $InstallDir $Dir
+                if (Test-Path $Src) {
+                    Copy-Item -Path $Src -Destination $Dest -Recurse -Force -ErrorAction Stop
+                }
+            }
+
+            # 复制其他文件（可选）
+            $Files = @("README.md", "README_EN.md", "LICENSE")
+            foreach ($File in $Files) {
+                $Src = Join-Path $TmpDir $File
+                $Dest = Join-Path $InstallDir $File
+                if (Test-Path $Src) {
+                    Copy-Item -Path $Src -Destination $Dest -Force -ErrorAction SilentlyContinue
+                }
+            }
+
+            # Windows 不需要设置执行权限
+            $InstallSuccess = $true
+            Write-Success "插件文件安装完成"
+            Write-Info "安装位置: $InstallDir"
+
         } catch {
-            Write-Warn "自动注册失败，请手动运行:"
-            Write-Host "  claude plugins install $InstallDir"
+            # 安装失败
+            Write-Err "安装文件复制失败: $_"
+        }
+
+        # 根据安装结果处理备份
+        if ($InstallSuccess) {
+            # 安装成功，删除备份
+            if ($BackupDir -and (Test-Path $BackupDir)) {
+                Remove-Item -Path $BackupDir -Recurse -Force -ErrorAction SilentlyContinue
+            }
+
+            # 注册插件
+            Write-Info "正在注册插件..."
+            try {
+                claude plugins install $InstallDir 2>$null
+                Write-Success "插件注册成功"
+            } catch {
+                Write-Warn "自动注册失败，请手动运行:"
+                Write-Host "  claude plugins install $InstallDir"
+            }
+        } else {
+            # 安装失败，回滚
+            if (Test-Path $InstallDir) {
+                Write-Warn "正在清理失败的安装..."
+                Remove-Item -Path $InstallDir -Recurse -Force -ErrorAction SilentlyContinue
+            }
+
+            if ($BackupDir -and (Test-Path $BackupDir)) {
+                Write-Info "正在恢复之前的安装..."
+                Move-Item -Path $BackupDir -Destination $InstallDir -Force
+                Write-Success "已恢复之前的安装"
+            }
+
+            exit 1
         }
     }
     finally {

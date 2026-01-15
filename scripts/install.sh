@@ -55,6 +55,62 @@ check_dependencies() {
     success "依赖检查通过"
 }
 
+# 带重试的 Git 克隆
+git_clone_with_retry() {
+    local repo_url="$1"
+    local dest_dir="$2"
+    local max_retries="${3:-3}"
+    local delay_seconds="${4:-5}"
+
+    local attempt=0
+    local last_error=""
+
+    while [ $attempt -lt $max_retries ]; do
+        attempt=$((attempt + 1))
+        info "下载尝试 $attempt/$max_retries..."
+
+        # 清理目标目录（如果存在）
+        rm -rf "$dest_dir" 2>/dev/null || true
+
+        # 尝试克隆
+        if last_error=$(git clone --depth 1 "$repo_url" "$dest_dir" 2>&1); then
+            return 0
+        fi
+
+        if [ $attempt -lt $max_retries ]; then
+            warn "下载失败，${delay_seconds} 秒后重试..."
+            sleep $delay_seconds
+            # 指数退避
+            delay_seconds=$((delay_seconds * 2))
+        fi
+    done
+
+    # 所有重试都失败
+    echo ""
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${RED}下载失败，请尝试以下解决方案：${NC}"
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo -e "${YELLOW}1. 检查网络连接${NC}"
+    echo "   ping github.com"
+    echo ""
+    echo -e "${YELLOW}2. 检查 Git 配置${NC}"
+    echo "   git config --global http.sslVerify false  # 临时禁用 SSL 验证"
+    echo ""
+    echo -e "${YELLOW}3. 使用代理（如有）${NC}"
+    echo "   git config --global http.proxy http://your-proxy:port"
+    echo ""
+    echo -e "${YELLOW}4. 手动下载${NC}"
+    echo "   访问: https://github.com/$REPO/releases"
+    echo "   下载 tar.gz 后解压到: $INSTALL_DIR"
+    echo ""
+    if [ -n "$last_error" ]; then
+        echo "错误详情: $last_error"
+    fi
+
+    return 1
+}
+
 # 下载并安装
 install_plugin() {
     info "正在下载 oh-my-claude..."
@@ -63,9 +119,10 @@ install_plugin() {
     TMP_DIR=$(mktemp -d)
     trap "rm -rf $TMP_DIR" EXIT
 
-    # 克隆仓库
-    git clone --depth 1 "https://github.com/$REPO.git" "$TMP_DIR" 2>/dev/null || \
-        error "下载失败，请检查网络连接"
+    # 带重试的克隆
+    if ! git_clone_with_retry "https://github.com/$REPO.git" "$TMP_DIR"; then
+        exit 1
+    fi
 
     success "下载完成"
 
@@ -73,28 +130,62 @@ install_plugin() {
     info "正在安装插件..."
     mkdir -p "$(dirname "$INSTALL_DIR")"
 
-    # 如果已存在，先备份
+    # 备份变量（用于回滚）
+    BACKUP_DIR=""
+
+    # 如果已存在，先备份（而不是直接删除）
     if [ -d "$INSTALL_DIR" ]; then
-        warn "检测到已有安装，正在更新..."
-        rm -rf "$INSTALL_DIR"
+        warn "检测到已有安装，正在备份..."
+        BACKUP_DIR="${INSTALL_DIR}.backup-$(date +%s)"
+        mv "$INSTALL_DIR" "$BACKUP_DIR"
     fi
 
-    # 复制文件
-    mkdir -p "$INSTALL_DIR"
-    cp -r "$TMP_DIR/agents" "$INSTALL_DIR/"
-    cp -r "$TMP_DIR/commands" "$INSTALL_DIR/"
-    cp -r "$TMP_DIR/hooks" "$INSTALL_DIR/"
-    cp -r "$TMP_DIR/skills" "$INSTALL_DIR/"
-    cp -r "$TMP_DIR/.claude-plugin" "$INSTALL_DIR/"
-    cp "$TMP_DIR/README.md" "$INSTALL_DIR/" 2>/dev/null || true
-    cp "$TMP_DIR/README_EN.md" "$INSTALL_DIR/" 2>/dev/null || true
-    cp "$TMP_DIR/LICENSE" "$INSTALL_DIR/" 2>/dev/null || true
+    # 安装函数（便于错误处理）
+    do_install() {
+        # 复制文件
+        mkdir -p "$INSTALL_DIR"
+        cp -r "$TMP_DIR/agents" "$INSTALL_DIR/" || return 1
+        cp -r "$TMP_DIR/commands" "$INSTALL_DIR/" || return 1
+        cp -r "$TMP_DIR/hooks" "$INSTALL_DIR/" || return 1
+        cp -r "$TMP_DIR/skills" "$INSTALL_DIR/" || return 1
+        cp -r "$TMP_DIR/.claude-plugin" "$INSTALL_DIR/" || return 1
+        cp "$TMP_DIR/README.md" "$INSTALL_DIR/" 2>/dev/null || true
+        cp "$TMP_DIR/README_EN.md" "$INSTALL_DIR/" 2>/dev/null || true
+        cp "$TMP_DIR/LICENSE" "$INSTALL_DIR/" 2>/dev/null || true
 
-    # 设置权限
-    chmod +x "$INSTALL_DIR/hooks/"*.sh 2>/dev/null || true
+        # 设置 hook 脚本执行权限（Windows 环境会忽略）
+        chmod +x "$INSTALL_DIR/hooks/"*.sh 2>/dev/null || true
 
-    success "插件文件安装完成"
-    info "安装位置: $INSTALL_DIR"
+        return 0
+    }
+
+    # 执行安装
+    if do_install; then
+        success "插件文件安装完成"
+        info "安装位置: $INSTALL_DIR"
+
+        # 安装成功，删除备份
+        if [ -n "$BACKUP_DIR" ] && [ -d "$BACKUP_DIR" ]; then
+            rm -rf "$BACKUP_DIR"
+        fi
+    else
+        # 安装失败，回滚
+        error "安装失败"
+
+        # 清理失败的安装
+        if [ -d "$INSTALL_DIR" ]; then
+            rm -rf "$INSTALL_DIR"
+        fi
+
+        # 恢复备份
+        if [ -n "$BACKUP_DIR" ] && [ -d "$BACKUP_DIR" ]; then
+            info "正在恢复之前的安装..."
+            mv "$BACKUP_DIR" "$INSTALL_DIR"
+            success "已恢复之前的安装"
+        fi
+
+        exit 1
+    fi
 
     # 注册插件
     info "正在注册插件..."

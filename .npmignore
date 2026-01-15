@@ -1,0 +1,54 @@
+# npm publish 时排除的文件
+# 保持 npm 包轻量化
+
+# 开发和构建相关
+homebrew/
+scoop/
+.github/
+docs/
+
+# 开发配置
+.editorconfig
+.eslintrc*
+.prettierrc*
+tsconfig.json
+jest.config.*
+
+# 测试
+tests/
+__tests__/
+*.test.js
+*.spec.js
+coverage/
+
+# 文档 (README 保留)
+CONTRIBUTING.md
+SECURITY.md
+*.local.md
+
+# Git
+.git/
+.gitattributes
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 日志和临时文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tmp/
+temp/
+
+# 开发脚本 (sync-version 是开发工具)
+scripts/sync-version.js
+scripts/install.sh
+scripts/install.ps1

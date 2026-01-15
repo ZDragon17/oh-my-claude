@@ -1,6 +1,6 @@
 {
   "name": "oh-my-claude",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture",
   "keywords": [
     "claude-code",

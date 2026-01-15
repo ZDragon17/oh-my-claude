@@ -5,5 +5,6 @@
  * 可通过 npm run install-plugin 调用
  */
 
-require('./cli.js');
+// 必须在 require 之前修改 argv
 process.argv.push('install');
+require('./cli.js');
