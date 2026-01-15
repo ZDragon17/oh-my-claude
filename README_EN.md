@@ -51,6 +51,9 @@ Specialized agents based on Chinese cultural figures:
 | 🛡️ | **MoZi** (墨子) | Security audit, defensive programming | `/mozi` `/security` |
 | ⚔️ | **SunZi** (孙子) | Performance optimization, tuning | `/sunzi` `/perf` |
 | 📜 | **SimaQian** (司马迁) | Documentation, change logging | `/simaqian` `/doc` |
+| ⛵ | **ZhengHe** (郑和) | API integration, external services | `/zhenghe` `/api` |
+| 🔭 | **ZhangHeng** (张衡) | Monitoring, observability | `/zhangheng` `/monitor` |
+| 🌊 | **LiBing** (李冰) | DevOps, infrastructure | `/libing` `/devops` |
 
 ### 🔄 YuGong Moving Mountains Mode
 
@@ -245,6 +248,9 @@ oh-my-claude/
 | `/mozi` | `/security` `/audit` | Summon MoZi security expert |
 | `/sunzi` | `/performance` `/perf` | Summon SunZi performance expert |
 | `/simaqian` | `/shiji` `/document` `/doc` | Summon SimaQian historian |
+| `/zhenghe` | `/xiyang` `/api` `/integrate` | Summon ZhengHe API expert |
+| `/zhangheng` | `/didongyi` `/monitor` `/observe` | Summon ZhangHeng monitor |
+| `/libing` | `/dujiangyan` `/devops` `/cicd` | Summon LiBing DevOps |
 
 ### Tool Commands
 
@@ -264,6 +270,9 @@ Including these keywords in any prompt auto-activates the corresponding mode:
 | `安全` `漏洞` `注入` `security` `vulnerability` `injection` `墨子` `mozi` `audit` | MoZi security hint |
 | `性能` `优化` `慢` `performance` `optimize` `slow` `孙子` `sunzi` `perf` `bottleneck` | SunZi performance hint |
 | `文档` `注释` `记录` `document` `comment` `readme` `changelog` `司马迁` `simaqian` `史记` | SimaQian documentation hint |
+| `API` `接口` `集成` `integrate` `webhook` `sdk` `郑和` `zhenghe` | ZhengHe API hint |
+| `监控` `日志` `告警` `monitor` `logging` `alert` `张衡` `zhangheng` | ZhangHeng monitoring hint |
+| `DevOps` `CI/CD` `部署` `docker` `kubernetes` `李冰` `libing` | LiBing DevOps hint |
 
 ## 🔧 Configuration
 
@@ -321,6 +330,15 @@ Author of "The Art of War," famous for "Know yourself and know your enemy, and y
 ### SimaQian (司马迁) - The Grand Historian
 Western Han dynasty historian, honored as the "Sage of History." Author of "Records of the Grand Historian" (Shiji), which pioneered the biographical form of historical writing. Famous for "investigating the relationship between heaven and man, and understanding the changes from past to present."
 
+### ZhengHe (郑和) - The Great Navigator
+Ming Dynasty admiral who led seven voyages to Southeast Asia, the Indian Ocean, the Persian Gulf, and the East African coast. His fleet promoted cultural exchange and trade between China and foreign countries, embodying the spirit of "openness, exploration, and connection."
+
+### ZhangHeng (张衡) - The Astronomer
+Outstanding scientist and astronomer of the Eastern Han Dynasty. Invented the world's first seismograph - the Houfeng Didongyi, which could detect distant earthquakes and indicate their direction. Also improved the armillary sphere for precise astronomical measurements, embodying the wisdom of "observation, sensing, and early warning."
+
+### LiBing (李冰) - The Water Engineer
+Governor of Shu during the Warring States period who directed the construction of the Dujiangyan irrigation system. This engineering marvel has functioned for over 2,000 years, embodying the wisdom of "working with nature and divide-and-conquer," recognized as a miracle in the history of water conservancy.
+
 ## 🗺️ Roadmap
 
 - [x] v0.1.0 - Basic agent system (5 agents)
@@ -328,6 +346,7 @@ Western Han dynasty historian, honored as the "Sage of History." Author of "Reco
 - [x] v0.3.0 - More agents (MoZi, SunZi)
 - [x] v0.4.0 - Visual progress dashboard (`/progress` command)
 - [x] v0.5.0 - More agents (SimaQian)
+- [x] v0.6.0 - More agents (ZhengHe, ZhangHeng, LiBing)
 - [ ] v1.0.0 - Stable release
 
 ## 🤝 Contributing

@@ -18,6 +18,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.0] - 2025-01-15
+
+### Added / 新增
+
+#### 🎭 新 Agent / New Agents
+
+- **郑和 (ZhengHe)** - API 远航家 / API Integration Expert
+  - API 集成（REST、GraphQL、WebSocket、gRPC）/ API integration
+  - SDK 封装与客户端库设计 / SDK wrapping and client library design
+  - 错误处理与重试策略 / Error handling and retry strategies
+  - 数据转换与映射 / Data transformation and mapping
+
+- **张衡 (ZhangHeng)** - 监控观测家 / Monitoring & Observability Expert
+  - 系统监控（CPU、内存、磁盘、网络）/ System monitoring
+  - 日志分析与结构化日志 / Log analysis and structured logging
+  - 链路追踪与分布式追踪 / Distributed tracing
+  - 告警配置与通知策略 / Alert configuration
+
+- **李冰 (LiBing)** - DevOps 水利家 / DevOps & Infrastructure Expert
+  - CI/CD 流水线（GitHub Actions、GitLab CI）/ CI/CD pipelines
+  - 容器化部署（Docker、Kubernetes）/ Container deployment
+  - 基础设施即代码（Terraform、Pulumi）/ Infrastructure as Code
+  - 自动化运维脚本 / Automation scripts
+
+#### ⚡ 新命令 / New Commands
+
+- `/zhenghe` (`/xiyang`, `/api`, `/integrate`, `/郑和`, `/西洋`, `/接口`) - 郑和 API 模式
+- `/zhangheng` (`/didongyi`, `/monitor`, `/observe`, `/张衡`, `/地动仪`, `/监控`) - 张衡监控模式
+- `/libing` (`/dujiangyan`, `/devops`, `/cicd`, `/李冰`, `/都江堰`, `/运维`) - 李冰 DevOps 模式
+
+#### 🪝 Hook 增强 / Hook Enhancements
+
+- **API 关键词检测** - 检测 "API"、"接口"、"集成"、"webhook" 等关键词
+- **监控关键词检测** - 检测 "监控"、"日志"、"告警"、"prometheus" 等关键词
+- **DevOps 关键词检测** - 检测 "devops"、"docker"、"kubernetes"、"pipeline" 等关键词
+
+### Changed / 变更
+
+- Agent 数量从 8 个增加到 11 个
+- 更新 bilingual skill 支持新命令别名
+- 更新 keyword-detector hook 支持新关键词
+
+---
+
 ## [0.5.0] - 2025-01-15
 
 ### Added / 新增
@@ -225,6 +269,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 0.6.0 | 2025-01-15 | 3 new agents (ZhengHe, ZhangHeng, LiBing) / 新增郑和、张衡、李冰 |
 | 0.5.0 | 2025-01-15 | SimaQian agent (documentation) / 司马迁文档史官 |
 | 0.4.0 | 2025-01-15 | Visual progress dashboard / 可视化进度面板 |
 | 0.3.0 | 2025-01-15 | 2 new agents (MoZi, SunZi) / 新增墨子、孙子 Agent |

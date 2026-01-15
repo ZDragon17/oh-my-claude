@@ -116,5 +116,35 @@ EOF
     exit 0
 fi
 
+# 检测 API 集成关键词
+if echo "$prompt_lower" | grep -qE '(api|接口|集成|对接|integrate|webhook|sdk|rest|graphql|grpc|郑和|zhenghe|西洋|第三方)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n⛵ **郑和 API 提示**\n\n检测到 API/集成相关需求，建议：\n- 使用 /zhenghe 命令进入 API 模式\n- 郑和擅长：API 集成、SDK 封装、外部服务对接\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测监控关键词
+if echo "$prompt_lower" | grep -qE '(监控|日志|告警|追踪|monitor|logging|alert|trace|metrics|prometheus|grafana|张衡|zhangheng|可观测|observab)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n🔭 **张衡监控提示**\n\n检测到监控/可观测性相关需求，建议：\n- 使用 /zhangheng 命令进入监控模式\n- 张衡擅长：系统监控、日志分析、链路追踪、告警配置\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测 DevOps 关键词
+if echo "$prompt_lower" | grep -qE '(devops|ci/cd|cicd|部署|运维|docker|kubernetes|k8s|容器|terraform|基础设施|流水线|pipeline|李冰|libing|都江堰)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n🌊 **李冰 DevOps 提示**\n\n检测到 DevOps/基础设施相关需求，建议：\n- 使用 /libing 命令进入 DevOps 模式\n- 李冰擅长：CI/CD 流水线、容器化部署、基础设施即代码\n"
+}
+EOF
+    exit 0
+fi
+
 # 无特殊关键词，正常继续
 exit 0

@@ -49,6 +49,9 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 | 🛡️ | **墨子** (MoZi) | 安全审计，防御编程 | `/mozi` `/security` |
 | ⚔️ | **孙子** (SunZi) | 性能优化，系统调优 | `/sunzi` `/perf` |
 | 📜 | **司马迁** (SimaQian) | 文档撰写，变更记录 | `/simaqian` `/doc` |
+| ⛵ | **郑和** (ZhengHe) | API 集成，外部服务 | `/zhenghe` `/api` |
+| 🔭 | **张衡** (ZhangHeng) | 系统监控，可观测性 | `/zhangheng` `/monitor` |
+| 🌊 | **李冰** (LiBing) | DevOps，基础设施 | `/libing` `/devops` |
 
 ### 🔄 愚公移山模式
 
@@ -243,6 +246,9 @@ oh-my-claude/
 | `/mozi` | `/security` `/audit` `/安全` | 召唤墨子安全 |
 | `/sunzi` | `/performance` `/perf` `/性能` `/优化` | 召唤孙子性能 |
 | `/simaqian` | `/shiji` `/document` `/doc` `/司马迁` `/史记` | 召唤司马迁史官 |
+| `/zhenghe` | `/xiyang` `/api` `/integrate` `/郑和` `/接口` | 召唤郑和 API |
+| `/zhangheng` | `/didongyi` `/monitor` `/observe` `/张衡` `/监控` | 召唤张衡监控 |
+| `/libing` | `/dujiangyan` `/devops` `/cicd` `/李冰` `/运维` | 召唤李冰 DevOps |
 
 ### 工具命令
 
@@ -262,6 +268,9 @@ oh-my-claude/
 | `安全` `漏洞` `注入` `security` `vulnerability` `injection` `墨子` `mozi` `audit` `审计` | 墨子安全提示 |
 | `性能` `优化` `慢` `performance` `optimize` `slow` `孙子` `sunzi` `perf` `瓶颈` `bottleneck` | 孙子性能提示 |
 | `文档` `注释` `记录` `document` `comment` `readme` `changelog` `司马迁` `simaqian` `史记` | 司马迁文档提示 |
+| `API` `接口` `集成` `对接` `integrate` `webhook` `sdk` `郑和` `zhenghe` | 郑和 API 提示 |
+| `监控` `日志` `告警` `追踪` `monitor` `logging` `alert` `张衡` `zhangheng` | 张衡监控提示 |
+| `DevOps` `CI/CD` `部署` `运维` `docker` `kubernetes` `李冰` `libing` | 李冰 DevOps 提示 |
 
 ## 🔧 配置
 
@@ -319,6 +328,15 @@ model: sonnet
 ### 司马迁 (SimaQian)
 西汉史学家，被誉为"史圣"。著有《史记》，开创纪传体通史先河，"究天人之际，通古今之变，成一家之言"。
 
+### 郑和 (ZhengHe)
+明代伟大航海家，七下西洋，远航至东南亚、印度洋、波斯湾和非洲东海岸。他的船队促进了中外文化交流和贸易往来，体现了"开放、探索、连接"的精神。
+
+### 张衡 (ZhangHeng)
+东汉杰出科学家、天文学家。发明了世界上第一台地震仪——候风地动仪，能够感知远方地震并指示方向。还改进了浑天仪，精确测量天体运行，体现了"观测、感知、预警"的智慧。
+
+### 李冰 (LiBing)
+战国时期蜀郡太守，主持修建都江堰水利工程。都江堰历经两千多年仍在发挥作用，体现了"顺势而为、分而治之"的工程智慧，被誉为世界水利史上的奇迹。
+
 ## 🗺️ 路线图
 
 - [x] v0.1.0 - 基础 Agent 体系（5 个 Agent）
@@ -326,6 +344,7 @@ model: sonnet
 - [x] v0.3.0 - 更多 Agent（墨子、孙子）
 - [x] v0.4.0 - 可视化进度面板（`/progress` 命令）
 - [x] v0.5.0 - 更多 Agent（司马迁）
+- [x] v0.6.0 - 更多 Agent（郑和、张衡、李冰）
 - [ ] v1.0.0 - 稳定版发布
 
 ## 🤝 贡献

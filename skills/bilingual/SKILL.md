@@ -23,6 +23,9 @@ description: |
 | `/mozi` | `/墨子` `/安全` | `/security` `/audit` | 墨子 | 安全审计，防御编程 |
 | `/sunzi` | `/孙子` `/性能` `/优化` | `/performance` `/perf` | 孙子 | 性能优化，系统调优 |
 | `/simaqian` | `/司马迁` `/史记` | `/shiji` `/document` `/doc` | 司马迁 | 文档撰写，变更记录 |
+| `/zhenghe` | `/郑和` `/西洋` `/接口` | `/xiyang` `/api` `/integrate` | 郑和 | API 集成，外部服务 |
+| `/zhangheng` | `/张衡` `/地动仪` `/监控` | `/didongyi` `/monitor` `/observe` | 张衡 | 系统监控，可观测性 |
+| `/libing` | `/李冰` `/都江堰` `/运维` | `/dujiangyan` `/devops` `/cicd` | 李冰 | DevOps，基础设施 |
 | `/team` | `/协作` `/合作` `/团队` | `/teamwork` | 愚公 | 多 Agent 团队协作 |
 
 ### 工具命令
@@ -68,6 +71,18 @@ description: |
 ### 司马迁文档模式
 - `文档`, `注释`, `记录`, `document`, `comment`, `readme`, `changelog`, `history`, `司马迁`, `simaqian`, `史记`, `shiji`
 - 建议召唤司马迁 Agent 进行文档撰写
+
+### 郑和 API 模式
+- `API`, `接口`, `集成`, `对接`, `integrate`, `webhook`, `sdk`, `REST`, `GraphQL`, `gRPC`, `郑和`, `zhenghe`, `西洋`, `第三方`
+- 建议召唤郑和 Agent 进行 API 集成
+
+### 张衡监控模式
+- `监控`, `日志`, `告警`, `追踪`, `monitor`, `logging`, `alert`, `trace`, `metrics`, `prometheus`, `grafana`, `张衡`, `zhangheng`, `可观测`
+- 建议召唤张衡 Agent 进行监控配置
+
+### 李冰 DevOps 模式
+- `DevOps`, `CI/CD`, `部署`, `运维`, `docker`, `kubernetes`, `容器`, `terraform`, `基础设施`, `流水线`, `pipeline`, `李冰`, `libing`
+- 建议召唤李冰 Agent 进行 DevOps 配置
 
 ## 使用示例
 
