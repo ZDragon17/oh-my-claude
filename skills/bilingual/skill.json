@@ -14,7 +14,8 @@
     "/bianque": ["/wangwen", "/debug", "/diagnose", "/扁鹊", "/望闻"],
     "/team": ["/teamwork", "/协作", "/合作", "/团队"],
     "/mozi": ["/security", "/audit", "/墨子", "/安全"],
-    "/sunzi": ["/performance", "/perf", "/孙子", "/性能", "/优化"]
+    "/sunzi": ["/performance", "/perf", "/孙子", "/性能", "/优化"],
+    "/progress": ["/进度", "/dashboard", "/面板", "/status", "/进展"]
   },
   "keywordTriggers": {
     "yugong_mode": [

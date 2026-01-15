@@ -1,0 +1,40 @@
+{
+  "name": "progress",
+  "version": "1.0.0",
+  "description": "可视化进度面板 - Visual progress dashboard for oh-my-claude",
+  "keywords": ["progress", "dashboard", "visualization", "todo", "status"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+  "commandAliases": {
+    "/progress": ["/进度", "/dashboard", "/面板", "/status", "/进展"]
+  },
+  "progressStyles": {
+    "full": "█",
+    "empty": "░",
+    "width": 30
+  },
+  "statusIcons": {
+    "completed": "✅",
+    "in_progress": "🔄",
+    "pending": "⏳",
+    "blocked": "🚫",
+    "cancelled": "❌"
+  },
+  "agentIcons": {
+    "yugong": "🏔️",
+    "zhuge": "🎯",
+    "luban": "🔧",
+    "wukong": "🔍",
+    "bianque": "🩺",
+    "mozi": "🛡️",
+    "sunzi": "⚔️"
+  },
+  "milestoneEmojis": {
+    "0": "🚀",
+    "25": "💪",
+    "50": "🎯",
+    "75": "🏃",
+    "100": "🎉"
+  }
+}

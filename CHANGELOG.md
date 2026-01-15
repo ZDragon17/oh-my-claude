@@ -13,8 +13,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned / 计划中
 
-- Visual progress dashboard / 可视化进度面板
 - More agents (司马迁...) / 更多 Agent
+- Agent memory persistence / Agent 记忆持久化
+
+---
+
+## [0.4.0] - 2025-01-15
+
+### Added / 新增
+
+#### 📊 可视化进度面板 / Visual Progress Dashboard
+
+- **`/progress` 命令** - 显示任务执行进度的可视化面板
+  - 完整模式：ASCII 艺术边框的详细面板
+  - 简洁模式：单行进度显示
+  - 统计模式：任务统计数据
+  - 别名：`/进度`, `/dashboard`, `/面板`, `/status`
+
+- **ASCII 进度条** - 30 字符宽度的可视化进度条
+  - `████████████░░░░░░░░░░░░░░░░░░ 40%`
+  - 里程碑 Emoji：🚀(0-25%) 💪(26-50%) 🎯(51-75%) 🏃(76-99%) 🎉(100%)
+
+- **状态图标系统**
+  - ✅ 已完成 | 🔄 进行中 | ⏳ 待处理 | 🚫 被阻塞
+
+- **Agent 图标**
+  - 🏔️ 愚公 | 🎯 诸葛 | 🔧 鲁班 | 🔍 悟空 | 🩺 扁鹊 | 🛡️ 墨子 | ⚔️ 孙子
+
+#### ⚡ 新命令 / New Commands
+
+- `/progress` (`/进度`, `/dashboard`, `/面板`, `/status`) - 可视化进度面板
+
+#### 🛠️ 新 Skill / New Skills
+
+- **progress** - 进度面板生成技能，支持多种展示模式
+
+### Changed / 变更
+
+- 更新 bilingual skill 支持 `/progress` 命令别名
+- 总命令数从 8 个增加到 9 个
 
 ---
 
@@ -160,6 +197,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 0.4.0 | 2025-01-15 | Visual progress dashboard / 可视化进度面板 |
 | 0.3.0 | 2025-01-15 | 2 new agents (MoZi, SunZi) / 新增墨子、孙子 Agent |
 | 0.2.0 | 2025-01-15 | Agent collaboration & /team command / Agent 协作增强和 /team 命令 |
 | 0.1.0 | 2025-01-15 | Initial release with 5 agents / 首次发布，包含 5 个 Agent |

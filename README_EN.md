@@ -244,6 +244,12 @@ oh-my-claude/
 | `/mozi` | `/security` `/audit` | Summon MoZi security expert |
 | `/sunzi` | `/performance` `/perf` | Summon SunZi performance expert |
 
+### Tool Commands
+
+| Command | Aliases | Function |
+|---------|---------|----------|
+| `/progress` | `/dashboard` `/status` | 📊 Visual progress dashboard |
+
 ### Keyword Triggers
 
 Including these keywords in any prompt auto-activates the corresponding mode:
@@ -314,7 +320,8 @@ Author of "The Art of War," famous for "Know yourself and know your enemy, and y
 - [x] v0.1.0 - Basic agent system (5 agents)
 - [x] v0.2.0 - Enhanced agent collaboration (`@agent` syntax, `/team` command)
 - [x] v0.3.0 - More agents (MoZi, SunZi)
-- [ ] v0.4.0 - Visual progress dashboard
+- [x] v0.4.0 - Visual progress dashboard (`/progress` command)
+- [ ] v0.5.0 - More agents (Sima Qian...)
 - [ ] v1.0.0 - Stable release
 
 ## 🤝 Contributing
