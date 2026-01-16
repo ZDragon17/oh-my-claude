@@ -8,6 +8,7 @@
   "repository": "https://github.com/ZDragon17/oh-my-claude",
   "commandAliases": {
     "/yugong": ["/yishan", "/persist", "/ultrawork", "/ulw", "/愚公", "/移山"],
+    "/cancel-yishan": ["/stop-yishan", "/cancel-yugong", "/stop-loop", "/取消移山", "/停止循环"],
     "/zhuge": ["/longzhong", "/strategy", "/consult", "/诸葛", "/隆中"],
     "/luban": ["/qiaogong", "/craft", "/frontend", "/鲁班", "/巧工"],
     "/wukong": ["/huoyan", "/explore", "/scout", "/悟空", "/火眼"],

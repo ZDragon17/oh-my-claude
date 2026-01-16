@@ -16,7 +16,7 @@ describe('配置管理系统', () => {
       const config = configManager.getConfig();
 
       expect(config).toBeDefined();
-      expect(config.version).toBe('1.0.18');
+      expect(config.version).toBe('1.0.19');
       expect(config.debug).toBe(false);
       expect(config.logLevel).toBe('info');
     });
@@ -115,7 +115,7 @@ describe('配置管理系统', () => {
         config: testConfig,
         files: [],
         exportedAt: new Date().toISOString(),
-        version: '1.0.18'
+        version: '1.0.19'
       };
 
       configManager.importConfig(exportData);

@@ -144,7 +144,7 @@ interface VerificationResult {
 
 // ==================== 常量配置 ====================
 
-const VERSION = '1.0.18';
+const VERSION = '1.0.19';
 const PLUGIN_NAME = 'oh-my-claude';
 
 // 路径配置

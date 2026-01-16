@@ -18,6 +18,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.19] - 2025-01-16
+
+### ✨ Added / 新增
+
+#### 🏔️ 愚公移山循环 (Yishan Loop) - 自主持续执行机制
+- **Stop Hook 拦截机制** - 当 Claude 尝试停止时，自动检查任务是否完成
+- **完成标记检测** - 通过 `<promise>...</promise>` 标签精确判断任务完成状态
+- **迭代次数控制** - 支持设置最大迭代次数，防止无限循环
+- **跨平台支持** - 提供 Bash 和 PowerShell 两个版本的 Stop Hook
+- **状态文件管理** - 使用 `.claude/yishan-loop.local.md` 存储循环状态
+
+#### 新增文件 / New Files
+- `hooks/yishan-stop-hook.sh` - Bash 版本的 Stop Hook
+- `hooks/yishan-stop-hook.ps1` - PowerShell 版本的 Stop Hook
+- `commands/cancel-yishan.md` - 取消循环命令
+- `scripts/setup-yishan-loop.sh` - 循环初始化脚本
+- `skills/yishan/` - 愚公移山技能配置
+
+#### 命令更新 / Command Updates
+- 更新 `/yishan` 和 `/yugong` 命令，添加自主循环机制说明
+- 新增 `/cancel-yishan` 命令用于取消循环
+
+---
+
 ## [1.0.18] - 2025-01-16
 
 ### 📦 Release / 发布

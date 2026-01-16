@@ -3,6 +3,12 @@
     "Stop": [
       {
         "type": "command",
+        "command": "bash hooks/yishan-stop-hook.sh",
+        "timeout": 10000,
+        "continueOnError": false
+      },
+      {
+        "type": "command",
         "command": "bash hooks/todo-enforcer.sh",
         "timeout": 5000,
         "continueOnError": true

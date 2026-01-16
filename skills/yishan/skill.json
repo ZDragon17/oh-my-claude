@@ -1,0 +1,21 @@
+{
+  "name": "yishan",
+  "version": "1.0.0",
+  "description": "愚公移山循环 - 自主持续执行直到任务完成",
+  "keywords": ["yishan", "yugong", "loop", "autonomous", "persist", "ultrawork"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+  "loopConfig": {
+    "stateFile": ".claude/yishan-loop.local.md",
+    "defaultMaxIterations": 50,
+    "defaultCompletionPromise": "移山完毕"
+  },
+  "commandAliases": {
+    "/yishan": ["/yugong", "/persist", "/ultrawork", "/ulw", "/愚公", "/移山"],
+    "/cancel-yishan": ["/stop-yishan", "/cancel-yugong", "/stop-loop", "/取消移山", "/停止循环"]
+  },
+  "hooks": {
+    "stop": "hooks/yishan-stop-hook.sh"
+  }
+}
