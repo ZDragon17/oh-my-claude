@@ -18,6 +18,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.4] - 2025-01-16
+
+### Fixed / 修复
+
+- **修复安装后自动启动 Claude Code 的问题** - 移除 `claude plugins install` 命令
+  - 安装完成后不再自动启动 Claude Code
+  - 不再自动输入 "plugins" 到 Claude Code
+  - Commands 和 Skills 已直接安装到标准目录，无需额外注册
+
+### Changed / 变更
+
+- 安装脚本优化：commands 安装到 `~/.claude/commands/zcf/`
+- 安装脚本优化：skills 安装到 `~/.claude/skills/`
+- 使用 `/zcf:` 前缀调用命令（如 `/zcf:yishan`）
+
+---
+
+## [1.0.3] - 2025-01-16
+
+### Fixed / 修复
+
+- 修复 commands 安装路径问题
+- 修复 skills 安装路径问题
+
+---
+
+## [1.0.2] - 2025-01-16
+
+### Changed / 变更
+
+- 版本号同步
+
+---
+
+## [1.0.1] - 2025-01-16
+
+### Fixed / 修复
+
+- 修复安装路径问题
+- 新增三位 Agent
+
+---
+
 ## [1.0.0] - 2025-01-15 🎉
 
 ### 🎊 首个正式版发布 / First Stable Release

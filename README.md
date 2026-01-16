@@ -175,18 +175,20 @@ claude plugins install .
 ### 验证安装
 
 ```bash
-# 在 Claude Code 中输入
-/yishan 你好
+# 在 Claude Code 中输入（使用 /zcf: 前缀）
+/zcf:yishan 你好
 
 # 如果看到愚公移山模式的响应，说明安装成功
 ```
+
+> 💡 **命令前缀说明**: 安装后，所有命令使用 `/zcf:` 前缀，如 `/zcf:yishan`、`/zcf:zhuge` 等
 
 ## 🚀 快速开始
 
 ### 1. 愚公移山 - 大规模任务
 
 ```bash
-/yishan 重构整个用户模块，包括：
+/zcf:yishan 重构整个用户模块，包括：
 - 用户注册
 - 用户登录
 - 密码重置
@@ -202,7 +204,7 @@ claude plugins install .
 ### 2. 诸葛顾问 - 架构设计
 
 ```bash
-/zhuge 我们的用户系统应该如何设计？需要考虑：
+/zcf:zhuge 我们的用户系统应该如何设计？需要考虑：
 - 多租户支持
 - 权限管理
 - 高可用性
@@ -217,7 +219,7 @@ claude plugins install .
 ### 3. 扁鹊诊断 - Bug 修复
 
 ```bash
-/bianque TypeError: Cannot read property 'name' of undefined
+/zcf:bianque TypeError: Cannot read property 'name' of undefined
   at UserService.getProfile (user.service.ts:42)
 ```
 
@@ -230,7 +232,7 @@ claude plugins install .
 ### 4. 悟空侦察 - 代码探索
 
 ```bash
-/wukong 找到所有处理用户认证的代码
+/zcf:wukong 找到所有处理用户认证的代码
 ```
 
 悟空会快速：
@@ -241,7 +243,7 @@ claude plugins install .
 ### 5. 鲁班巧工 - 精密实现
 
 ```bash
-/luban 实现一个带动画效果的 Toast 组件
+/zcf:luban 实现一个带动画效果的 Toast 组件
 ```
 
 鲁班会精心：
@@ -314,31 +316,37 @@ oh-my-claude/
 
 ## 🎯 命令速查
 
+> 💡 所有命令使用 `/zcf:` 前缀
+
 ### Agent 命令
 
-| 命令 | 别名 | 功能 |
-|------|------|------|
-| `/yugong` | `/yishan` `/persist` `/ultrawork` `/ulw` | 启动愚公移山模式 |
-| `/zhuge` | `/longzhong` `/strategy` `/consult` | 召唤诸葛顾问 |
-| `/luban` | `/qiaogong` `/craft` `/frontend` | 召唤鲁班巧匠 |
-| `/wukong` | `/huoyan` `/explore` `/scout` | 召唤悟空侦察 |
-| `/bianque` | `/wangwen` `/debug` `/diagnose` | 召唤扁鹊诊断 |
-| `/mozi` | `/security` `/audit` `/安全` | 召唤墨子安全 |
-| `/sunzi` | `/performance` `/perf` `/性能` `/优化` | 召唤孙子性能 |
-| `/simaqian` | `/shiji` `/document` `/doc` `/司马迁` `/史记` | 召唤司马迁史官 |
-| `/zhenghe` | `/xiyang` `/api` `/integrate` `/郑和` `/接口` | 召唤郑和 API |
-| `/zhangheng` | `/didongyi` `/monitor` `/observe` `/张衡` `/监控` | 召唤张衡监控 |
-| `/libing` | `/dujiangyan` `/devops` `/cicd` `/李冰` `/运维` | 召唤李冰 DevOps |
-| `/laozi` | `/daodejing` `/simplify` `/clean` `/老子` `/简洁` `/至简` | 召唤老子简洁大师 |
-| `/baozheng` | `/kaifeng` `/test` `/tdd` `/包拯` `/测试` | 召唤包拯测试专家 |
-| `/weizheng` | `/jian` `/review` `/cr` `/魏征` `/审查` | 召唤魏征代码审查 |
-| `/cangjie` | `/zaozi` `/database` `/db` `/sql` `/仓颉` `/数据库` | 召唤仓颉数据库专家 |
+| 命令 | 功能 |
+|------|------|
+| `/zcf:yugong` 或 `/zcf:yishan` | 启动愚公移山模式 |
+| `/zcf:zhuge` | 召唤诸葛顾问 |
+| `/zcf:luban` | 召唤鲁班巧匠 |
+| `/zcf:wukong` | 召唤悟空侦察 |
+| `/zcf:bianque` | 召唤扁鹊诊断 |
+| `/zcf:mozi` | 召唤墨子安全 |
+| `/zcf:sunzi` | 召唤孙子性能 |
+| `/zcf:simaqian` | 召唤司马迁史官 |
+| `/zcf:zhenghe` | 召唤郑和 API |
+| `/zcf:zhangheng` | 召唤张衡监控 |
+| `/zcf:libing` | 召唤李冰 DevOps |
+| `/zcf:laozi` | 召唤老子简洁大师 |
+| `/zcf:baozheng` | 召唤包拯测试专家 |
+| `/zcf:weizheng` | 召唤魏征代码审查 |
+| `/zcf:cangjie` | 召唤仓颉数据库专家 |
+| `/zcf:libai` | 召唤李白需求炼金师 |
+| `/zcf:gukaizhi` | 召唤顾恺之界面美学师 |
+| `/zcf:change` | 召唤嫦娥云端仙子 |
 
 ### 工具命令
 
-| 命令 | 别名 | 功能 |
-|------|------|------|
-| `/progress` | `/进度` `/dashboard` `/面板` `/status` | 📊 可视化进度面板 |
+| 命令 | 功能 |
+|------|------|
+| `/zcf:progress` | 📊 可视化进度面板 |
+| `/zcf:team` | 🤝 多 Agent 团队协作 |
 
 ### 关键词触发
 
