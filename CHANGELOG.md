@@ -18,6 +18,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.9] - 2025-01-16
+
+### Fixed / 修复
+
+- **修复 macOS 上命令无法识别的问题** - 移除子目录命名空间并添加故障排除指南
+  - **根因分析**：
+    - 问题一：Claude Code 子目录命名空间 Bug ([Issue #2422](https://github.com/anthropics/claude-code/issues/2422)) - 状态 NOT_PLANNED
+    - 问题二：macOS 命令发现 Bug ([Issue #13906](https://github.com/anthropics/claude-code/issues/13906)) - 缓存损坏导致命令不加载
+  - **修复措施**：
+    - 移除 `zcf` 子目录，commands 直接安装到 `~/.claude/commands/`
+    - 更新时自动清理旧版本的 `zcf` 子目录
+    - 显示命令格式变更提示（`/zcf:yishan` → `/yishan`）
+  - **新增故障排除指南**：
+    - macOS 特定提示：清除 `~/.claude.json` 缓存
+    - 详细的三步排查流程
+    - 安装位置验证命令
+
+---
+
 ## [1.0.8] - 2025-01-16
 
 ### Fixed / 修复

@@ -6,6 +6,8 @@ This document defines the collaboration patterns and communication protocols bet
 
 ## Agent 职责矩阵 / Agent Responsibility Matrix
 
+### 核心架构 / Core Architecture
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        愚公 (YuGong)                             │
@@ -29,6 +31,29 @@ This document defines the collaboration patterns and communication protocols bet
                     │  Implementation │
                     └─────────────────┘
 ```
+
+### 完整 Agent 列表 / Complete Agent List
+
+| Agent | 名称 | 专长 | 命令 |
+|-------|------|------|------|
+| 🏔️ | **愚公** (YuGong) | 主编排，大规模任务 | `/yugong` `/yishan` |
+| 🎯 | **诸葛** (ZhuGe) | 战略顾问，架构设计 | `/zhuge` `/longzhong` |
+| 🔧 | **鲁班** (LuBan) | 精工巧匠，代码实现 | `/luban` `/qiaogong` |
+| 🔍 | **悟空** (WuKong) | 代码侦察，快速探索 | `/wukong` `/huoyan` |
+| 🩺 | **扁鹊** (BianQue) | Bug 诊断，问题修复 | `/bianque` `/wangwen` |
+| 🛡️ | **墨子** (MoZi) | 安全审计，防御编程 | `/mozi` `/security` |
+| ⚔️ | **孙子** (SunZi) | 性能优化，系统调优 | `/sunzi` `/perf` |
+| 📜 | **司马迁** (SimaQian) | 文档撰写，变更记录 | `/simaqian` `/doc` |
+| ⛵ | **郑和** (ZhengHe) | API 集成，外部服务 | `/zhenghe` `/api` |
+| 🔭 | **张衡** (ZhangHeng) | 系统监控，可观测性 | `/zhangheng` `/monitor` |
+| 🌊 | **李冰** (LiBing) | DevOps，基础设施 | `/libing` `/devops` |
+| ☯️ | **老子** (LaoZi) | 代码简化，Clean Code | `/laozi` `/simplify` |
+| ⚖️ | **包拯** (BaoZheng) | 测试专家，TDD | `/baozheng` `/test` |
+| 🪞 | **魏征** (WeiZheng) | 代码审查，规范检查 | `/weizheng` `/review` |
+| 📊 | **仓颉** (CangJie) | 数据库设计，SQL 优化 | `/cangjie` `/db` |
+| ✨ | **李白** (LiBai) | 需求分析，用户故事 | `/libai` `/poet` |
+| 🎨 | **顾恺之** (GuKaiZhi) | UI/UX 设计，界面美学 | `/gukaizhi` `/painter` |
+| 🌙 | **嫦娥** (ChangE) | 云服务，Serverless 部署 | `/change` `/cloud` |
 
 ## 🔗 Agent 调用语法 / Agent Invocation Syntax
 
@@ -236,8 +261,12 @@ interface AgentTaskRequest {
   priority: Priority;     // 优先级
 }
 
-type AgentName = 'yugong' | 'zhuge' | 'luban' | 'wukong' | 'bianque';
-type TaskType = 'explore' | 'design' | 'implement' | 'diagnose' | 'review';
+type AgentName = 'yugong' | 'zhuge' | 'luban' | 'wukong' | 'bianque' |
+  'mozi' | 'sunzi' | 'simaqian' | 'zhenghe' | 'zhangheng' | 'libing' |
+  'laozi' | 'baozheng' | 'weizheng' | 'cangjie' | 'libai' | 'gukaizhi' | 'change';
+type TaskType = 'explore' | 'design' | 'implement' | 'diagnose' | 'review' |
+  'security' | 'performance' | 'document' | 'api' | 'monitor' | 'devops' |
+  'simplify' | 'test' | 'database' | 'requirements' | 'ui-design' | 'cloud';
 type Priority = 'high' | 'medium' | 'low';
 ```
 
@@ -291,6 +320,19 @@ interface AgentTaskResponse {
 | 鲁班 | 代码实现、质量优化 | 架构决策 |
 | 悟空 | 代码探索、信息收集 | 代码修改 |
 | 扁鹊 | 问题诊断、根因分析 | 架构重构 |
+| 墨子 | 安全审计、防御策略 | 性能优化 |
+| 孙子 | 性能优化、瓶颈分析 | 安全审计 |
+| 司马迁 | 文档撰写、变更记录 | 代码实现 |
+| 郑和 | API 集成、外部服务 | 内部架构 |
+| 张衡 | 系统监控、可观测性 | 业务逻辑 |
+| 李冰 | DevOps、基础设施 | 业务代码 |
+| 老子 | 代码简化、重构 | 新功能开发 |
+| 包拯 | 测试设计、TDD | 生产代码 |
+| 魏征 | 代码审查、规范检查 | 代码实现 |
+| 仓颉 | 数据库设计、SQL | 前端代码 |
+| 李白 | 需求分析、用户故事 | 技术实现 |
+| 顾恺之 | UI/UX 设计 | 后端逻辑 |
+| 嫦娥 | 云服务、Serverless | 本地部署 |
 
 ### 2. 信息透明 / Information Transparency
 
@@ -372,6 +414,13 @@ Agent 详细说明...
 
 | 版本 | 日期 | 变更 |
 |------|------|------|
+| 1.0.8 | 2025-01 | 更新文档，补充完整 18 个 Agent 列表和职责说明 |
+| 0.9.0 | 2025-01 | 添加李白、顾恺之、嫦娥 Agent |
+| 0.8.0 | 2025-01 | 添加包拯、魏征、仓颉 Agent |
+| 0.7.0 | 2025-01 | 添加老子 Agent |
+| 0.6.0 | 2025-01 | 添加郑和、张衡、李冰 Agent |
+| 0.5.0 | 2025-01 | 添加司马迁 Agent |
+| 0.3.0 | 2025-01 | 添加墨子、孙子 Agent |
 | 0.2.0 | 2025-01 | 增强 Agent 协作机制，添加调用语法和 /team 命令 |
 | 0.1.0 | 2025-01 | 初始版本，定义 5 个核心 Agent 的协作模式 |
 

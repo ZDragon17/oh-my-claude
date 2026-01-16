@@ -53,32 +53,8 @@ const FILES = [
   },
 ];
 
-// 颜色输出
-const colors = {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  cyan: '\x1b[36m',
-};
-
-function log(msg, color = 'reset') {
-  console.log(`${colors[color]}${msg}${colors.reset}`);
-}
-
-function success(msg) {
-  log(`✅ ${msg}`, 'green');
-}
-function error(msg) {
-  log(`❌ ${msg}`, 'red');
-}
-function info(msg) {
-  log(`ℹ️  ${msg}`, 'blue');
-}
-function warn(msg) {
-  log(`⚠️  ${msg}`, 'yellow');
-}
+// 颜色输出 - 使用共享模块
+const { colors, log, success, error, info, warn } = require('./logger');
 
 // 验证版本号格式
 function isValidVersion(version) {

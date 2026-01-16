@@ -16,6 +16,15 @@ const {
   createMockPluginStructure,
 } = require('./helpers/test-utils');
 
+// 从 cli.js 导入函数
+const {
+  copyDir,
+  copyPluginFiles,
+  setHookPermissions,
+  executeWithRollback,
+  smartCopyFile,
+} = require('../scripts/cli');
+
 describe('文件操作集成测试', () => {
   let tempDir;
   let packageDir;
@@ -34,125 +43,10 @@ describe('文件操作集成测试', () => {
     cleanupTempDir(tempDir);
   });
 
-  // 插件目录配置
-  const PLUGIN_DIRS = ['agents', 'commands', 'hooks', 'skills', '.claude-plugin'];
-  const PLUGIN_FILES = ['README.md', 'README_EN.md', 'LICENSE'];
-
-  /**
-   * 智能复制文件
-   */
-  const smartCopyFile = (src, dest) => {
-    fs.copyFileSync(src, dest);
-  };
-
-  /**
-   * 复制目录
-   */
-  const copyDir = (src, dest, options = {}) => {
-    const { preserveEmpty = true } = options;
-    const stats = { files: 0, dirs: 0, emptyDirs: 0 };
-
-    fs.mkdirSync(dest, { recursive: true });
-    stats.dirs++;
-
-    const entries = fs.readdirSync(src, { withFileTypes: true });
-
-    if (entries.length === 0) {
-      stats.emptyDirs++;
-      if (!preserveEmpty) {
-        fs.rmdirSync(dest);
-        stats.dirs--;
-      }
-      return stats;
-    }
-
-    for (const entry of entries) {
-      const srcPath = path.join(src, entry.name);
-      const destPath = path.join(dest, entry.name);
-
-      if (entry.isDirectory()) {
-        const subStats = copyDir(srcPath, destPath, options);
-        stats.files += subStats.files;
-        stats.dirs += subStats.dirs;
-        stats.emptyDirs += subStats.emptyDirs;
-      } else {
-        smartCopyFile(srcPath, destPath);
-        stats.files++;
-      }
-    }
-
-    return stats;
-  };
-
-  /**
-   * 复制插件文件
-   */
-  const copyPluginFiles = (packageDir, pluginDir, showProgress = false) => {
-    const stats = { dirs: 0, files: 0, errors: [] };
-
-    for (const dir of PLUGIN_DIRS) {
-      const src = path.join(packageDir, dir);
-      const dest = path.join(pluginDir, dir);
-
-      if (!fs.existsSync(src)) {
-        stats.errors.push(`目录不存在: ${dir}`);
-        continue;
-      }
-
-      try {
-        copyDir(src, dest);
-        stats.dirs++;
-      } catch (err) {
-        stats.errors.push(`复制目录失败 ${dir}: ${err.message}`);
-      }
-    }
-
-    for (const file of PLUGIN_FILES) {
-      const src = path.join(packageDir, file);
-      const dest = path.join(pluginDir, file);
-
-      if (!fs.existsSync(src)) {
-        continue;
-      }
-
-      try {
-        fs.copyFileSync(src, dest);
-        stats.files++;
-      } catch (err) {
-        stats.errors.push(`复制文件失败 ${file}: ${err.message}`);
-      }
-    }
-
-    return stats;
-  };
-
-  /**
-   * 设置 hook 权限
-   */
-  const setHookPermissions = (pluginDir) => {
-    if (os.platform() === 'win32') {
-      return;
-    }
-
-    const hooksDir = path.join(pluginDir, 'hooks');
-    if (!fs.existsSync(hooksDir)) {
-      return;
-    }
-
-    const hookFiles = fs.readdirSync(hooksDir).filter(f => f.endsWith('.sh'));
-    for (const hookFile of hookFiles) {
-      try {
-        fs.chmodSync(path.join(hooksDir, hookFile), '755');
-      } catch {
-        // 忽略错误
-      }
-    }
-  };
-
   describe('copyPluginFiles - 复制插件文件', () => {
     test('成功复制所有目录和文件', () => {
       fs.mkdirSync(pluginDir, { recursive: true });
-      const stats = copyPluginFiles(packageDir, pluginDir);
+      const stats = copyPluginFiles(packageDir, pluginDir, false);
 
       // 检查目录复制
       expect(fs.existsSync(path.join(pluginDir, 'agents'))).toBe(true);
@@ -172,7 +66,7 @@ describe('文件操作集成测试', () => {
       fs.rmSync(path.join(packageDir, 'commands'), { recursive: true });
 
       fs.mkdirSync(pluginDir, { recursive: true });
-      const stats = copyPluginFiles(packageDir, pluginDir);
+      const stats = copyPluginFiles(packageDir, pluginDir, false);
 
       // 应该有一些错误（commands 不存在）
       expect(stats.errors.some(e => e.includes('commands'))).toBe(true);
@@ -188,14 +82,14 @@ describe('文件操作集成测试', () => {
       fs.writeFileSync(path.join(nestedDir, 'deep.md'), '# Deep');
 
       fs.mkdirSync(pluginDir, { recursive: true });
-      copyPluginFiles(packageDir, pluginDir);
+      copyPluginFiles(packageDir, pluginDir, false);
 
       expect(fs.existsSync(path.join(pluginDir, 'agents', 'nested', 'deep.md'))).toBe(true);
     });
 
     test('文件内容正确复制', () => {
       fs.mkdirSync(pluginDir, { recursive: true });
-      copyPluginFiles(packageDir, pluginDir);
+      copyPluginFiles(packageDir, pluginDir, false);
 
       // 验证内容
       const originalContent = fs.readFileSync(
@@ -216,7 +110,7 @@ describe('文件操作集成测试', () => {
       // 在 Windows 上不应该有任何操作
       if (os.platform() === 'win32') {
         fs.mkdirSync(pluginDir, { recursive: true });
-        copyPluginFiles(packageDir, pluginDir);
+        copyPluginFiles(packageDir, pluginDir, false);
 
         // 不应该抛出错误
         expect(() => setHookPermissions(pluginDir)).not.toThrow();
@@ -226,7 +120,7 @@ describe('文件操作集成测试', () => {
     test('非 Windows 系统设置执行权限', () => {
       if (os.platform() !== 'win32') {
         fs.mkdirSync(pluginDir, { recursive: true });
-        copyPluginFiles(packageDir, pluginDir);
+        copyPluginFiles(packageDir, pluginDir, false);
 
         setHookPermissions(pluginDir);
 
@@ -249,46 +143,6 @@ describe('文件操作集成测试', () => {
   });
 
   describe('executeWithRollback - 带回滚的操作', () => {
-    const executeWithRollback = (pluginDir, operation, operationName = '操作') => {
-      const backupDir = `${pluginDir}.backup-${Date.now()}`;
-
-      try {
-        // 备份
-        if (fs.existsSync(pluginDir)) {
-          fs.renameSync(pluginDir, backupDir);
-        }
-
-        // 创建目录
-        const parentDir = path.dirname(pluginDir);
-        if (!fs.existsSync(parentDir)) {
-          fs.mkdirSync(parentDir, { recursive: true });
-        }
-        fs.mkdirSync(pluginDir, { recursive: true });
-
-        // 执行操作
-        operation(pluginDir, backupDir);
-
-        // 清理备份
-        if (fs.existsSync(backupDir)) {
-          fs.rmSync(backupDir, { recursive: true, force: true });
-        }
-
-        return true;
-      } catch (err) {
-        // 清理失败的操作
-        if (fs.existsSync(pluginDir)) {
-          fs.rmSync(pluginDir, { recursive: true, force: true });
-        }
-
-        // 恢复备份
-        if (fs.existsSync(backupDir)) {
-          fs.renameSync(backupDir, pluginDir);
-        }
-
-        return false;
-      }
-    };
-
     test('成功操作后清理备份', () => {
       // 创建已存在的插件目录
       fs.mkdirSync(pluginDir, { recursive: true });
@@ -303,7 +157,6 @@ describe('文件操作集成测试', () => {
       // 旧文件应该不存在了（被新目录替换）
       expect(fs.existsSync(path.join(pluginDir, 'old.txt'))).toBe(false);
       // 备份应该被清理
-      const backupPattern = `${pluginDir}.backup-`;
       const parentDir = path.dirname(pluginDir);
       const backups = fs.readdirSync(parentDir).filter(f => f.startsWith('plugin.backup-'));
       expect(backups.length).toBe(0);
@@ -314,7 +167,7 @@ describe('文件操作集成测试', () => {
       fs.mkdirSync(pluginDir, { recursive: true });
       fs.writeFileSync(path.join(pluginDir, 'existing.txt'), 'existing content');
 
-      const result = executeWithRollback(pluginDir, (targetDir) => {
+      const result = executeWithRollback(pluginDir, () => {
         // 模拟失败
         throw new Error('操作失败');
       });
@@ -347,7 +200,7 @@ describe('文件操作集成测试', () => {
       fs.writeFileSync(largeFile, content);
 
       fs.mkdirSync(pluginDir, { recursive: true });
-      copyPluginFiles(packageDir, pluginDir);
+      copyPluginFiles(packageDir, pluginDir, false);
 
       const copiedFile = path.join(pluginDir, 'agents', 'large.md');
       expect(fs.existsSync(copiedFile)).toBe(true);
@@ -364,7 +217,7 @@ describe('文件操作集成测试', () => {
       fs.mkdirSync(emptyDir, { recursive: true });
 
       fs.mkdirSync(pluginDir, { recursive: true });
-      copyPluginFiles(packageDir, pluginDir);
+      copyPluginFiles(packageDir, pluginDir, false);
 
       // 空目录应该被复制
       expect(fs.existsSync(path.join(pluginDir, 'agents', 'empty'))).toBe(true);
@@ -375,7 +228,7 @@ describe('文件操作集成测试', () => {
       fs.writeFileSync(specialFile, '# Special');
 
       fs.mkdirSync(pluginDir, { recursive: true });
-      copyPluginFiles(packageDir, pluginDir);
+      copyPluginFiles(packageDir, pluginDir, false);
 
       expect(fs.existsSync(path.join(pluginDir, 'agents', 'test-file_name.md'))).toBe(true);
     });
@@ -385,7 +238,7 @@ describe('文件操作集成测试', () => {
       fs.writeFileSync(unicodeFile, '# 测试');
 
       fs.mkdirSync(pluginDir, { recursive: true });
-      copyPluginFiles(packageDir, pluginDir);
+      copyPluginFiles(packageDir, pluginDir, false);
 
       expect(fs.existsSync(path.join(pluginDir, 'agents', '测试文件.md'))).toBe(true);
     });

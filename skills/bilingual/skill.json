@@ -1,6 +1,6 @@
 {
   "name": "bilingual",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "description": "中英双语命令支持 - Bilingual command support for oh-my-claude",
   "keywords": ["bilingual", "i18n", "chinese", "english", "dual-language"],
   "author": "ZDragon17",

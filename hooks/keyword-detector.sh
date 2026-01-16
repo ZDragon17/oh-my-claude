@@ -8,23 +8,28 @@ if command -v jq > /dev/null 2>&1; then
     has_jq=1
 fi
 
-# 读取 stdin 中的 JSON 数据
-input=$(cat)
+# 读取 stdin 中的 JSON 数据（带超时保护）
+input=$(cat 2>/dev/null) || input=""
+
+# 空输入检查
+if [ -z "$input" ]; then
+    exit 0
+fi
 
 # 提取用户提示
 if [ "$has_jq" -eq 1 ]; then
-    prompt=$(echo "$input" | jq -r '.prompt // empty' 2>/dev/null)
+    prompt=$(echo "$input" | jq -r '.prompt // empty' 2>/dev/null) || prompt=""
 else
     # 简单的字符串提取作为回退
-    prompt=$(echo "$input" | sed -n 's/.*"prompt"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+    prompt=$(echo "$input" | sed -n 's/.*"prompt"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' 2>/dev/null) || prompt=""
 fi
 
 if [ -z "$prompt" ]; then
     exit 0
 fi
 
-# 转换为小写进行匹配
-prompt_lower=$(echo "$prompt" | tr '[:upper:]' '[:lower:]')
+# 转换为小写进行匹配（带错误保护）
+prompt_lower=$(echo "$prompt" | tr '[:upper:]' '[:lower:]' 2>/dev/null) || prompt_lower="$prompt"
 
 # 检测愚公移山关键词
 if echo "$prompt_lower" | grep -qE '(ultra[-_]?work|ulw|移山|yi[-_]?shan|persist|愚公|yu[-_]?gong)'; then

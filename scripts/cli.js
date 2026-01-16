@@ -12,11 +12,12 @@ const os = require('os');
 
 // ==================== 常量配置 ====================
 
-const VERSION = '1.0.8';
+const VERSION = '1.0.9';
 const PLUGIN_NAME = 'oh-my-claude';
 
-// 路径配置
-const ERROR_LOG_PATH = path.join(os.tmpdir(), 'oh-my-claude-error.log');
+// 路径配置 - 使用用户主目录下的持久化日志目录
+const LOG_DIR = path.join(os.homedir(), '.oh-my-claude', 'logs');
+const ERROR_LOG_PATH = path.join(LOG_DIR, 'error.log');
 
 // 时间配置（毫秒）
 const LOCK_TIMEOUT_MS = 30000;           // 锁等待超时：30秒
@@ -65,6 +66,11 @@ function sanitizeStackTrace(stack) {
 // 记录错误到日志文件（带脱敏处理）
 function logErrorToFile(err) {
   try {
+    // 确保日志目录存在
+    if (!fs.existsSync(LOG_DIR)) {
+      fs.mkdirSync(LOG_DIR, { recursive: true });
+    }
+
     const timestamp = new Date().toISOString();
     const sanitizedStack = sanitizeStackTrace(err.stack);
     const sanitizedMessage = sanitizeStackTrace(err.message);
@@ -114,24 +120,8 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-// 颜色输出
-const colors = {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  cyan: '\x1b[36m',
-};
-
-function log(msg, color = 'reset') {
-  console.log(`${colors[color]}${msg}${colors.reset}`);
-}
-
-function success(msg) { log(`✅ ${msg}`, 'green'); }
-function error(msg) { log(`❌ ${msg}`, 'red'); }
-function info(msg) { log(`ℹ️  ${msg}`, 'blue'); }
-function warn(msg) { log(`⚠️  ${msg}`, 'yellow'); }
+// 颜色输出 - 使用共享模块
+const { colors, log, success, error, info, warn } = require('./logger');
 
 // ==================== 进度反馈机制 ====================
 
@@ -290,9 +280,12 @@ function getPluginDir() {
 }
 
 // 获取 commands 安装路径
+// 注意：直接安装到 commands 根目录，不使用子目录
+// 因为 Claude Code 的子目录命名空间功能存在 Bug (Issue #2422)
+// macOS 原生客户端不支持 /prefix:namespace:command 格式
 function getCommandsDir() {
   const home = os.homedir();
-  return path.join(home, '.claude', 'commands', 'zcf');
+  return path.join(home, '.claude', 'commands');
 }
 
 // 获取 skills 安装路径
@@ -414,16 +407,28 @@ function setHookPermissions(pluginDir) {
 }
 
 /**
- * 安装 slash commands 到 ~/.claude/commands/zcf/
+ * 安装 slash commands 到 ~/.claude/commands/
  * @param {string} packageDir - 源目录
  * @returns {Object} 安装结果
  */
 function installCommands(packageDir) {
   const commandsDir = getCommandsDir();
   const commandsSrc = path.join(packageDir, 'commands');
-  const stats = { count: 0, errors: [] };
+  const stats = { count: 0, errors: [], cleaned: false };
 
   info('正在安装 slash commands...');
+
+  // 清理旧版本的 zcf 子目录（1.0.8 及之前版本使用 /zcf:* 命令格式）
+  const legacyZcfDir = path.join(commandsDir, 'zcf');
+  if (fs.existsSync(legacyZcfDir)) {
+    try {
+      fs.rmSync(legacyZcfDir, { recursive: true, force: true });
+      stats.cleaned = true;
+      info('已清理旧版本 zcf 子目录');
+    } catch (err) {
+      warn(`清理旧版本目录失败: ${err.message}`);
+    }
+  }
 
   // 创建 commands 目录
   if (!fs.existsSync(commandsDir)) {
@@ -449,6 +454,9 @@ function installCommands(packageDir) {
   if (stats.count > 0) {
     success(`Slash commands 安装完成 (${stats.count} 个命令)`);
     info(`Commands 位置: ${commandsDir}`);
+    if (stats.cleaned) {
+      warn('⚠️  命令格式已更改：请使用 /yishan 而非 /zcf:yishan');
+    }
   } else {
     warn('未找到任何命令文件');
   }
@@ -619,7 +627,25 @@ function acquireLock(lockFile, timeout = LOCK_TIMEOUT_MS) {
       if (err.code === 'EEXIST') {
         // 锁文件已存在，检查是否过期
         try {
-          const existingLock = JSON.parse(fs.readFileSync(lockFile, 'utf8'));
+          const lockData = fs.readFileSync(lockFile, 'utf8');
+          let existingLock;
+
+          try {
+            existingLock = JSON.parse(lockData);
+          } catch (parseErr) {
+            // JSON 解析失败，锁文件可能已损坏，清理后重试
+            warn('锁文件格式损坏，正在清理...');
+            fs.unlinkSync(lockFile);
+            continue;
+          }
+
+          // 验证锁内容的有效性
+          if (!existingLock || typeof existingLock.timestamp !== 'number') {
+            warn('锁文件内容无效，正在清理...');
+            fs.unlinkSync(lockFile);
+            continue;
+          }
+
           const lockAge = Date.now() - existingLock.timestamp;
 
           // 如果锁超过阈值，认为是陈旧锁，强制删除
@@ -636,18 +662,32 @@ function acquireLock(lockFile, timeout = LOCK_TIMEOUT_MS) {
 
           // 其他进程持有锁，等待
           info(`另一个 oh-my-claude 进程 (PID: ${existingLock.pid}) 正在运行，等待中...`);
-        } catch {
-          // 读取锁文件失败，可能已被删除
+        } catch (readErr) {
+          // 读取锁文件失败，可能已被删除或权限问题
+          if (readErr.code === 'ENOENT') {
+            // 文件已被删除，直接重试
+            continue;
+          }
+          // 其他读取错误，记录后继续
           continue;
         }
 
-        // 等待一小段时间后重试（同步阻塞）
+        // 使用 spawnSync 实现非阻塞等待，避免 CPU 空转
         const waitTime = Math.min(LOCK_RETRY_INTERVAL_MS, timeout - (Date.now() - startTime));
         if (waitTime > 0) {
-          // 使用简单的忙等待（由于是 CLI 工具，短暂阻塞可接受）
-          const endWait = Date.now() + waitTime;
-          while (Date.now() < endWait) {
-            // 空循环等待
+          // 使用系统 sleep 命令等待，避免忙等待占用 CPU
+          try {
+            if (process.platform === 'win32') {
+              // Windows: 使用 ping localhost 实现延时
+              spawnSync('ping', ['-n', '2', '127.0.0.1'], { stdio: 'ignore', timeout: waitTime + 1000 });
+            } else {
+              // Unix: 使用 sleep 命令
+              spawnSync('sleep', [(waitTime / 1000).toFixed(1)], { stdio: 'ignore', timeout: waitTime + 1000 });
+            }
+          } catch {
+            // 如果 sleep 失败，使用短暂的忙等待作为后备
+            const endWait = Date.now() + Math.min(waitTime, 100);
+            while (Date.now() < endWait) { /* 短暂等待 */ }
           }
         }
       } else {
@@ -668,14 +708,26 @@ function acquireLock(lockFile, timeout = LOCK_TIMEOUT_MS) {
 function releaseLock(lockFile) {
   try {
     if (fs.existsSync(lockFile)) {
+      // 读取并验证是我们自己的锁
+      const lockData = fs.readFileSync(lockFile, 'utf8');
+
+      let lockContent;
+      try {
+        lockContent = JSON.parse(lockData);
+      } catch {
+        // JSON 解析失败，锁文件可能已损坏
+        // 安全删除损坏的锁文件
+        fs.unlinkSync(lockFile);
+        return;
+      }
+
       // 验证是我们自己的锁
-      const lockContent = JSON.parse(fs.readFileSync(lockFile, 'utf8'));
-      if (lockContent.pid === process.pid) {
+      if (lockContent && lockContent.pid === process.pid) {
         fs.unlinkSync(lockFile);
       }
     }
   } catch {
-    // 忽略释放锁时的错误
+    // 忽略释放锁时的错误（文件可能已被删除等）
   }
 }
 
@@ -791,7 +843,7 @@ function install() {
     process.exit(1);
   }
 
-  // 安装 commands 到 ~/.claude/commands/zcf/
+  // 安装 commands 到 ~/.claude/commands/
   installCommands(packageDir);
 
   // 安装 skills 到 ~/.claude/skills/
@@ -808,19 +860,26 @@ function install() {
   warn('   (仅关闭窗口可能不够，需要完全退出应用)');
   if (os.platform() === 'darwin') {
     warn('   macOS: 使用 Cmd+Q 完全退出应用');
+    warn('   如果命令仍未加载，尝试: rm ~/.claude.json && 重启 Claude Code');
   }
   log('');
-  log('快速开始（使用 /zcf: 前缀）:', 'cyan');
-  info('  /zcf:yishan  - 愚公移山模式（大规模任务）');
-  info('  /zcf:zhuge   - 诸葛顾问（架构设计）');
-  info('  /zcf:bianque - 扁鹊诊断（调试问题）');
-  info('  /zcf:luban   - 鲁班巧工（前端开发）');
-  info('  /zcf:wukong  - 悟空探索（代码搜索）');
+  log('快速开始:', 'cyan');
+  info('  /yishan  - 愚公移山模式（大规模任务）');
+  info('  /zhuge   - 诸葛顾问（架构设计）');
+  info('  /bianque - 扁鹊诊断（调试问题）');
+  info('  /luban   - 鲁班巧工（前端开发）');
+  info('  /wukong  - 悟空探索（代码搜索）');
   log('');
   log('安装位置:', 'cyan');
   info(`  Commands: ${getCommandsDir()}`);
   info(`  Skills:   ${getSkillsDir()}`);
   info(`  Plugin:   ${pluginDir}`);
+  log('');
+  log('故障排除:', 'cyan');
+  info('  如果命令未出现在 /help 中：');
+  info('  1. 确保完全退出 Claude Code（不只是关闭窗口）');
+  info('  2. 检查文件是否存在: ls ~/.claude/commands/');
+  info('  3. 清除缓存: rm ~/.claude.json && 重启');
   log('');
 }
 
@@ -946,8 +1005,8 @@ function update() {
     process.exit(1);
   }
 
-  // 更新 commands 到 ~/.claude/commands/zcf/
-  installCommands(packageDir);
+  // 更新 commands 到 ~/.claude/commands/
+  const cmdStats = installCommands(packageDir);
 
   // 更新 skills 到 ~/.claude/skills/
   installSkills(packageDir);
@@ -963,7 +1022,23 @@ function update() {
   warn('   (仅关闭窗口可能不够，需要完全退出应用)');
   if (os.platform() === 'darwin') {
     warn('   macOS: 使用 Cmd+Q 完全退出应用');
+    warn('   如果命令仍未加载，尝试: rm ~/.claude.json && 重启 Claude Code');
   }
+  log('');
+
+  // 如果清理了旧版本，显示命令格式变化提示
+  if (cmdStats.cleaned) {
+    log('📝 命令格式变更提示:', 'yellow');
+    info('   旧格式: /zcf:yishan, /zcf:zhuge, /zcf:bianque ...');
+    info('   新格式: /yishan, /zhuge, /bianque ...');
+    log('');
+  }
+
+  log('故障排除:', 'cyan');
+  info('  如果命令未出现在 /help 中：');
+  info('  1. 确保完全退出 Claude Code（不只是关闭窗口）');
+  info('  2. 检查文件是否存在: ls ~/.claude/commands/');
+  info('  3. 清除缓存: rm ~/.claude.json && 重启');
   log('');
 }
 
@@ -1184,42 +1259,103 @@ function copyDir(src, dest, options = {}) {
   return stats;
 }
 
-// 主程序
-const args = process.argv.slice(2);
-const command = args[0] || 'help';
+// ==================== 模块导出（供测试使用） ====================
 
-switch (command) {
-  case 'install':
-  case 'i':
-    install();
-    break;
-  case 'uninstall':
-  case 'remove':
-  case 'rm':
-    uninstall();
-    break;
-  case 'update':
-  case 'upgrade':
-  case 'up':
-    update();
-    break;
-  case 'verify':
-  case 'check':
-  case 'doctor':
-    verify();
-    break;
-  case 'version':
-  case '-v':
-  case '--version':
-    showVersion();
-    break;
-  case 'help':
-  case '-h':
-  case '--help':
-    showHelp();
-    break;
-  default:
-    error(`未知命令: ${command}`);
-    showHelp();
-    process.exit(1);
+/**
+ * 导出内部函数供测试使用
+ * 仅在测试环境下使用，生产环境下这些函数通过 CLI 入口调用
+ */
+module.exports = {
+  // 常量
+  VERSION,
+  PLUGIN_NAME,
+  LOCK_TIMEOUT_MS,
+  LOCK_STALE_MS,
+  LARGE_FILE_THRESHOLD_BYTES,
+  LOG_DIR,
+  ERROR_LOG_PATH,
+
+  // 安全函数
+  sanitizeStackTrace,
+  getUserFriendlyError,
+
+  // 文件操作
+  safeReadFile,
+  safeWriteFile,
+  safeRemoveDir,
+  safeCopyFile,
+  copyDir,
+  smartCopyFile,
+  copyPluginFiles,
+
+  // 路径函数
+  getPluginDir,
+  getCommandsDir,
+  getSkillsDir,
+  getPackageDir,
+  getLockFilePath,
+
+  // 锁机制
+  acquireLock,
+  releaseLock,
+
+  // 进度类
+  ProgressIndicator,
+
+  // 执行器
+  executeWithRollback,
+  setHookPermissions,
+
+  // 验证
+  verifyInstallation,
+
+  // 主要命令（供集成测试使用）
+  install,
+  uninstall,
+  update,
+  verify,
+};
+
+// ==================== CLI 入口 ====================
+
+// 仅在直接运行时执行（非 require）
+if (require.main === module) {
+  const args = process.argv.slice(2);
+  const command = args[0] || 'help';
+
+  switch (command) {
+    case 'install':
+    case 'i':
+      install();
+      break;
+    case 'uninstall':
+    case 'remove':
+    case 'rm':
+      uninstall();
+      break;
+    case 'update':
+    case 'upgrade':
+    case 'up':
+      update();
+      break;
+    case 'verify':
+    case 'check':
+    case 'doctor':
+      verify();
+      break;
+    case 'version':
+    case '-v':
+    case '--version':
+      showVersion();
+      break;
+    case 'help':
+    case '-h':
+    case '--help':
+      showHelp();
+      break;
+    default:
+      error(`未知命令: ${command}`);
+      showHelp();
+      process.exit(1);
+  }
 }

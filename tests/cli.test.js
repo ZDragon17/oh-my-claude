@@ -5,7 +5,6 @@
  * - sanitizeStackTrace: 堆栈跟踪脱敏
  * - getUserFriendlyError: 错误消息转换
  * - ProgressIndicator: 进度显示器
- * - 文件锁机制
  * - 文件操作函数
  */
 
@@ -15,12 +14,19 @@ const os = require('os');
 const {
   createTempDir,
   cleanupTempDir,
-  createMockPluginStructure,
-  captureConsole,
 } = require('./helpers/test-utils');
 
-// 由于 cli.js 是一个入口脚本，需要提取函数来测试
-// 为了测试，创建一个模块化的版本
+// 从 cli.js 导入函数
+const {
+  sanitizeStackTrace,
+  getUserFriendlyError,
+  ProgressIndicator,
+  safeReadFile,
+  safeWriteFile,
+  safeRemoveDir,
+  copyDir,
+  VERSION,
+} = require('../scripts/cli');
 
 describe('cli.js 核心功能测试', () => {
   let tempDir;
@@ -34,24 +40,6 @@ describe('cli.js 核心功能测试', () => {
   });
 
   describe('sanitizeStackTrace - 堆栈跟踪脱敏', () => {
-    // 直接测试脱敏逻辑
-    const sanitizeStackTrace = (stack) => {
-      if (!stack) return '';
-
-      const home = os.homedir();
-      const username = os.userInfo().username;
-
-      let sanitized = stack
-        .replace(new RegExp(home.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '~')
-        .replace(new RegExp(username.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '<user>');
-
-      sanitized = sanitized.replace(/[A-Za-z]:\\Users\\[^\\]+\\/gi, '<user-home>\\');
-      sanitized = sanitized.replace(/[a-f0-9]{32,}/gi, '<redacted-hex>');
-      sanitized = sanitized.replace(/[A-Za-z0-9+/=]{40,}/g, '<redacted-token>');
-
-      return sanitized;
-    };
-
     test('空字符串返回空字符串', () => {
       expect(sanitizeStackTrace('')).toBe('');
     });
@@ -98,28 +86,6 @@ describe('cli.js 核心功能测试', () => {
   });
 
   describe('getUserFriendlyError - 错误消息转换', () => {
-    const getUserFriendlyError = (err, filePath) => {
-      const errorMessages = {
-        ENOENT: `文件或目录不存在: ${filePath}\n  请检查路径是否正确`,
-        EACCES: `权限不足: ${filePath}\n  请尝试以管理员身份运行，或检查文件权限`,
-        EPERM: `操作被拒绝: ${filePath}\n  可能被其他程序占用，请关闭相关程序后重试`,
-        ENOSPC: `磁盘空间不足\n  请清理磁盘空间后重试`,
-        EBUSY: `资源正忙: ${filePath}\n  文件可能正在被其他程序使用`,
-        EMFILE: `打开文件过多\n  请关闭一些应用程序后重试`,
-        EEXIST: `文件已存在: ${filePath}\n  请先删除或重命名现有文件`,
-        EISDIR: `目标是目录而非文件: ${filePath}`,
-        ENOTDIR: `目标不是目录: ${filePath}`,
-        ENOTEMPTY: `目录不为空: ${filePath}\n  请先清空目录内容`,
-      };
-
-      const friendlyMessage = errorMessages[err.code];
-      if (friendlyMessage) {
-        return friendlyMessage;
-      }
-
-      return `${err.message}\n  如需帮助，请访问: https://github.com/ZDragon17/oh-my-claude/issues`;
-    };
-
     test('ENOENT 返回文件不存在提示', () => {
       const err = { code: 'ENOENT', message: 'File not found' };
       const result = getUserFriendlyError(err, '/path/to/file');
@@ -145,6 +111,42 @@ describe('cli.js 核心功能测试', () => {
       expect(result).toContain('磁盘空间不足');
     });
 
+    test('EBUSY 返回资源正忙提示', () => {
+      const err = { code: 'EBUSY', message: 'Resource busy' };
+      const result = getUserFriendlyError(err, '/path/to/file');
+      expect(result).toContain('资源正忙');
+    });
+
+    test('EMFILE 返回打开文件过多提示', () => {
+      const err = { code: 'EMFILE', message: 'Too many open files' };
+      const result = getUserFriendlyError(err, '/path/to/file');
+      expect(result).toContain('打开文件过多');
+    });
+
+    test('EEXIST 返回文件已存在提示', () => {
+      const err = { code: 'EEXIST', message: 'File exists' };
+      const result = getUserFriendlyError(err, '/path/to/file');
+      expect(result).toContain('文件已存在');
+    });
+
+    test('EISDIR 返回目标是目录提示', () => {
+      const err = { code: 'EISDIR', message: 'Is a directory' };
+      const result = getUserFriendlyError(err, '/path/to/file');
+      expect(result).toContain('目标是目录');
+    });
+
+    test('ENOTDIR 返回目标不是目录提示', () => {
+      const err = { code: 'ENOTDIR', message: 'Not a directory' };
+      const result = getUserFriendlyError(err, '/path/to/file');
+      expect(result).toContain('目标不是目录');
+    });
+
+    test('ENOTEMPTY 返回目录不为空提示', () => {
+      const err = { code: 'ENOTEMPTY', message: 'Directory not empty' };
+      const result = getUserFriendlyError(err, '/path/to/file');
+      expect(result).toContain('目录不为空');
+    });
+
     test('未知错误返回默认消息', () => {
       const err = { code: 'UNKNOWN', message: 'Some unknown error' };
       const result = getUserFriendlyError(err, '/path/to/file');
@@ -154,42 +156,6 @@ describe('cli.js 核心功能测试', () => {
   });
 
   describe('ProgressIndicator - 进度显示器', () => {
-    class ProgressIndicator {
-      constructor(totalSteps, description = '处理中') {
-        this.totalSteps = totalSteps;
-        this.currentStep = 0;
-        this.description = description;
-        this.startTime = Date.now();
-        this.isInteractive = false; // 测试模式下设为 false
-      }
-
-      update(stepDescription = '') {
-        this.currentStep++;
-        return {
-          currentStep: this.currentStep,
-          totalSteps: this.totalSteps,
-          percent: Math.round((this.currentStep / this.totalSteps) * 100),
-          stepDescription,
-        };
-      }
-
-      _createProgressBar(percent) {
-        const total = 20;
-        const filled = Math.round((percent / 100) * total);
-        const empty = total - filled;
-        return `[${'█'.repeat(filled)}${'░'.repeat(empty)}]`;
-      }
-
-      complete(message = '完成') {
-        const elapsed = ((Date.now() - this.startTime) / 1000).toFixed(1);
-        return { message, elapsed, success: true };
-      }
-
-      fail(message = '失败') {
-        return { message, success: false };
-      }
-    }
-
     test('初始化正确设置总步骤数', () => {
       const progress = new ProgressIndicator(5);
       expect(progress.totalSteps).toBe(5);
@@ -198,14 +164,14 @@ describe('cli.js 核心功能测试', () => {
 
     test('update 正确递增步骤', () => {
       const progress = new ProgressIndicator(4);
+      // 设置为非交互模式以避免控制台输出
+      progress.isInteractive = false;
 
-      const step1 = progress.update('步骤1');
-      expect(step1.currentStep).toBe(1);
-      expect(step1.percent).toBe(25);
+      progress.update('步骤1');
+      expect(progress.currentStep).toBe(1);
 
-      const step2 = progress.update('步骤2');
-      expect(step2.currentStep).toBe(2);
-      expect(step2.percent).toBe(50);
+      progress.update('步骤2');
+      expect(progress.currentStep).toBe(2);
     });
 
     test('_createProgressBar 正确生成进度条', () => {
@@ -216,36 +182,25 @@ describe('cli.js 核心功能测试', () => {
       expect(progress._createProgressBar(100)).toBe('[████████████████████]');
     });
 
-    test('complete 返回成功状态', () => {
+    test('complete 方法可正常调用', () => {
       const progress = new ProgressIndicator(2);
+      progress.isInteractive = false;
       progress.update();
       progress.update();
-      const result = progress.complete('操作完成');
-      expect(result.success).toBe(true);
-      expect(result.message).toBe('操作完成');
+      // 验证不抛出异常
+      expect(() => progress.complete('操作完成')).not.toThrow();
     });
 
-    test('fail 返回失败状态', () => {
+    test('fail 方法可正常调用', () => {
       const progress = new ProgressIndicator(2);
-      const result = progress.fail('操作失败');
-      expect(result.success).toBe(false);
-      expect(result.message).toBe('操作失败');
+      progress.isInteractive = false;
+      // 验证不抛出异常
+      expect(() => progress.fail('操作失败')).not.toThrow();
     });
   });
 
   describe('文件操作函数', () => {
     describe('safeReadFile', () => {
-      const safeReadFile = (filePath) => {
-        try {
-          return fs.readFileSync(filePath, 'utf8');
-        } catch (err) {
-          if (err.code === 'ENOENT') {
-            return null;
-          }
-          throw err;
-        }
-      };
-
       test('读取存在的文件', () => {
         const testFile = path.join(tempDir, 'test.txt');
         fs.writeFileSync(testFile, 'hello world', 'utf8');
@@ -261,19 +216,6 @@ describe('cli.js 核心功能测试', () => {
     });
 
     describe('safeWriteFile', () => {
-      const safeWriteFile = (filePath, content) => {
-        try {
-          const dir = path.dirname(filePath);
-          if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-          }
-          fs.writeFileSync(filePath, content, 'utf8');
-          return true;
-        } catch (err) {
-          throw err;
-        }
-      };
-
       test('写入文件成功', () => {
         const testFile = path.join(tempDir, 'output.txt');
         const result = safeWriteFile(testFile, 'test content');
@@ -292,17 +234,6 @@ describe('cli.js 核心功能测试', () => {
     });
 
     describe('safeRemoveDir', () => {
-      const safeRemoveDir = (dirPath) => {
-        try {
-          if (fs.existsSync(dirPath)) {
-            fs.rmSync(dirPath, { recursive: true, force: true });
-          }
-          return true;
-        } catch (err) {
-          throw err;
-        }
-      };
-
       test('删除存在的目录', () => {
         const testDir = path.join(tempDir, 'to-delete');
         fs.mkdirSync(testDir);
@@ -320,42 +251,6 @@ describe('cli.js 核心功能测试', () => {
     });
 
     describe('copyDir', () => {
-      const copyDir = (src, dest, options = {}) => {
-        const { preserveEmpty = true } = options;
-        const stats = { files: 0, dirs: 0, emptyDirs: 0 };
-
-        fs.mkdirSync(dest, { recursive: true });
-        stats.dirs++;
-
-        const entries = fs.readdirSync(src, { withFileTypes: true });
-
-        if (entries.length === 0) {
-          stats.emptyDirs++;
-          if (!preserveEmpty) {
-            fs.rmdirSync(dest);
-            stats.dirs--;
-          }
-          return stats;
-        }
-
-        for (const entry of entries) {
-          const srcPath = path.join(src, entry.name);
-          const destPath = path.join(dest, entry.name);
-
-          if (entry.isDirectory()) {
-            const subStats = copyDir(srcPath, destPath, options);
-            stats.files += subStats.files;
-            stats.dirs += subStats.dirs;
-            stats.emptyDirs += subStats.emptyDirs;
-          } else {
-            fs.copyFileSync(srcPath, destPath);
-            stats.files++;
-          }
-        }
-
-        return stats;
-      };
-
       test('复制目录及其内容', () => {
         const srcDir = path.join(tempDir, 'src');
         const destDir = path.join(tempDir, 'dest');
@@ -398,6 +293,12 @@ describe('cli.js 核心功能测试', () => {
         expect(stats.dirs).toBe(0);
         expect(fs.existsSync(destDir)).toBe(false);
       });
+    });
+  });
+
+  describe('VERSION 常量', () => {
+    test('VERSION 应该是有效的语义化版本', () => {
+      expect(VERSION).toMatch(/^\d+\.\d+\.\d+$/);
     });
   });
 });

@@ -175,13 +175,11 @@ claude plugins install .
 ### 验证安装
 
 ```bash
-# 在 Claude Code 中输入（使用 /zcf: 前缀）
-/zcf:yishan 你好
+# 在 Claude Code 中输入
+/yishan 你好
 
 # 如果看到愚公移山模式的响应，说明安装成功
 ```
-
-> 💡 **命令前缀说明**: 安装后，所有命令使用 `/zcf:` 前缀，如 `/zcf:yishan`、`/zcf:zhuge` 等
 
 ### 更新插件
 
@@ -207,20 +205,56 @@ npx claude-pangu uninstall
 
 # 或手动删除
 # macOS / Linux
-rm -rf ~/.claude/commands/zcf
+rm -rf ~/.claude/commands/{yishan,yugong,zhuge,bianque,luban,wukong}.md  # 等其他命令文件
 rm -rf ~/.claude/plugins/oh-my-claude
 
 # Windows (PowerShell)
-Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\commands\zcf"
 Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\oh-my-claude"
+# 命令文件需要单独删除
 ```
+
+### 故障排除
+
+如果安装后命令无法使用，请按以下步骤排查：
+
+#### 1. 完全重启 Claude Code
+
+```bash
+# macOS: 使用 Cmd+Q 完全退出，不只是关闭窗口
+# Windows: 确保从任务管理器中关闭所有 Claude 进程
+```
+
+#### 2. 验证文件是否安装成功
+
+```bash
+# 检查命令文件是否存在
+ls ~/.claude/commands/yishan.md
+
+# 查看所有已安装的命令
+ls ~/.claude/commands/
+```
+
+#### 3. 清除缓存（macOS 特定问题）
+
+macOS 上存在已知的命令发现 Bug ([Issue #13906](https://github.com/anthropics/claude-code/issues/13906))，清除缓存可能解决问题：
+
+```bash
+# 清除 Claude Code 缓存
+rm ~/.claude.json
+
+# 然后完全重启 Claude Code
+```
+
+#### 4. 检查 /help 输出
+
+在 Claude Code 中输入 `/help`，查看是否显示 `yishan`、`zhuge` 等命令。
 
 ## 🚀 快速开始
 
 ### 1. 愚公移山 - 大规模任务
 
 ```bash
-/zcf:yishan 重构整个用户模块，包括：
+/yishan 重构整个用户模块，包括：
 - 用户注册
 - 用户登录
 - 密码重置
@@ -236,7 +270,7 @@ Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\oh-my-claude"
 ### 2. 诸葛顾问 - 架构设计
 
 ```bash
-/zcf:zhuge 我们的用户系统应该如何设计？需要考虑：
+/zhuge 我们的用户系统应该如何设计？需要考虑：
 - 多租户支持
 - 权限管理
 - 高可用性
@@ -251,7 +285,7 @@ Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\oh-my-claude"
 ### 3. 扁鹊诊断 - Bug 修复
 
 ```bash
-/zcf:bianque TypeError: Cannot read property 'name' of undefined
+/bianque TypeError: Cannot read property 'name' of undefined
   at UserService.getProfile (user.service.ts:42)
 ```
 
@@ -264,7 +298,7 @@ Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\oh-my-claude"
 ### 4. 悟空侦察 - 代码探索
 
 ```bash
-/zcf:wukong 找到所有处理用户认证的代码
+/wukong 找到所有处理用户认证的代码
 ```
 
 悟空会快速：
@@ -275,7 +309,7 @@ Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\oh-my-claude"
 ### 5. 鲁班巧工 - 精密实现
 
 ```bash
-/zcf:luban 实现一个带动画效果的 Toast 组件
+/luban 实现一个带动画效果的 Toast 组件
 ```
 
 鲁班会精心：
@@ -348,37 +382,37 @@ oh-my-claude/
 
 ## 🎯 命令速查
 
-> 💡 所有命令使用 `/zcf:` 前缀
+> 💡 直接使用命令名即可，如 `/yishan`、`/zhuge`
 
 ### Agent 命令
 
 | 命令 | 功能 |
 |------|------|
-| `/zcf:yugong` 或 `/zcf:yishan` | 启动愚公移山模式 |
-| `/zcf:zhuge` | 召唤诸葛顾问 |
-| `/zcf:luban` | 召唤鲁班巧匠 |
-| `/zcf:wukong` | 召唤悟空侦察 |
-| `/zcf:bianque` | 召唤扁鹊诊断 |
-| `/zcf:mozi` | 召唤墨子安全 |
-| `/zcf:sunzi` | 召唤孙子性能 |
-| `/zcf:simaqian` | 召唤司马迁史官 |
-| `/zcf:zhenghe` | 召唤郑和 API |
-| `/zcf:zhangheng` | 召唤张衡监控 |
-| `/zcf:libing` | 召唤李冰 DevOps |
-| `/zcf:laozi` | 召唤老子简洁大师 |
-| `/zcf:baozheng` | 召唤包拯测试专家 |
-| `/zcf:weizheng` | 召唤魏征代码审查 |
-| `/zcf:cangjie` | 召唤仓颉数据库专家 |
-| `/zcf:libai` | 召唤李白需求炼金师 |
-| `/zcf:gukaizhi` | 召唤顾恺之界面美学师 |
-| `/zcf:change` | 召唤嫦娥云端仙子 |
+| `/yugong` 或 `/yishan` | 启动愚公移山模式 |
+| `/zhuge` | 召唤诸葛顾问 |
+| `/luban` | 召唤鲁班巧匠 |
+| `/wukong` | 召唤悟空侦察 |
+| `/bianque` | 召唤扁鹊诊断 |
+| `/mozi` | 召唤墨子安全 |
+| `/sunzi` | 召唤孙子性能 |
+| `/simaqian` | 召唤司马迁史官 |
+| `/zhenghe` | 召唤郑和 API |
+| `/zhangheng` | 召唤张衡监控 |
+| `/libing` | 召唤李冰 DevOps |
+| `/laozi` | 召唤老子简洁大师 |
+| `/baozheng` | 召唤包拯测试专家 |
+| `/weizheng` | 召唤魏征代码审查 |
+| `/cangjie` | 召唤仓颉数据库专家 |
+| `/libai` | 召唤李白需求炼金师 |
+| `/gukaizhi` | 召唤顾恺之界面美学师 |
+| `/change` | 召唤嫦娥云端仙子 |
 
 ### 工具命令
 
 | 命令 | 功能 |
 |------|------|
-| `/zcf:progress` | 📊 可视化进度面板 |
-| `/zcf:team` | 🤝 多 Agent 团队协作 |
+| `/progress` | 📊 可视化进度面板 |
+| `/team` | 🤝 多 Agent 团队协作 |
 
 ### 关键词触发
 

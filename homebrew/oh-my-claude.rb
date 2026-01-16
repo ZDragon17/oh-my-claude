@@ -4,7 +4,7 @@
 class OhMyClaude < Formula
   desc "基于中国传统文化的 Claude Code 智能编排插件"
   homepage "https://github.com/ZDragon17/oh-my-claude"
-  url "https://github.com/ZDragon17/oh-my-claude/archive/refs/tags/v1.0.0.tar.gz"
+  url "https://github.com/ZDragon17/oh-my-claude/archive/refs/tags/v1.0.9.tar.gz"
   sha256 "PLACEHOLDER_SHA256"  # 需要在发布时更新
   license "MIT"
   head "https://github.com/ZDragon17/oh-my-claude.git", branch: "main"

@@ -14,8 +14,16 @@ const path = require('path');
 const {
   createTempDir,
   cleanupTempDir,
-  delay,
 } = require('./helpers/test-utils');
+
+// 从 cli.js 导入函数
+const {
+  getLockFilePath,
+  acquireLock,
+  releaseLock,
+  LOCK_TIMEOUT_MS,
+  LOCK_STALE_MS,
+} = require('../scripts/cli');
 
 describe('并发锁机制测试', () => {
   let tempDir;
@@ -28,83 +36,10 @@ describe('并发锁机制测试', () => {
     cleanupTempDir(tempDir);
   });
 
-  // 锁相关常量
-  const LOCK_TIMEOUT_MS = 2000;      // 测试用较短超时
-  const LOCK_STALE_MS = 1000;        // 测试用较短陈旧锁时间
-  const LOCK_RETRY_INTERVAL_MS = 100; // 测试用较短重试间隔
-
-  /**
-   * 获取锁文件路径
-   */
-  const getLockFilePath = (pluginDir) => `${pluginDir}.lock`;
-
-  /**
-   * 尝试获取文件锁
-   */
-  const acquireLock = (lockFile, timeout = LOCK_TIMEOUT_MS) => {
-    const startTime = Date.now();
-    const pid = process.pid;
-    const lockContent = JSON.stringify({ pid, timestamp: Date.now() });
-
-    while (Date.now() - startTime < timeout) {
-      try {
-        // 尝试以排他模式创建锁文件
-        fs.writeFileSync(lockFile, lockContent, { flag: 'wx' });
-        return true;
-      } catch (err) {
-        if (err.code === 'EEXIST') {
-          // 锁文件已存在，检查是否过期
-          try {
-            const existingLock = JSON.parse(fs.readFileSync(lockFile, 'utf8'));
-            const lockAge = Date.now() - existingLock.timestamp;
-
-            // 如果锁超过阈值，认为是陈旧锁
-            if (lockAge > LOCK_STALE_MS) {
-              fs.unlinkSync(lockFile);
-              continue;
-            }
-
-            // 如果是同一进程的锁，允许通过（可重入）
-            if (existingLock.pid === pid) {
-              return true;
-            }
-          } catch {
-            continue;
-          }
-
-          // 简单等待
-          const waitEnd = Date.now() + LOCK_RETRY_INTERVAL_MS;
-          while (Date.now() < waitEnd) {
-            // 忙等待
-          }
-        } else {
-          return false;
-        }
-      }
-    }
-    return false;
-  };
-
-  /**
-   * 释放文件锁
-   */
-  const releaseLock = (lockFile) => {
-    try {
-      if (fs.existsSync(lockFile)) {
-        const lockContent = JSON.parse(fs.readFileSync(lockFile, 'utf8'));
-        if (lockContent.pid === process.pid) {
-          fs.unlinkSync(lockFile);
-        }
-      }
-    } catch {
-      // 忽略错误
-    }
-  };
-
   describe('acquireLock - 获取锁', () => {
     test('成功获取锁', () => {
       const lockFile = path.join(tempDir, 'test.lock');
-      const result = acquireLock(lockFile);
+      const result = acquireLock(lockFile, 2000);
 
       expect(result).toBe(true);
       expect(fs.existsSync(lockFile)).toBe(true);
@@ -116,7 +51,7 @@ describe('并发锁机制测试', () => {
     test('锁文件包含正确的 PID 和时间戳', () => {
       const lockFile = path.join(tempDir, 'pid.lock');
       const beforeTime = Date.now();
-      acquireLock(lockFile);
+      acquireLock(lockFile, 2000);
       const afterTime = Date.now();
 
       const lockContent = JSON.parse(fs.readFileSync(lockFile, 'utf8'));
@@ -131,8 +66,8 @@ describe('并发锁机制测试', () => {
     test('可重入 - 同一进程可以多次获取锁', () => {
       const lockFile = path.join(tempDir, 'reentrant.lock');
 
-      const result1 = acquireLock(lockFile);
-      const result2 = acquireLock(lockFile);
+      const result1 = acquireLock(lockFile, 2000);
+      const result2 = acquireLock(lockFile, 2000);
 
       expect(result1).toBe(true);
       expect(result2).toBe(true);
@@ -151,7 +86,7 @@ describe('并发锁机制测试', () => {
       fs.writeFileSync(lockFile, JSON.stringify(staleLock), 'utf8');
 
       // 应该能成功获取锁（因为旧锁是陈旧的）
-      const result = acquireLock(lockFile, LOCK_TIMEOUT_MS);
+      const result = acquireLock(lockFile, 2000);
 
       expect(result).toBe(true);
 
@@ -166,7 +101,7 @@ describe('并发锁机制测试', () => {
   describe('releaseLock - 释放锁', () => {
     test('成功释放锁', () => {
       const lockFile = path.join(tempDir, 'release.lock');
-      acquireLock(lockFile);
+      acquireLock(lockFile, 2000);
       expect(fs.existsSync(lockFile)).toBe(true);
 
       releaseLock(lockFile);
@@ -214,8 +149,8 @@ describe('并发锁机制测试', () => {
     test('获取锁后再次获取应该成功（同进程）', () => {
       const lockFile = path.join(tempDir, 'concurrent.lock');
 
-      const acquired1 = acquireLock(lockFile);
-      const acquired2 = acquireLock(lockFile);
+      const acquired1 = acquireLock(lockFile, 2000);
+      const acquired2 = acquireLock(lockFile, 2000);
 
       expect(acquired1).toBe(true);
       expect(acquired2).toBe(true);
@@ -251,24 +186,23 @@ describe('并发锁机制测试', () => {
       expect(result).toBe(false);
     });
 
-    test('锁文件内容损坏时会等待超时', () => {
+    test('锁文件内容损坏时自动清理并获取锁', () => {
       const lockFile = path.join(tempDir, 'corrupted.lock');
 
       // 创建损坏的锁文件
       fs.writeFileSync(lockFile, 'not valid json', 'utf8');
 
-      // 由于损坏的 JSON 无法解析，无法判断是否陈旧，会持续重试直到超时
-      // 这是预期行为：无法解析的锁文件会导致持续等待
+      // 损坏的锁文件会被自动清理，然后成功获取锁
       const startTime = Date.now();
-      const result = acquireLock(lockFile, 500); // 短超时测试
+      const result = acquireLock(lockFile, 500);
       const elapsed = Date.now() - startTime;
 
-      // 由于无法解析锁内容，会超时失败
-      // 实际行为：JSON 解析失败后 continue，但文件仍存在，所以会一直重试
-      expect(elapsed).toBeGreaterThanOrEqual(400);
+      // 应该快速成功（清理损坏锁后立即获取）
+      expect(result).toBe(true);
+      expect(elapsed).toBeLessThan(100);
 
       // 清理
-      fs.unlinkSync(lockFile);
+      releaseLock(lockFile);
     });
 
     test('零超时立即返回', () => {

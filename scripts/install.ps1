@@ -304,12 +304,12 @@ function Show-Success {
     Write-Host "⚠️  重要：请完全退出并重新启动 Claude Code 以加载新命令" -ForegroundColor Yellow
     Write-Host "   (仅关闭窗口可能不够，需要完全退出应用)" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "快速开始（使用 /zcf: 前缀）:" -ForegroundColor Cyan
-    Write-Host "  /zcf:yishan  - 愚公移山模式（大规模任务）"
-    Write-Host "  /zcf:zhuge   - 诸葛顾问（架构设计）"
-    Write-Host "  /zcf:bianque - 扁鹊诊断（调试问题）"
-    Write-Host "  /zcf:luban   - 鲁班巧工（前端开发）"
-    Write-Host "  /zcf:wukong  - 悟空探索（代码搜索）"
+    Write-Host "快速开始:" -ForegroundColor Cyan
+    Write-Host "  /yishan  - 愚公移山模式（大规模任务）"
+    Write-Host "  /zhuge   - 诸葛顾问（架构设计）"
+    Write-Host "  /bianque - 扁鹊诊断（调试问题）"
+    Write-Host "  /luban   - 鲁班巧工（前端开发）"
+    Write-Host "  /wukong  - 悟空探索（代码搜索）"
     Write-Host ""
     Write-Host "查看所有 Agent:" -ForegroundColor Cyan
     Write-Host "  https://github.com/$Repo#-agent-列表"

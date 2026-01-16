@@ -1,6 +1,6 @@
 {
   "name": "progress",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "description": "可视化进度面板 - Visual progress dashboard for oh-my-claude",
   "keywords": ["progress", "dashboard", "visualization", "todo", "status"],
   "author": "ZDragon17",

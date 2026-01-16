@@ -39,48 +39,49 @@ if [ -z "$transcript_path" ]; then
 fi
 
 # 路径安全验证函数
+# 注意: 避免使用 local 关键字以保持 POSIX 兼容性
 validate_path() {
-    local path="$1"
+    _vp_path="$1"
 
     # 1. 检查是否为空
-    if [ -z "$path" ]; then
+    if [ -z "$_vp_path" ]; then
         return 1
     fi
 
     # 2. 检查危险字符（命令注入防护）
-    case "$path" in
+    case "$_vp_path" in
         *[\;\&\|\`\$\(\)\{\}\[\]\<\>\!\*\?]*)
             return 1
             ;;
     esac
 
     # 3. 检查文件是否存在且为普通文件（必须在规范化之前检查）
-    if [ ! -f "$path" ]; then
+    if [ ! -f "$_vp_path" ]; then
         return 1
     fi
 
     # 4. 检查文件是否可读
-    if [ ! -r "$path" ]; then
+    if [ ! -r "$_vp_path" ]; then
         return 1
     fi
 
     # 5. 规范化路径（消除 .. 和符号链接）
-    local real_path=""
+    _vp_real_path=""
     if command -v realpath > /dev/null 2>&1; then
-        real_path=$(realpath "$path" 2>/dev/null) || return 1
+        _vp_real_path=$(realpath "$_vp_path" 2>/dev/null) || return 1
     elif command -v readlink > /dev/null 2>&1; then
         # macOS 和一些系统可能没有 realpath，使用 readlink -f
-        real_path=$(readlink -f "$path" 2>/dev/null) || {
+        _vp_real_path=$(readlink -f "$_vp_path" 2>/dev/null) || {
             # 如果 readlink -f 不支持，回退到原始路径检查
-            real_path="$path"
+            _vp_real_path="$_vp_path"
         }
     else
         # 无规范化工具，使用基本检查
-        real_path="$path"
+        _vp_real_path="$_vp_path"
     fi
 
     # 6. 检查规范化后的路径是否包含路径遍历
-    case "$real_path" in
+    case "$_vp_real_path" in
         *..*)
             return 1
             ;;
@@ -88,13 +89,13 @@ validate_path() {
 
     # 7. 检查路径是否以期望的前缀开始（只允许用户目录或临时目录）
     # 支持: Unix ($HOME, /tmp, /var/folders), WSL (/mnt/c/Users), Git Bash (/c/Users)
-    case "$real_path" in
+    case "$_vp_real_path" in
         "$HOME"/*|/tmp/*|/var/folders/*|/mnt/c/[Uu]sers/*|/c/[Uu]sers/*|/home/*)
             # 允许的路径前缀（包括 Windows WSL 和 Git Bash 路径）
             ;;
         *)
             # 检查 Windows 原生路径格式 (如 C:\Users\... 或 C:\Temp\...)
-            if echo "$real_path" | grep -qiE '^[a-z]:\\(users|temp)\\'; then
+            if echo "$_vp_real_path" | grep -qiE '^[a-z]:\\(users|temp)\\'; then
                 # Windows 原生路径，允许
                 :
             else

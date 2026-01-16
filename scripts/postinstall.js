@@ -5,12 +5,8 @@
  * 在 npm install 后显示安装提示
  */
 
-const colors = {
-  reset: '\x1b[0m',
-  cyan: '\x1b[36m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-};
+// 使用共享日志模块
+const { colors } = require('./logger');
 
 console.log(`
 ${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}

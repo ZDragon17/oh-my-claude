@@ -40,6 +40,14 @@ SECURITY.md
 .DS_Store
 Thumbs.db
 
+# Windows 保留设备名 (这些名称在 Windows 上会导致文件系统问题)
+nul
+con
+prn
+aux
+lpt[0-9]
+com[0-9]
+
 # 日志和临时文件
 *.log
 npm-debug.log*

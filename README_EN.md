@@ -174,13 +174,13 @@ claude plugins install .
 ### Verify Installation
 
 ```bash
-# In Claude Code, type (use /zcf: prefix)
-/zcf:yishan hello
+# In Claude Code, type (use / prefix)
+/yishan hello
 
 # If you see YuGong mode response, installation is successful
 ```
 
-> 💡 **Command Prefix**: After installation, all commands use the `/zcf:` prefix, e.g., `/zcf:yishan`, `/zcf:zhuge`
+> 💡 **Command Prefix**: After installation, all commands use the `/` prefix, e.g., `/yishan`, `/zhuge`
 
 ### Update Plugin
 
@@ -206,20 +206,56 @@ npx claude-pangu uninstall
 
 # Or manual removal
 # macOS / Linux
-rm -rf ~/.claude/commands/zcf
+rm -rf ~/.claude/commands/{yishan,yugong,zhuge,bianque,luban,wukong}.md  # and other command files
 rm -rf ~/.claude/plugins/oh-my-claude
 
 # Windows (PowerShell)
-Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\commands\zcf"
 Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\oh-my-claude"
+# Command files need to be deleted separately
 ```
+
+### Troubleshooting
+
+If commands don't work after installation, follow these steps:
+
+#### 1. Fully Restart Claude Code
+
+```bash
+# macOS: Use Cmd+Q to completely quit, not just close the window
+# Windows: Ensure all Claude processes are closed via Task Manager
+```
+
+#### 2. Verify Files Are Installed
+
+```bash
+# Check if command files exist
+ls ~/.claude/commands/yishan.md
+
+# View all installed commands
+ls ~/.claude/commands/
+```
+
+#### 3. Clear Cache (macOS-specific Issue)
+
+There's a known command discovery bug on macOS ([Issue #13906](https://github.com/anthropics/claude-code/issues/13906)). Clearing cache may help:
+
+```bash
+# Clear Claude Code cache
+rm ~/.claude.json
+
+# Then completely restart Claude Code
+```
+
+#### 4. Check /help Output
+
+Type `/help` in Claude Code to see if `yishan`, `zhuge`, and other commands are listed.
 
 ## 🚀 Quick Start
 
 ### 1. YuGong Mode - Large-scale Tasks
 
 ```bash
-/zcf:yishan Refactor the entire user module, including:
+/yishan Refactor the entire user module, including:
 - User registration
 - User login
 - Password reset
@@ -235,7 +271,7 @@ YuGong will automatically:
 ### 2. ZhuGe Advisor - Architecture Design
 
 ```bash
-/zcf:zhuge How should we design our user system? Consider:
+/zhuge How should we design our user system? Consider:
 - Multi-tenancy support
 - Permission management
 - High availability
@@ -250,7 +286,7 @@ ZhuGe will provide:
 ### 3. BianQue Diagnosis - Bug Fixing
 
 ```bash
-/zcf:bianque TypeError: Cannot read property 'name' of undefined
+/bianque TypeError: Cannot read property 'name' of undefined
   at UserService.getProfile (user.service.ts:42)
 ```
 
@@ -263,7 +299,7 @@ BianQue will perform:
 ### 4. WuKong Scout - Code Exploration
 
 ```bash
-/zcf:wukong Find all code handling user authentication
+/wukong Find all code handling user authentication
 ```
 
 WuKong will quickly:
@@ -274,7 +310,7 @@ WuKong will quickly:
 ### 5. LuBan Craftsman - Precision Implementation
 
 ```bash
-/zcf:luban Implement a Toast component with animations
+/luban Implement a Toast component with animations
 ```
 
 LuBan will carefully:
@@ -347,37 +383,37 @@ oh-my-claude/
 
 ## 🎯 Command Reference
 
-> 💡 All commands use the `/zcf:` prefix
+> 💡 All commands use the `/` prefix
 
 ### Agent Commands
 
 | Command | Function |
 |---------|----------|
-| `/zcf:yugong` or `/zcf:yishan` | Start YuGong mode |
-| `/zcf:zhuge` | Summon ZhuGe advisor |
-| `/zcf:luban` | Summon LuBan craftsman |
-| `/zcf:wukong` | Summon WuKong scout |
-| `/zcf:bianque` | Summon BianQue diagnostician |
-| `/zcf:mozi` | Summon MoZi security expert |
-| `/zcf:sunzi` | Summon SunZi performance expert |
-| `/zcf:simaqian` | Summon SimaQian historian |
-| `/zcf:zhenghe` | Summon ZhengHe API expert |
-| `/zcf:zhangheng` | Summon ZhangHeng monitor |
-| `/zcf:libing` | Summon LiBing DevOps |
-| `/zcf:laozi` | Summon LaoZi simplicity master |
-| `/zcf:baozheng` | Summon BaoZheng testing expert |
-| `/zcf:weizheng` | Summon WeiZheng code reviewer |
-| `/zcf:cangjie` | Summon CangJie database expert |
-| `/zcf:libai` | Summon LiBai requirements analyst |
-| `/zcf:gukaizhi` | Summon GuKaiZhi UI/UX designer |
-| `/zcf:change` | Summon ChangE cloud architect |
+| `/yugong` or `/yishan` | Start YuGong mode |
+| `/zhuge` | Summon ZhuGe advisor |
+| `/luban` | Summon LuBan craftsman |
+| `/wukong` | Summon WuKong scout |
+| `/bianque` | Summon BianQue diagnostician |
+| `/mozi` | Summon MoZi security expert |
+| `/sunzi` | Summon SunZi performance expert |
+| `/simaqian` | Summon SimaQian historian |
+| `/zhenghe` | Summon ZhengHe API expert |
+| `/zhangheng` | Summon ZhangHeng monitor |
+| `/libing` | Summon LiBing DevOps |
+| `/laozi` | Summon LaoZi simplicity master |
+| `/baozheng` | Summon BaoZheng testing expert |
+| `/weizheng` | Summon WeiZheng code reviewer |
+| `/cangjie` | Summon CangJie database expert |
+| `/libai` | Summon LiBai requirements analyst |
+| `/gukaizhi` | Summon GuKaiZhi UI/UX designer |
+| `/change` | Summon ChangE cloud architect |
 
 ### Tool Commands
 
 | Command | Function |
 |---------|----------|
-| `/zcf:progress` | 📊 Visual progress dashboard |
-| `/zcf:team` | 🤝 Multi-agent team collaboration |
+| `/progress` | 📊 Visual progress dashboard |
+| `/team` | 🤝 Multi-agent team collaboration |
 
 ### Keyword Triggers
 

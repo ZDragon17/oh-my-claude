@@ -8,11 +8,11 @@ if command -v jq > /dev/null 2>&1; then
     has_jq=1
 fi
 
-# 读取 stdin 中的 JSON 数据
-input=$(cat)
+# 读取 stdin 中的 JSON 数据（带错误保护）
+input=$(cat 2>/dev/null) || input=""
 
-# 如果没有 jq，静默退出
-if [ "$has_jq" -eq 0 ]; then
+# 如果没有 jq 或输入为空，静默退出
+if [ "$has_jq" -eq 0 ] || [ -z "$input" ]; then
     exit 0
 fi
 
