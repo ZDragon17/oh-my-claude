@@ -10,8 +10,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { z } from 'zod';
-import AgentStateManagerImpl from '../lib/agent-state-manager';
-import { configManager, OhMyClaudeConfig } from '../lib/config-manager';
+import AgentStateManagerImpl from '../lib/agent-state-manager.js';
+import { configManager, OhMyClaudeConfig } from '../lib/config-manager.js';
 
 // ==================== 类型定义 ====================
 
