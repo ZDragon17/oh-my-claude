@@ -12,6 +12,7 @@ import * as os from 'os';
 import { z } from 'zod';
 import AgentStateManagerImpl from '../lib/agent-state-manager.js';
 import { configManager, OhMyClaudeConfig } from '../lib/config-manager.js';
+import { colors, log, success, error, info, warn } from './logger.js';
 
 // ==================== 类型定义 ====================
 
@@ -355,8 +356,7 @@ process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
   process.exit(1);
 });
 
-// 颜色输出 - 使用共享模块
-const { colors, log, success, error, info, warn } = require('./logger');
+// 颜色输出 - 使用共享模块（已在文件顶部导入）
 
 // 初始化 Agent 状态管理器
 const agentStateManager = new AgentStateManagerImpl();

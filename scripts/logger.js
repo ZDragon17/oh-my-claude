@@ -50,7 +50,7 @@ function warn(msg) {
   log(`⚠️  ${msg}`, 'yellow');
 }
 
-module.exports = {
+export {
   colors,
   log,
   success,
