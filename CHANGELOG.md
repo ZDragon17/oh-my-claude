@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.6] - 2025-01-16
+
+### Fixed / 修复
+
+- **修复 CLI 版本号未同步的问题** - `cli.js` 中的 VERSION 常量未与 `package.json` 同步
+  - 导致 `npx claude-pangu update` 显示错误的版本号
+  - 现已修复，版本号正确显示为 1.0.6
+
+---
+
 ## [1.0.5] - 2025-01-16
 
 ### Fixed / 修复
