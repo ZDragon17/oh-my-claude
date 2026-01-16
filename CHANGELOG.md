@@ -18,6 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.18] - 2025-01-16
+
+### 📦 Release / 发布
+
+- **正式发布版本** - 包含 1.0.17 的所有质量改进
+- **npm 包名：`claude-pangu`** - 可通过 `npm install -g claude-pangu` 安装
+
+---
+
 ## [1.0.17] - 2025-01-16
 
 ### 🔧 Fixed / 修复
