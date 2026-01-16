@@ -284,7 +284,7 @@ export class AgentStateManagerImpl implements AgentStateManager {
     const contextStr = JSON.stringify(context);
     const originalSize = Buffer.byteLength(contextStr, 'utf8');
 
-    let compressedData: any = {};
+    const compressedData: Record<string, unknown> = {};
     let compressedSize = 0;
 
     // 根据算法进行压缩
@@ -322,8 +322,8 @@ export class AgentStateManagerImpl implements AgentStateManager {
     session.context.compressed.push({
       id: compression.id,
       timestamp: compression.timestamp,
-      summary: compressedData.summary || '',
-      keyPoints: compressedData.keypoints || [],
+      summary: (compressedData.summary as string) || '',
+      keyPoints: (compressedData.keypoints as string[]) || [],
       references: {},
       size: compressedSize
     });

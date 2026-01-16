@@ -9,10 +9,16 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import * as readline from 'readline';
+import { fileURLToPath } from 'url';
 import { z } from 'zod';
 import AgentStateManagerImpl from '../lib/agent-state-manager.js';
 import { configManager, OhMyClaudeConfig } from '../lib/config-manager.js';
 import { colors, log, success, error, info, warn } from './logger.js';
+
+// ESM __filename 和 __dirname 等价物
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ==================== 类型定义 ====================
 
@@ -484,9 +490,10 @@ function getSkillsDir(): string {
 
 /**
  * 获取当前包的路径
+ * 从 dist/scripts/ 向上两级到项目根目录
  */
 function getPackageDir(): string {
-  return path.resolve(__dirname, '..');
+  return path.resolve(__dirname, '..', '..');
 }
 
 /**
@@ -1504,7 +1511,6 @@ function uninstall(): void {
   info(`插件位置: ${pluginDir}`);
   log('');
 
-  const readline = require('readline');
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -1813,10 +1819,11 @@ async function handleConfigCommand(args: string[]): Promise<void> {
       setConfigValue(args[1], args[2]);
       break;
 
-    case 'save':
-      const filePath = args.length > 1 ? args[1] : undefined;
-      await saveConfigToFile(filePath);
+    case 'save': {
+      const configFilePath = args.length > 1 ? args[1] : undefined;
+      await saveConfigToFile(configFilePath);
       break;
+    }
 
     case 'reset':
       configManager.resetToDefaults();
@@ -1947,8 +1954,9 @@ function verify(): void {
 
 // ==================== 主入口 ====================
 
-// 仅在直接运行时执行
-if (require.main === module) {
+// 仅在直接运行时执行 (ESM 兼容方式)
+const isMainModule = process.argv[1] === __filename || process.argv[1]?.endsWith('cli.js');
+if (isMainModule) {
   (async () => {
     const args = process.argv.slice(2);
     const command = args[0] || 'help';
