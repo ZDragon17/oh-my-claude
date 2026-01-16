@@ -1,6 +1,6 @@
 {
   "name": "claude-pangu",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture (原名 oh-my-claude)",
   "keywords": [
     "claude-code",
@@ -47,7 +47,7 @@
     "clean": "rm -rf dist/ coverage/",
     "install-plugin": "ts-node scripts/cli.ts install",
     "uninstall-plugin": "ts-node scripts/cli.ts uninstall",
-    "postinstall": "node scripts/postinstall.js",
+    "postinstall": "node scripts/postinstall.cjs",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
