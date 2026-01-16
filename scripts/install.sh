@@ -229,6 +229,8 @@ show_success() {
     echo -e "${GREEN}🎉 安装完成!${NC}"
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
+    echo -e "${YELLOW}⚠️  重要：请重启 Claude Code 以加载新命令${NC}"
+    echo ""
     echo -e "${CYAN}快速开始（使用 /zcf: 前缀）:${NC}"
     echo "  /zcf:yishan  - 愚公移山模式（大规模任务）"
     echo "  /zcf:zhuge   - 诸葛顾问（架构设计）"

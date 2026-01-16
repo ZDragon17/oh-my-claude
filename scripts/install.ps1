@@ -272,6 +272,8 @@ function Show-Success {
     Write-Host "🎉 安装完成!" -ForegroundColor Green
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
     Write-Host ""
+    Write-Host "⚠️  重要：请重启 Claude Code 以加载新命令" -ForegroundColor Yellow
+    Write-Host ""
     Write-Host "快速开始（使用 /zcf: 前缀）:" -ForegroundColor Cyan
     Write-Host "  /zcf:yishan  - 愚公移山模式（大规模任务）"
     Write-Host "  /zcf:zhuge   - 诸葛顾问（架构设计）"

@@ -18,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.5] - 2025-01-16
+
+### Fixed / 修复
+
+- **修复 macOS 安装后命令不生效的问题** - 添加重启提示
+  - 安装完成后显示明确提示：请重启 Claude Code 以加载新命令
+  - Claude Code 需要重启才能识别新安装的 slash commands 和 skills
+  - 同时更新 install.sh 和 install.ps1 脚本
+
+---
+
 ## [1.0.4] - 2025-01-16
 
 ### Fixed / 修复
