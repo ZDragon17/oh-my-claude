@@ -1,0 +1,37 @@
+{
+  "version": "1.0.9",
+  "debug": false,
+  "logLevel": "warn",
+  "agents": {
+    "defaultTimeout": 15000,
+    "maxConcurrentTasks": 2,
+    "enableCollaboration": false,
+    "contextCompression": true
+  },
+  "ui": {
+    "theme": "dark",
+    "language": "zh-CN",
+    "showProgress": false,
+    "enableNotifications": false
+  },
+  "performance": {
+    "enableCache": true,
+    "cacheSize": 200,
+    "maxMemoryUsage": 100,
+    "enableMetrics": true
+  },
+  "network": {
+    "timeout": 15000,
+    "retries": 2
+  },
+  "plugins": {
+    "autoUpdate": true,
+    "enableThirdParty": false,
+    "trustedDomains": ["github.com", "npmjs.com"]
+  },
+  "advanced": {
+    "enableProfiling": false,
+    "enableTracing": false,
+    "customHooks": {}
+  }
+}

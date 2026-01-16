@@ -1,0 +1,13 @@
+{
+  "version": "1.0.9",
+  "debug": false,
+  "agents": {
+    "maxConcurrentTasks": 1
+  },
+  "ui": {
+    "theme": "auto"
+  },
+  "performance": {
+    "enableCache": true
+  }
+}

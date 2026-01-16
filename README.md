@@ -456,6 +456,125 @@ model: sonnet
 你的自定义指令...
 ```
 
+### 配置管理系统
+
+oh-my-claude 提供了强大的分层配置系统，支持多种配置方式和运行时热重载。
+
+#### 配置层级（优先级从高到低）
+
+1. **环境变量** - 最高优先级，用于 CI/CD 和容器化部署
+2. **项目配置** - `./.oh-my-claude.json` 或 `./oh-my-claude.config.json`
+3. **用户配置** - `~/.oh-my-claude/config.json`
+4. **全局配置** - `~/.oh-my-claude/config/global.json`
+5. **默认配置** - 内置的默认值
+
+#### 配置命令
+
+```bash
+# 查看当前完整配置
+oh-my-claude config show
+
+# 获取特定配置值
+oh-my-claude config get debug
+oh-my-claude config get agents.defaultTimeout
+oh-my-claude config get ui.theme
+
+# 设置配置值
+oh-my-claude config set debug true
+oh-my-claude config set agents.defaultTimeout 60000
+oh-my-claude config set ui.theme dark
+
+# 保存当前配置到文件
+oh-my-claude config save
+oh-my-claude config save ~/.oh-my-claude/my-config.json
+
+# 重置为默认配置
+oh-my-claude config reset
+```
+
+#### 环境变量覆盖
+
+支持以下环境变量进行配置覆盖：
+
+```bash
+# 基础配置
+export OH_MY_CLAUDE_DEBUG=true
+export OH_MY_CLAUDE_LOG_LEVEL=debug
+
+# Agent 配置
+export OH_MY_CLAUDE_AGENT_TIMEOUT=60000
+export OH_MY_CLAUDE_MAX_CONCURRENT=5
+
+# UI 配置
+export OH_MY_CLAUDE_THEME=dark
+export OH_MY_CLAUDE_LANGUAGE=en-US
+
+# 网络配置
+export OH_MY_CLAUDE_TIMEOUT=30000
+export OH_MY_CLAUDE_PROXY=http://proxy.company.com:8080
+```
+
+#### 示例配置
+
+项目提供了多种环境的配置示例：
+
+```bash
+# 查看配置示例
+ls examples/configs/
+
+# 使用开发环境配置
+cp examples/configs/development.json ~/.oh-my-claude/config.json
+
+# 使用生产环境配置
+cp examples/configs/production.json ~/.oh-my-claude/config.json
+
+# 使用最小化配置（适合新用户）
+cp examples/configs/minimal.json ~/.oh-my-claude/config.json
+```
+
+**开发环境配置特点：**
+- 启用调试和详细日志
+- 更长的超时时间
+- 禁用缓存确保最新代码
+- 启用第三方插件支持
+
+**生产环境配置特点：**
+- 禁用调试，只显示重要日志
+- 优化性能和资源使用
+- 严格的安全策略
+- 自动更新
+
+#### 热重载
+
+启用追踪功能后，配置文件修改会自动重新加载：
+
+```bash
+oh-my-claude config set advanced.enableTracing true
+oh-my-claude config save
+```
+
+现在修改 `~/.oh-my-claude/config.json` 文件后会自动生效，无需重启。
+
+### 自定义 Agent
+
+在 `~/.claude/agents/` 创建自定义 Agent：
+
+```markdown
+---
+name: custom-agent
+description: 我的自定义 Agent
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+model: sonnet
+---
+
+# 自定义 Agent
+
+你的自定义指令...
+```
+
 ### 禁用 Hook
 
 编辑 `hooks/hooks.json` 移除不需要的 Hook。

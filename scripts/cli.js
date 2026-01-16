@@ -1136,6 +1136,76 @@ function verify() {
   }
 }
 
+/**
+ * 任务复杂度分析
+ * @param {string} taskDescription - 任务描述
+ * @returns {object} 复杂度分析结果
+ */
+function analyzeTaskComplexity(taskDescription) {
+  let complexity = 0;
+  const factors = [];
+
+  // 1. 任务规模分析 (0-3分)
+  if (taskDescription.match(/(完整|整个|全部|系统|平台)/g)) {
+    complexity += 3;
+    factors.push('大规模系统开发 (+3)');
+  } else if (taskDescription.match(/(模块|功能|页面)/g)) {
+    complexity += 2;
+    factors.push('中等规模功能开发 (+2)');
+  } else {
+    complexity += 1;
+    factors.push('小型任务 (+1)');
+  }
+
+  // 2. 技术复杂度分析 (0-2分)
+  if (taskDescription.match(/(架构|设计|重构|优化|性能|安全|测试)/g)) {
+    complexity += 2;
+    factors.push('涉及架构/设计层面 (+2)');
+  } else if (taskDescription.match(/(数据库|API|集成|第三方)/g)) {
+    complexity += 1.5;
+    factors.push('涉及技术集成 (+1.5)');
+  }
+
+  // 3. 依赖关系复杂度 (0-2分)
+  if (taskDescription.match(/(电商|管理系统|多模块|微服务)/g)) {
+    complexity += 2;
+    factors.push('高度耦合的多模块系统 (+2)');
+  } else if (taskDescription.match(/(前后端|数据库|缓存)/g)) {
+    complexity += 1;
+    factors.push('涉及多层架构 (+1)');
+  }
+
+  // 4. 风险评估 (0-1.5分)
+  if (taskDescription.match(/(生产|线上|重要|紧急)/g)) {
+    complexity += 1.5;
+    factors.push('高风险/高优先级任务 (+1.5)');
+  } else if (taskDescription.match(/(新功能|实验|测试)/g)) {
+    complexity += 0.5;
+    factors.push('中等风险任务 (+0.5)');
+  }
+
+  // 5. 时间压力 (0-1分)
+  if (taskDescription.match(/(快速|紧急|deadline|尽快)/g)) {
+    complexity += 1;
+    factors.push('时间压力较大 (+1)');
+  }
+
+  // 限制最大分数为10
+  complexity = Math.min(complexity, 10);
+
+  // 确定复杂度等级
+  let level = '低';
+  if (complexity >= 7) level = '高';
+  else if (complexity >= 4) level = '中';
+
+  return {
+    score: complexity,
+    level: level,
+    factors: factors,
+    maxScore: 10
+  };
+}
+
 // 显示版本
 function showVersion() {
   log(`oh-my-claude v${VERSION}`);

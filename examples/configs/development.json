@@ -1,0 +1,41 @@
+{
+  "version": "1.0.9",
+  "debug": true,
+  "logLevel": "debug",
+  "agents": {
+    "defaultTimeout": 60000,
+    "maxConcurrentTasks": 5,
+    "enableCollaboration": true,
+    "contextCompression": false
+  },
+  "ui": {
+    "theme": "light",
+    "language": "zh-CN",
+    "showProgress": true,
+    "enableNotifications": true
+  },
+  "performance": {
+    "enableCache": false,
+    "cacheSize": 50,
+    "maxMemoryUsage": 500,
+    "enableMetrics": true
+  },
+  "network": {
+    "timeout": 60000,
+    "retries": 5,
+    "proxy": "http://localhost:7890"
+  },
+  "plugins": {
+    "autoUpdate": false,
+    "enableThirdParty": true,
+    "trustedDomains": ["github.com", "npmjs.com", "localhost"]
+  },
+  "advanced": {
+    "enableProfiling": true,
+    "enableTracing": true,
+    "customHooks": {
+      "pre-commit": "./hooks/pre-commit.sh",
+      "post-commit": "./hooks/post-commit.sh"
+    }
+  }
+}
