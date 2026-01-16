@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "CommonJS",
+    "module": "ES2020",
+    "moduleResolution": "node",
     "lib": ["ES2020"],
     "outDir": "./dist",
     "rootDir": "./",
@@ -23,12 +24,17 @@
   },
   "include": [
     "scripts/**/*",
-    "src/**/*",
+    "lib/**/*",
     "types/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "coverage"
+    "coverage",
+    "agents",
+    "commands",
+    "hooks",
+    "skills",
+    ".claude-plugin"
   ]
 }
