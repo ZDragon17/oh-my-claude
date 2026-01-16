@@ -10,6 +10,8 @@ $ErrorActionPreference = "Stop"
 $Repo = "ZDragon17/oh-my-claude"
 $PluginName = "oh-my-claude"
 $InstallDir = Join-Path $env:USERPROFILE ".claude\plugins\$PluginName"
+$CommandsDir = Join-Path $env:USERPROFILE ".claude\commands\zcf"
+$SkillsDir = Join-Path $env:USERPROFILE ".claude\skills"
 
 # 输出函数
 function Write-Info($msg) { Write-Host "ℹ️  $msg" -ForegroundColor Blue }
@@ -180,9 +182,52 @@ function Install-Plugin {
             }
 
             # Windows 不需要设置执行权限
+
+            # 安装 slash commands 到 ~/.claude/commands/zcf/
+            Write-Info "正在安装 slash commands..."
+            if (-not (Test-Path $CommandsDir)) {
+                New-Item -ItemType Directory -Path $CommandsDir -Force | Out-Null
+            }
+            $CommandsSrc = Join-Path $TmpDir "commands"
+            if (Test-Path $CommandsSrc) {
+                Get-ChildItem -Path $CommandsSrc -Filter "*.md" | ForEach-Object {
+                    Copy-Item -Path $_.FullName -Destination $CommandsDir -Force -ErrorAction Stop
+                }
+                Write-Success "Slash commands 安装完成"
+                Write-Info "Commands 位置: $CommandsDir"
+            }
+
+            # 安装 skills 到 ~/.claude/skills/
+            Write-Info "正在安装 skills..."
+            $SkillsSrc = Join-Path $TmpDir "skills"
+            if (Test-Path $SkillsSrc) {
+                Get-ChildItem -Path $SkillsSrc -Directory | ForEach-Object {
+                    $SkillName = $_.Name
+                    $SkillDestDir = Join-Path $SkillsDir $SkillName
+
+                    # 创建 skill 目录
+                    if (-not (Test-Path $SkillDestDir)) {
+                        New-Item -ItemType Directory -Path $SkillDestDir -Force | Out-Null
+                    }
+
+                    # 复制 SKILL.md (如果存在)
+                    $SkillMdSrc = Join-Path $_.FullName "SKILL.md"
+                    if (Test-Path $SkillMdSrc) {
+                        Copy-Item -Path $SkillMdSrc -Destination $SkillDestDir -Force -ErrorAction Stop
+                    }
+
+                    # 复制其他支持文件
+                    Get-ChildItem -Path $_.FullName -File | Where-Object { $_.Name -ne "skill.json" } | ForEach-Object {
+                        Copy-Item -Path $_.FullName -Destination $SkillDestDir -Force -ErrorAction SilentlyContinue
+                    }
+                }
+                Write-Success "Skills 安装完成"
+                Write-Info "Skills 位置: $SkillsDir"
+            }
+
             $InstallSuccess = $true
             Write-Success "插件文件安装完成"
-            Write-Info "安装位置: $InstallDir"
+            Write-Info "插件位置: $InstallDir"
 
         } catch {
             # 安装失败
@@ -236,13 +281,20 @@ function Show-Success {
     Write-Host "🎉 安装完成!" -ForegroundColor Green
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
     Write-Host ""
-    Write-Host "快速开始:" -ForegroundColor Cyan
-    Write-Host "  /yishan 或 /愚公  - 愚公移山模式（大规模任务）"
-    Write-Host "  /zhuge 或 /诸葛   - 诸葛顾问（架构设计）"
-    Write-Host "  /bianque 或 /扁鹊 - 扁鹊诊断（调试问题）"
+    Write-Host "快速开始（使用 /zcf: 前缀）:" -ForegroundColor Cyan
+    Write-Host "  /zcf:yishan  - 愚公移山模式（大规模任务）"
+    Write-Host "  /zcf:zhuge   - 诸葛顾问（架构设计）"
+    Write-Host "  /zcf:bianque - 扁鹊诊断（调试问题）"
+    Write-Host "  /zcf:luban   - 鲁班巧工（前端开发）"
+    Write-Host "  /zcf:wukong  - 悟空探索（代码搜索）"
     Write-Host ""
     Write-Host "查看所有 Agent:" -ForegroundColor Cyan
     Write-Host "  https://github.com/$Repo#-agent-列表"
+    Write-Host ""
+    Write-Host "安装位置:" -ForegroundColor Cyan
+    Write-Host "  Commands: $CommandsDir"
+    Write-Host "  Skills:   $SkillsDir"
+    Write-Host "  Plugin:   $InstallDir"
     Write-Host ""
 }
 

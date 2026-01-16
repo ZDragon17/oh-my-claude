@@ -18,6 +18,8 @@ NC='\033[0m' # No Color
 REPO="ZDragon17/oh-my-claude"
 PLUGIN_NAME="oh-my-claude"
 INSTALL_DIR="$HOME/.claude/plugins/$PLUGIN_NAME"
+COMMANDS_DIR="$HOME/.claude/commands/zcf"
+SKILLS_DIR="$HOME/.claude/skills"
 
 # 输出函数
 info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
@@ -156,6 +158,37 @@ install_plugin() {
         # 设置 hook 脚本执行权限（Windows 环境会忽略）
         chmod +x "$INSTALL_DIR/hooks/"*.sh 2>/dev/null || true
 
+        # 安装 slash commands 到 ~/.claude/commands/zcf/
+        info "正在安装 slash commands..."
+        mkdir -p "$COMMANDS_DIR"
+        if [ -d "$TMP_DIR/commands" ]; then
+            cp "$TMP_DIR/commands/"*.md "$COMMANDS_DIR/" 2>/dev/null || true
+            success "Slash commands 安装完成"
+            info "Commands 位置: $COMMANDS_DIR"
+        fi
+
+        # 安装 skills 到 ~/.claude/skills/
+        info "正在安装 skills..."
+        if [ -d "$TMP_DIR/skills" ]; then
+            for skill_dir in "$TMP_DIR/skills"/*/; do
+                if [ -d "$skill_dir" ]; then
+                    skill_name=$(basename "$skill_dir")
+                    skill_dest="$SKILLS_DIR/$skill_name"
+                    mkdir -p "$skill_dest"
+
+                    # 复制 SKILL.md (如果存在)
+                    if [ -f "$skill_dir/SKILL.md" ]; then
+                        cp "$skill_dir/SKILL.md" "$skill_dest/"
+                    fi
+
+                    # 复制其他支持文件（排除 skill.json）
+                    find "$skill_dir" -maxdepth 1 -type f ! -name "skill.json" -exec cp {} "$skill_dest/" \; 2>/dev/null || true
+                fi
+            done
+            success "Skills 安装完成"
+            info "Skills 位置: $SKILLS_DIR"
+        fi
+
         return 0
     }
 
@@ -204,13 +237,20 @@ show_success() {
     echo -e "${GREEN}🎉 安装完成!${NC}"
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
-    echo -e "${CYAN}快速开始:${NC}"
-    echo "  /yishan 或 /愚公  - 愚公移山模式（大规模任务）"
-    echo "  /zhuge 或 /诸葛   - 诸葛顾问（架构设计）"
-    echo "  /bianque 或 /扁鹊 - 扁鹊诊断（调试问题）"
+    echo -e "${CYAN}快速开始（使用 /zcf: 前缀）:${NC}"
+    echo "  /zcf:yishan  - 愚公移山模式（大规模任务）"
+    echo "  /zcf:zhuge   - 诸葛顾问（架构设计）"
+    echo "  /zcf:bianque - 扁鹊诊断（调试问题）"
+    echo "  /zcf:luban   - 鲁班巧工（前端开发）"
+    echo "  /zcf:wukong  - 悟空探索（代码搜索）"
     echo ""
     echo -e "${CYAN}查看所有 Agent:${NC}"
     echo "  https://github.com/$REPO#-agent-列表"
+    echo ""
+    echo -e "${CYAN}安装位置:${NC}"
+    echo "  Commands: $COMMANDS_DIR"
+    echo "  Skills:   $SKILLS_DIR"
+    echo "  Plugin:   $INSTALL_DIR"
     echo ""
 }
 
