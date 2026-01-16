@@ -240,16 +240,7 @@ function Install-Plugin {
             if ($BackupDir -and (Test-Path $BackupDir)) {
                 Remove-Item -Path $BackupDir -Recurse -Force -ErrorAction SilentlyContinue
             }
-
-            # 注册插件
-            Write-Info "正在注册插件..."
-            try {
-                claude plugins install $InstallDir 2>$null
-                Write-Success "插件注册成功"
-            } catch {
-                Write-Warn "自动注册失败，请手动运行:"
-                Write-Host "  claude plugins install $InstallDir"
-            }
+            # 注意：不再需要 claude plugins install，因为 commands 和 skills 已安装到标准目录
         } else {
             # 安装失败，回滚
             if (Test-Path $InstallDir) {

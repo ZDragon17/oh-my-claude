@@ -195,12 +195,13 @@ install_plugin() {
     # 执行安装
     if do_install; then
         success "插件文件安装完成"
-        info "安装位置: $INSTALL_DIR"
+        info "插件位置: $INSTALL_DIR"
 
         # 安装成功，删除备份
         if [ -n "$BACKUP_DIR" ] && [ -d "$BACKUP_DIR" ]; then
             rm -rf "$BACKUP_DIR"
         fi
+        # 注意：不再需要 claude plugins install，因为 commands 和 skills 已安装到标准目录
     else
         # 安装失败，回滚
         error "安装失败"
@@ -218,15 +219,6 @@ install_plugin() {
         fi
 
         exit 1
-    fi
-
-    # 注册插件
-    info "正在注册插件..."
-    if claude plugins install "$INSTALL_DIR" 2>/dev/null; then
-        success "插件注册成功"
-    else
-        warn "自动注册失败，请手动运行:"
-        echo "  claude plugins install $INSTALL_DIR"
     fi
 }
 
