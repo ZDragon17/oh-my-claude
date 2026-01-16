@@ -183,6 +183,38 @@ claude plugins install .
 
 > 💡 **命令前缀说明**: 安装后，所有命令使用 `/zcf:` 前缀，如 `/zcf:yishan`、`/zcf:zhuge` 等
 
+### 更新插件
+
+```bash
+# npm 方式更新（推荐）
+npx claude-pangu@latest update
+
+# 或重新运行一键安装脚本（会自动覆盖旧版本）
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.sh | bash
+
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.ps1 | iex
+```
+
+> ⚠️ **重要**: 更新后请**完全退出**并重新启动 Claude Code（仅关闭窗口可能不够）。macOS 使用 `Cmd+Q` 完全退出，Windows 确保从任务管理器中关闭所有进程。
+
+### 卸载插件
+
+```bash
+# npm 方式卸载
+npx claude-pangu uninstall
+
+# 或手动删除
+# macOS / Linux
+rm -rf ~/.claude/commands/zcf
+rm -rf ~/.claude/plugins/oh-my-claude
+
+# Windows (PowerShell)
+Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\commands\zcf"
+Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\oh-my-claude"
+```
+
 ## 🚀 快速开始
 
 ### 1. 愚公移山 - 大规模任务

@@ -174,10 +174,44 @@ claude plugins install .
 ### Verify Installation
 
 ```bash
-# In Claude Code, type
-/yishan hello
+# In Claude Code, type (use /zcf: prefix)
+/zcf:yishan hello
 
 # If you see YuGong mode response, installation is successful
+```
+
+> 💡 **Command Prefix**: After installation, all commands use the `/zcf:` prefix, e.g., `/zcf:yishan`, `/zcf:zhuge`
+
+### Update Plugin
+
+```bash
+# npm update (recommended)
+npx claude-pangu@latest update
+
+# Or re-run the one-line install script (will overwrite old version)
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.sh | bash
+
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.ps1 | iex
+```
+
+> ⚠️ **Important**: After updating, please **completely quit** and restart Claude Code (just closing the window may not be enough). On macOS use `Cmd+Q`, on Windows ensure all processes are closed via Task Manager.
+
+### Uninstall Plugin
+
+```bash
+# npm uninstall
+npx claude-pangu uninstall
+
+# Or manual removal
+# macOS / Linux
+rm -rf ~/.claude/commands/zcf
+rm -rf ~/.claude/plugins/oh-my-claude
+
+# Windows (PowerShell)
+Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\commands\zcf"
+Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\oh-my-claude"
 ```
 
 ## 🚀 Quick Start
@@ -185,7 +219,7 @@ claude plugins install .
 ### 1. YuGong Mode - Large-scale Tasks
 
 ```bash
-/yishan Refactor the entire user module, including:
+/zcf:yishan Refactor the entire user module, including:
 - User registration
 - User login
 - Password reset
@@ -201,7 +235,7 @@ YuGong will automatically:
 ### 2. ZhuGe Advisor - Architecture Design
 
 ```bash
-/zhuge How should we design our user system? Consider:
+/zcf:zhuge How should we design our user system? Consider:
 - Multi-tenancy support
 - Permission management
 - High availability
@@ -216,7 +250,7 @@ ZhuGe will provide:
 ### 3. BianQue Diagnosis - Bug Fixing
 
 ```bash
-/bianque TypeError: Cannot read property 'name' of undefined
+/zcf:bianque TypeError: Cannot read property 'name' of undefined
   at UserService.getProfile (user.service.ts:42)
 ```
 
@@ -229,7 +263,7 @@ BianQue will perform:
 ### 4. WuKong Scout - Code Exploration
 
 ```bash
-/wukong Find all code handling user authentication
+/zcf:wukong Find all code handling user authentication
 ```
 
 WuKong will quickly:
@@ -240,7 +274,7 @@ WuKong will quickly:
 ### 5. LuBan Craftsman - Precision Implementation
 
 ```bash
-/luban Implement a Toast component with animations
+/zcf:luban Implement a Toast component with animations
 ```
 
 LuBan will carefully:
@@ -313,31 +347,37 @@ oh-my-claude/
 
 ## 🎯 Command Reference
 
+> 💡 All commands use the `/zcf:` prefix
+
 ### Agent Commands
 
-| Command | Aliases | Function |
-|---------|---------|----------|
-| `/yugong` | `/yishan` `/persist` `/ultrawork` `/ulw` | Start YuGong mode |
-| `/zhuge` | `/longzhong` `/strategy` `/consult` | Summon ZhuGe advisor |
-| `/luban` | `/qiaogong` `/craft` `/frontend` | Summon LuBan craftsman |
-| `/wukong` | `/huoyan` `/explore` `/scout` | Summon WuKong scout |
-| `/bianque` | `/wangwen` `/debug` `/diagnose` | Summon BianQue diagnostician |
-| `/mozi` | `/security` `/audit` | Summon MoZi security expert |
-| `/sunzi` | `/performance` `/perf` | Summon SunZi performance expert |
-| `/simaqian` | `/shiji` `/document` `/doc` | Summon SimaQian historian |
-| `/zhenghe` | `/xiyang` `/api` `/integrate` | Summon ZhengHe API expert |
-| `/zhangheng` | `/didongyi` `/monitor` `/observe` | Summon ZhangHeng monitor |
-| `/libing` | `/dujiangyan` `/devops` `/cicd` | Summon LiBing DevOps |
-| `/laozi` | `/daodejing` `/simplify` `/clean` | Summon LaoZi simplicity master |
-| `/baozheng` | `/kaifeng` `/test` `/tdd` | Summon BaoZheng testing expert |
-| `/weizheng` | `/jian` `/review` `/cr` | Summon WeiZheng code reviewer |
-| `/cangjie` | `/zaozi` `/database` `/db` `/sql` | Summon CangJie database expert |
+| Command | Function |
+|---------|----------|
+| `/zcf:yugong` or `/zcf:yishan` | Start YuGong mode |
+| `/zcf:zhuge` | Summon ZhuGe advisor |
+| `/zcf:luban` | Summon LuBan craftsman |
+| `/zcf:wukong` | Summon WuKong scout |
+| `/zcf:bianque` | Summon BianQue diagnostician |
+| `/zcf:mozi` | Summon MoZi security expert |
+| `/zcf:sunzi` | Summon SunZi performance expert |
+| `/zcf:simaqian` | Summon SimaQian historian |
+| `/zcf:zhenghe` | Summon ZhengHe API expert |
+| `/zcf:zhangheng` | Summon ZhangHeng monitor |
+| `/zcf:libing` | Summon LiBing DevOps |
+| `/zcf:laozi` | Summon LaoZi simplicity master |
+| `/zcf:baozheng` | Summon BaoZheng testing expert |
+| `/zcf:weizheng` | Summon WeiZheng code reviewer |
+| `/zcf:cangjie` | Summon CangJie database expert |
+| `/zcf:libai` | Summon LiBai requirements analyst |
+| `/zcf:gukaizhi` | Summon GuKaiZhi UI/UX designer |
+| `/zcf:change` | Summon ChangE cloud architect |
 
 ### Tool Commands
 
-| Command | Aliases | Function |
-|---------|---------|----------|
-| `/progress` | `/dashboard` `/status` | 📊 Visual progress dashboard |
+| Command | Function |
+|---------|----------|
+| `/zcf:progress` | 📊 Visual progress dashboard |
+| `/zcf:team` | 🤝 Multi-agent team collaboration |
 
 ### Keyword Triggers
 
