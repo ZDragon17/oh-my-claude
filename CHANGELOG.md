@@ -18,6 +18,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.8] - 2025-01-16
+
+### Fixed / 修复
+
+- **修复 npm 安装后命令不生效的问题** - `cli.js` 的 install/update 命令未将文件安装到正确位置
+  - 问题：npm 安装方式 (`npx claude-pangu install`) 只安装到 plugins 目录，未安装到 commands 目录
+  - 原因：curl 安装脚本会安装到 `~/.claude/commands/zcf/`，但 npm 方式缺少这一步骤
+  - 修复：现在 npm 安装也会将 commands 复制到 `~/.claude/commands/zcf/`
+  - 同时安装 skills 到 `~/.claude/skills/`
+  - 安装后自动验证关键文件是否正确安装
+  - 显示更明确的重启提示（macOS 需要 Cmd+Q 完全退出）
+
+---
+
 ## [1.0.7] - 2025-01-16
 
 ### Added / 新增

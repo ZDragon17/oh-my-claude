@@ -12,7 +12,7 @@ const os = require('os');
 
 // ==================== 常量配置 ====================
 
-const VERSION = '1.0.7';
+const VERSION = '1.0.8';
 const PLUGIN_NAME = 'oh-my-claude';
 
 // 路径配置
@@ -289,6 +289,18 @@ function getPluginDir() {
   return path.join(home, '.claude', 'plugins', PLUGIN_NAME);
 }
 
+// 获取 commands 安装路径
+function getCommandsDir() {
+  const home = os.homedir();
+  return path.join(home, '.claude', 'commands', 'zcf');
+}
+
+// 获取 skills 安装路径
+function getSkillsDir() {
+  const home = os.homedir();
+  return path.join(home, '.claude', 'skills');
+}
+
 // 获取当前包的路径
 function getPackageDir() {
   return path.resolve(__dirname, '..');
@@ -399,6 +411,154 @@ function setHookPermissions(pluginDir) {
       warn(`设置权限失败: ${hookFile}`);
     }
   }
+}
+
+/**
+ * 安装 slash commands 到 ~/.claude/commands/zcf/
+ * @param {string} packageDir - 源目录
+ * @returns {Object} 安装结果
+ */
+function installCommands(packageDir) {
+  const commandsDir = getCommandsDir();
+  const commandsSrc = path.join(packageDir, 'commands');
+  const stats = { count: 0, errors: [] };
+
+  info('正在安装 slash commands...');
+
+  // 创建 commands 目录
+  if (!fs.existsSync(commandsDir)) {
+    fs.mkdirSync(commandsDir, { recursive: true });
+  }
+
+  // 复制所有 .md 文件
+  if (fs.existsSync(commandsSrc)) {
+    const mdFiles = fs.readdirSync(commandsSrc).filter(f => f.endsWith('.md'));
+    for (const file of mdFiles) {
+      try {
+        fs.copyFileSync(
+          path.join(commandsSrc, file),
+          path.join(commandsDir, file)
+        );
+        stats.count++;
+      } catch (err) {
+        stats.errors.push(`复制 ${file} 失败: ${err.message}`);
+      }
+    }
+  }
+
+  if (stats.count > 0) {
+    success(`Slash commands 安装完成 (${stats.count} 个命令)`);
+    info(`Commands 位置: ${commandsDir}`);
+  } else {
+    warn('未找到任何命令文件');
+  }
+
+  return stats;
+}
+
+/**
+ * 安装 skills 到 ~/.claude/skills/
+ * @param {string} packageDir - 源目录
+ * @returns {Object} 安装结果
+ */
+function installSkills(packageDir) {
+  const skillsDir = getSkillsDir();
+  const skillsSrc = path.join(packageDir, 'skills');
+  const stats = { count: 0, errors: [] };
+
+  info('正在安装 skills...');
+
+  if (fs.existsSync(skillsSrc)) {
+    const skillDirs = fs.readdirSync(skillsSrc, { withFileTypes: true })
+      .filter(d => d.isDirectory());
+
+    for (const skillDir of skillDirs) {
+      const skillName = skillDir.name;
+      const skillSrcDir = path.join(skillsSrc, skillName);
+      const skillDestDir = path.join(skillsDir, skillName);
+
+      try {
+        // 创建 skill 目录
+        if (!fs.existsSync(skillDestDir)) {
+          fs.mkdirSync(skillDestDir, { recursive: true });
+        }
+
+        // 复制 SKILL.md (如果存在)
+        const skillMdSrc = path.join(skillSrcDir, 'SKILL.md');
+        if (fs.existsSync(skillMdSrc)) {
+          fs.copyFileSync(skillMdSrc, path.join(skillDestDir, 'SKILL.md'));
+        }
+
+        // 复制其他支持文件（排除 skill.json）
+        const files = fs.readdirSync(skillSrcDir, { withFileTypes: true })
+          .filter(f => f.isFile() && f.name !== 'skill.json');
+
+        for (const file of files) {
+          try {
+            fs.copyFileSync(
+              path.join(skillSrcDir, file.name),
+              path.join(skillDestDir, file.name)
+            );
+          } catch {
+            // 忽略非关键文件的复制错误
+          }
+        }
+
+        stats.count++;
+      } catch (err) {
+        stats.errors.push(`安装 skill ${skillName} 失败: ${err.message}`);
+      }
+    }
+  }
+
+  if (stats.count > 0) {
+    success(`Skills 安装完成 (${stats.count} 个 skill)`);
+    info(`Skills 位置: ${skillsDir}`);
+  }
+
+  return stats;
+}
+
+/**
+ * 验证安装结果
+ * @returns {Object} 验证结果
+ */
+function verifyInstallation() {
+  info('验证安装...');
+  const commandsDir = getCommandsDir();
+  const result = { success: true, errors: [] };
+
+  // 检查关键命令文件
+  const yishanPath = path.join(commandsDir, 'yishan.md');
+  if (fs.existsSync(yishanPath)) {
+    success('✓ yishan.md 已安装');
+  } else {
+    warn('✗ yishan.md 未找到');
+    result.errors.push('yishan.md 未找到');
+    result.success = false;
+  }
+
+  // 检查命令数量
+  if (fs.existsSync(commandsDir)) {
+    const cmdFiles = fs.readdirSync(commandsDir).filter(f => f.endsWith('.md'));
+    if (cmdFiles.length > 0) {
+      success(`✓ 已安装 ${cmdFiles.length} 个命令`);
+    } else {
+      warn('✗ 未检测到任何命令文件');
+      result.errors.push('未检测到命令文件');
+      result.success = false;
+    }
+  } else {
+    warn('✗ commands 目录不存在');
+    result.errors.push('commands 目录不存在');
+    result.success = false;
+  }
+
+  if (!result.success) {
+    warn('安装可能不完整，请检查上述警告');
+  }
+
+  return result;
 }
 
 /**
@@ -631,14 +791,37 @@ function install() {
     process.exit(1);
   }
 
-  // 注册插件
-  registerPlugin(pluginDir);
+  // 安装 commands 到 ~/.claude/commands/zcf/
+  installCommands(packageDir);
 
+  // 安装 skills 到 ~/.claude/skills/
+  installSkills(packageDir);
+
+  // 验证安装
+  verifyInstallation();
+
+  // 显示完成信息
   log('\n🎉 安装完成!', 'green');
-  log('━'.repeat(DIVIDER_LENGTH), 'cyan');
-  info('使用 /yishan 或 /愚公 开始愚公移山模式');
-  info('使用 /zhuge 或 /诸葛 召唤诸葛顾问');
-  info('查看所有命令: 阅读 README.md\n');
+  log('━'.repeat(DIVIDER_LENGTH), 'green');
+  log('');
+  warn('⚠️  重要：请完全退出并重新启动 Claude Code 以加载新命令');
+  warn('   (仅关闭窗口可能不够，需要完全退出应用)');
+  if (os.platform() === 'darwin') {
+    warn('   macOS: 使用 Cmd+Q 完全退出应用');
+  }
+  log('');
+  log('快速开始（使用 /zcf: 前缀）:', 'cyan');
+  info('  /zcf:yishan  - 愚公移山模式（大规模任务）');
+  info('  /zcf:zhuge   - 诸葛顾问（架构设计）');
+  info('  /zcf:bianque - 扁鹊诊断（调试问题）');
+  info('  /zcf:luban   - 鲁班巧工（前端开发）');
+  info('  /zcf:wukong  - 悟空探索（代码搜索）');
+  log('');
+  log('安装位置:', 'cyan');
+  info(`  Commands: ${getCommandsDir()}`);
+  info(`  Skills:   ${getSkillsDir()}`);
+  info(`  Plugin:   ${pluginDir}`);
+  log('');
 }
 
 // 执行卸载操作
@@ -763,6 +946,24 @@ function update() {
     process.exit(1);
   }
 
+  // 更新 commands 到 ~/.claude/commands/zcf/
+  installCommands(packageDir);
+
+  // 更新 skills 到 ~/.claude/skills/
+  installSkills(packageDir);
+
+  // 验证安装
+  verifyInstallation();
+
+  // 显示完成信息
+  log('\n🎉 更新完成!', 'green');
+  log('━'.repeat(DIVIDER_LENGTH), 'green');
+  log('');
+  warn('⚠️  重要：请完全退出并重新启动 Claude Code 以加载新命令');
+  warn('   (仅关闭窗口可能不够，需要完全退出应用)');
+  if (os.platform() === 'darwin') {
+    warn('   macOS: 使用 Cmd+Q 完全退出应用');
+  }
   log('');
 }
 
