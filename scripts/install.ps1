@@ -265,6 +265,35 @@ function Install-Plugin {
     }
 }
 
+# 验证安装
+function Test-Installation {
+    Write-Info "验证安装..."
+    $errors = 0
+
+    # 检查关键命令文件
+    $yishanPath = Join-Path $CommandsDir "yishan.md"
+    if (Test-Path $yishanPath) {
+        Write-Success "✓ yishan.md 已安装"
+    } else {
+        Write-Warn "✗ yishan.md 未找到"
+        $errors++
+    }
+
+    # 检查命令数量
+    $cmdFiles = Get-ChildItem -Path $CommandsDir -Filter "*.md" -ErrorAction SilentlyContinue
+    $cmdCount = ($cmdFiles | Measure-Object).Count
+    if ($cmdCount -gt 0) {
+        Write-Success "✓ 已安装 $cmdCount 个命令"
+    } else {
+        Write-Warn "✗ 未检测到任何命令文件"
+        $errors++
+    }
+
+    if ($errors -gt 0) {
+        Write-Warn "安装可能不完整，请检查上述警告"
+    }
+}
+
 # 显示完成信息
 function Show-Success {
     Write-Host ""
@@ -272,7 +301,8 @@ function Show-Success {
     Write-Host "🎉 安装完成!" -ForegroundColor Green
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
     Write-Host ""
-    Write-Host "⚠️  重要：请重启 Claude Code 以加载新命令" -ForegroundColor Yellow
+    Write-Host "⚠️  重要：请完全退出并重新启动 Claude Code 以加载新命令" -ForegroundColor Yellow
+    Write-Host "   (仅关闭窗口可能不够，需要完全退出应用)" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "快速开始（使用 /zcf: 前缀）:" -ForegroundColor Cyan
     Write-Host "  /zcf:yishan  - 愚公移山模式（大规模任务）"
@@ -295,4 +325,5 @@ function Show-Success {
 Show-Banner
 Test-Dependencies
 Install-Plugin
+Test-Installation
 Show-Success

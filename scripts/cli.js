@@ -12,7 +12,7 @@ const os = require('os');
 
 // ==================== 常量配置 ====================
 
-const VERSION = '1.0.6';
+const VERSION = '1.0.7';
 const PLUGIN_NAME = 'oh-my-claude';
 
 // 路径配置

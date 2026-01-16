@@ -222,6 +222,33 @@ install_plugin() {
     fi
 }
 
+# 验证安装
+verify_installation() {
+    info "验证安装..."
+    local errors=0
+
+    # 检查关键命令文件
+    if [ -f "$COMMANDS_DIR/yishan.md" ]; then
+        success "✓ yishan.md 已安装"
+    else
+        warn "✗ yishan.md 未找到"
+        errors=$((errors + 1))
+    fi
+
+    # 检查命令数量
+    local cmd_count=$(ls -1 "$COMMANDS_DIR"/*.md 2>/dev/null | wc -l)
+    if [ "$cmd_count" -gt 0 ]; then
+        success "✓ 已安装 $cmd_count 个命令"
+    else
+        warn "✗ 未检测到任何命令文件"
+        errors=$((errors + 1))
+    fi
+
+    if [ $errors -gt 0 ]; then
+        warn "安装可能不完整，请检查上述警告"
+    fi
+}
+
 # 显示完成信息
 show_success() {
     echo ""
@@ -229,7 +256,8 @@ show_success() {
     echo -e "${GREEN}🎉 安装完成!${NC}"
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
-    echo -e "${YELLOW}⚠️  重要：请重启 Claude Code 以加载新命令${NC}"
+    echo -e "${YELLOW}⚠️  重要：请完全退出并重新启动 Claude Code 以加载新命令${NC}"
+    echo -e "${YELLOW}   (仅关闭窗口可能不够，需要完全退出应用)${NC}"
     echo ""
     echo -e "${CYAN}快速开始（使用 /zcf: 前缀）:${NC}"
     echo "  /zcf:yishan  - 愚公移山模式（大规模任务）"
@@ -253,6 +281,7 @@ main() {
     show_banner
     check_dependencies
     install_plugin
+    verify_installation
     show_success
 }
 
