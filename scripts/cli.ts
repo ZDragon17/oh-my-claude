@@ -15,125 +15,20 @@ import { z } from 'zod';
 import AgentStateManagerImpl from '../lib/agent-state-manager.js';
 import { configManager, OhMyClaudeConfig } from '../lib/config-manager.js';
 import { colors, log, success, error, info, warn } from './logger.js';
+import type {
+  PluginConfig,
+  TaskSnapshot,
+  AgentCollaboration,
+  CompressedContext,
+  ContextSnapshots,
+  PluginState,
+  TaskRecoveryPlan,
+  ComplexityAnalysis
+} from '../types/index.js';
 
 // ESM __filename 和 __dirname 等价物
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// ==================== 类型定义 ====================
-
-interface PluginConfig {
-  version: string;
-  name?: string;
-  description?: string;
-}
-
-interface TaskSnapshot {
-  id: string;
-  taskId?: string;
-  timestamp: string;
-  type: string;
-  status: string;
-  progress: number;
-  agents: string[];
-  context: Record<string, any>;
-  checkpoint?: any;
-}
-
-interface AgentCollaboration {
-  id: string;
-  timestamp: string;
-  agents: Array<{
-    name: string;
-    status: string;
-  }>;
-  task: {
-    description: string;
-    status: string;
-  };
-  status: string;
-  messages: string[];
-  context: Record<string, any>;
-}
-
-interface CompressedContext {
-  id: string;
-  timestamp: string;
-  summary: string;
-  keyPoints: string[];
-  references: Record<string, any>;
-  size: number;
-}
-
-interface ContextSnapshots {
-  compressedContexts: Record<string, CompressedContext>;
-  keyReferences: Record<string, any>;
-  contextSnapshots: any[];
-}
-
-interface PluginState {
-  version: string;
-  installed: boolean;
-  installTime: string | null;
-  lastUpdate: string;
-  agents: Array<{
-    name: string;
-    file: string;
-    checksum?: string;
-  }>;
-  commands: Array<{
-    name: string;
-    file: string;
-    checksum?: string;
-  }>;
-  hooks: Array<{
-    file: string;
-    checksum?: string;
-  }>;
-  skills: Array<{
-    name: string;
-    checksum?: string;
-  }>;
-  checksums: Record<string, string>;
-  tasks: {
-    activeTasks: TaskSnapshot[];
-    completedTasks: TaskSnapshot[];
-    failedTasks: TaskSnapshot[];
-    taskHistory: TaskSnapshot[];
-  };
-  agentCollaboration: {
-    activeSessions: AgentCollaboration[];
-    agentStates: Record<string, any>;
-    collaborationHistory: AgentCollaboration[];
-  };
-  context: ContextSnapshots;
-  performance: {
-    taskCompletionRate: number;
-    averageTaskDuration: number;
-    agentUtilization: Record<string, number>;
-    errorRates: Record<string, number>;
-  };
-}
-
-interface TaskRecoveryPlan {
-  canRecover: boolean;
-  reason: string;
-  recoveryPlan?: {
-    checkpointId: string;
-    lastProgress: number;
-    currentStep: number;
-    nextAction: string;
-    contextSnapshot: any;
-    recoverySteps: string[];
-  };
-}
-
-interface ComplexityAnalysis {
-  score: number;
-  level: string;
-  factors: string[];
-  maxScore: number;
-}
 
 // ==================== Zod 模式验证 ====================
 
@@ -249,7 +144,7 @@ interface VerificationResult {
 
 // ==================== 常量配置 ====================
 
-const VERSION = '1.0.9';
+const VERSION = '1.0.17';
 const PLUGIN_NAME = 'oh-my-claude';
 
 // 路径配置

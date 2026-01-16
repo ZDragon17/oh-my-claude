@@ -65,7 +65,7 @@ export interface OhMyClaudeConfig {
 // ==================== Zod 验证模式 ====================
 
 const OhMyClaudeConfigSchema = z.object({
-  version: z.string().default('1.0.9'),
+  version: z.string().default('1.0.17'),
   debug: z.boolean().default(false),
   logLevel: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
 
@@ -112,7 +112,7 @@ const OhMyClaudeConfigSchema = z.object({
 // ==================== 默认配置 ====================
 
 const DEFAULT_CONFIG: OhMyClaudeConfig = {
-  version: '1.0.9',
+  version: '1.0.17',
   debug: false,
   logLevel: 'info',
 

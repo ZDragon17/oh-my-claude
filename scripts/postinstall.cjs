@@ -5,8 +5,15 @@
  * 在 npm install 后显示安装提示
  */
 
-// 使用共享日志模块
-const { colors } = require('./logger');
+// ANSI 颜色代码 (CJS 模块不能导入 ESM logger)
+const colors = {
+  reset: '\x1b[0m',
+  cyan: '\x1b[36m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  red: '\x1b[31m',
+  dim: '\x1b[2m'
+};
 
 console.log(`
 ${colors.cyan}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}

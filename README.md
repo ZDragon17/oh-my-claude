@@ -1,5 +1,6 @@
 # oh-my-claude 🏔️
 
+[![npm version](https://img.shields.io/npm/v/claude-pangu.svg)](https://www.npmjs.com/package/claude-pangu)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude-Code-blueviolet)](https://claude.ai)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)

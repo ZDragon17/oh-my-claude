@@ -18,6 +18,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.17] - 2025-01-16
+
+### 🔧 Fixed / 修复
+
+#### 版本一致性修复 / Version Consistency Fix
+- **统一所有位置的版本号** - 修复 package.json、plugin.json、config-manager.ts、cli.ts 中版本号不一致的问题
+- **移除重复的 zod 依赖** - zod 从 devDependencies 中移除，仅保留在 dependencies 中
+
+#### 跨平台兼容性 / Cross-Platform Compatibility
+- **修复 Windows 上 clean 脚本不兼容问题** - 使用 rimraf 替代 rm -rf，确保跨平台兼容
+- **添加 rimraf 作为开发依赖** - 提供跨平台的目录删除功能
+
+#### 代码质量改进 / Code Quality Improvements
+- **消除类型重复定义** - cli.ts 现在从 types/index.ts 导入类型，避免重复定义
+- **替换过时的 substr 方法** - 将所有 `.substr(2, 9)` 替换为 `.substring(2, 11)`，遵循现代 JavaScript 标准
+- **修复 postinstall.cjs** - CJS 模块不再尝试导入 ESM logger，改为内联颜色定义
+- **更新测试文件版本号** - 测试用例中的版本号与实际版本保持同步
+
+### 📦 Dependencies / 依赖变更
+
+#### Added / 新增
+- `rimraf@^5.0.5` (devDependency) - 跨平台目录删除工具
+
+#### Removed / 移除
+- `zod` from devDependencies (保留在 dependencies 中)
+
+---
+
 ## [1.0.10] - 2025-01-16
 
 ### ✨ Added / 新增

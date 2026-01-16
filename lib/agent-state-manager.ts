@@ -159,7 +159,7 @@ export class AgentStateManagerImpl implements AgentStateManager {
   // ==================== 协作会话管理 ====================
 
   createSession(taskId: string, description: string, agentIds: string[]): CollaborationSession {
-    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
     // 验证所有 agents 都已注册
     const agents: AgentState[] = [];
@@ -248,7 +248,7 @@ export class AgentStateManagerImpl implements AgentStateManager {
     }
 
     const message = {
-      id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
       timestamp: new Date().toISOString(),
       agentId,
       type: type as 'request' | 'response' | 'notification' | 'error',
@@ -306,7 +306,7 @@ export class AgentStateManagerImpl implements AgentStateManager {
     compressedSize = Buffer.byteLength(compressedStr, 'utf8');
 
     const compression: ContextCompression = {
-      id: `ctx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `ctx_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
       originalSize,
       compressedSize,
       compressionRatio: originalSize / compressedSize,
@@ -394,7 +394,7 @@ export class AgentStateManagerImpl implements AgentStateManager {
       throw new Error(`Session ${sessionId} not found`);
     }
 
-    const checkpointId = `checkpoint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const checkpointId = `checkpoint_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     const checkpoint = {
       id: checkpointId,
       timestamp: new Date().toISOString(),
