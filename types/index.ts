@@ -30,13 +30,24 @@ export interface MessageRecord {
 }
 
 /**
+ * 检查点状态类型 - 支持复杂的会话状态
+ */
+export interface CheckpointState {
+  messages?: MessageRecord[];
+  context?: ContextRecord;
+  metrics?: Record<string, unknown>;
+  agentStates?: Array<Record<string, unknown>>;
+  [key: string]: unknown;
+}
+
+/**
  * 检查点数据类型
  */
 export interface CheckpointData {
   id: string;
   timestamp: string;
   description: string;
-  state: ContextRecord;
+  state: CheckpointState;
 }
 
 export interface PluginConfig {
@@ -238,7 +249,7 @@ export interface AgentStateManager {
 
   // 检查点管理
   createCheckpoint(sessionId: string, description: string): string;
-  restoreFromCheckpoint(sessionId: string, checkpointId: string): ContextRecord;
+  restoreFromCheckpoint(sessionId: string, checkpointId: string): CheckpointState;
 
   // 性能监控
   recordPerformance(agentId: string, taskId: string, duration: number, success: boolean): void;

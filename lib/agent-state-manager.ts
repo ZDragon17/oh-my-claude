@@ -14,7 +14,8 @@ import {
   CollaborationSession,
   ContextCompression,
   AgentStateManager,
-  CompressedContext
+  CompressedContext,
+  CheckpointState
 } from '../types';
 
 // ==================== 状态管理配置 ====================
@@ -411,7 +412,7 @@ export class AgentStateManagerImpl implements AgentStateManager {
     return checkpointId;
   }
 
-  restoreFromCheckpoint(sessionId: string, checkpointId: string): Record<string, any> {
+  restoreFromCheckpoint(sessionId: string, checkpointId: string): CheckpointState {
     const session = this.activeSessions.get(sessionId);
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);

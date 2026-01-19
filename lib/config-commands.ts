@@ -116,7 +116,7 @@ export function setConfigValue(key: string, valueStr: string): void {
       const topKey = keys[0];
       const currentValue = configManager.get(topKey as keyof OhMyClaudeConfig);
       const updatedValue = setNestedValue(currentValue, keys.slice(1), value);
-      configManager.set(topKey as keyof OhMyClaudeConfig, updatedValue);
+      configManager.set(topKey as keyof OhMyClaudeConfig, updatedValue as OhMyClaudeConfig[keyof OhMyClaudeConfig]);
     }
 
     console.log(`配置已更新: ${key} = ${JSON.stringify(value)}`);
