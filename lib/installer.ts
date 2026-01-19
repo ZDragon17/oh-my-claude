@@ -6,12 +6,17 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
 import { VERSION, PLUGIN_NAME, PLUGIN_DIR } from './constants.js';
 import { copyPluginFiles, setHookPermissions } from './file-operations.js';
 import { executeWithRollback } from './lock-manager.js';
 import { installCommands, installSkills, registerCoreAgents, getCommandsDir, getSkillsDir } from './plugin-installer.js';
 import { success, info, warn, error, log } from '../scripts/logger.js';
 import { printCommandTitle, printInstallComplete, printUpdateComplete } from './ui/messages.js';
+
+// ESM 环境下获取 __dirname 和 __filename
+const __filename_esm = fileURLToPath(import.meta.url);
+const __dirname_esm = path.dirname(__filename_esm);
 
 // 重新导出供 cli.ts 使用
 export { getCommandsDir, getSkillsDir };
@@ -45,17 +50,18 @@ export function getPackageDir(): string {
     }
   };
 
-  // 方法 1: 使用 __dirname (CommonJS / Jest / npx 环境)
-  if (typeof __dirname !== 'undefined' && __dirname) {
+  // 方法 1: 使用 ESM 的 import.meta.url (主要方法)
+  // __dirname_esm 在模块顶部通过 fileURLToPath(import.meta.url) 获取
+  if (__dirname_esm) {
     // 可能的目录结构:
     // - lib/installer.ts -> 根目录 (开发环境, ts-node)
     // - dist/lib/installer.js -> 根目录 (编译后)
     // - node_modules/.pnpm/claude-pangu@x.x.x/node_modules/claude-pangu/dist/lib/installer.js
     // - AppData/Local/npm-cache/_npx/.../node_modules/claude-pangu/dist/lib/installer.js
     const candidatePaths = [
-      path.resolve(__dirname, '..'),           // lib/ -> 根目录
-      path.resolve(__dirname, '..', '..'),     // dist/lib/ -> 根目录
-      path.resolve(__dirname, '..', '..', '..'), // 深层嵌套情况
+      path.resolve(__dirname_esm, '..'),           // lib/ -> 根目录
+      path.resolve(__dirname_esm, '..', '..'),     // dist/lib/ -> 根目录
+      path.resolve(__dirname_esm, '..', '..', '..'), // 深层嵌套情况
     ];
     
     for (const candidate of candidatePaths) {
@@ -63,12 +69,9 @@ export function getPackageDir(): string {
         return candidate;
       }
     }
-  }
-  
-  // 方法 2: 使用 __filename 向上遍历查找 (更可靠的 npx 支持)
-  if (typeof __filename !== 'undefined' && __filename) {
-    let currentDir = path.dirname(__filename);
-    // 最多向上查找 10 层
+    
+    // 向上遍历查找
+    let currentDir = __dirname_esm;
     for (let i = 0; i < 10; i++) {
       if (isValidPackageDir(currentDir)) {
         return currentDir;
@@ -76,6 +79,20 @@ export function getPackageDir(): string {
       const parentDir = path.dirname(currentDir);
       if (parentDir === currentDir) break; // 到达根目录
       currentDir = parentDir;
+    }
+  }
+  
+  // 方法 2: 使用 CommonJS __dirname (Jest 测试环境)
+  if (typeof __dirname !== 'undefined' && __dirname) {
+    const candidatePaths = [
+      path.resolve(__dirname, '..'),
+      path.resolve(__dirname, '..', '..'),
+    ];
+    
+    for (const candidate of candidatePaths) {
+      if (isValidPackageDir(candidate)) {
+        return candidate;
+      }
     }
   }
   

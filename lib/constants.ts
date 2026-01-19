@@ -6,6 +6,11 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
+import { fileURLToPath } from 'url';
+
+// ESM 环境下获取 __dirname
+const __filename_esm = fileURLToPath(import.meta.url);
+const __dirname_esm = path.dirname(__filename_esm);
 
 // ==================== 版本和名称 ====================
 
@@ -30,29 +35,40 @@ function getPackageVersion(): string {
   };
 
   try {
-    // 方法 1: 使用 __dirname 向上查找 (CommonJS / Jest / npx 环境)
-    if (typeof __dirname !== 'undefined' && __dirname) {
+    // 方法 1: 使用 ESM 的 import.meta.url (主要方法)
+    if (__dirname_esm) {
       const candidatePaths = [
-        path.resolve(__dirname, '..'),           // lib/ -> 根目录
-        path.resolve(__dirname, '..', '..'),     // dist/lib/ -> 根目录
-        path.resolve(__dirname, '..', '..', '..'), // 深层嵌套
+        path.resolve(__dirname_esm, '..'),           // lib/ -> 根目录
+        path.resolve(__dirname_esm, '..', '..'),     // dist/lib/ -> 根目录
+        path.resolve(__dirname_esm, '..', '..', '..'), // 深层嵌套
       ];
       
       for (const candidate of candidatePaths) {
         const version = findPackageJson(candidate);
         if (version) return version;
       }
-    }
-    
-    // 方法 2: 使用 __filename 向上遍历查找 (更可靠的 npx 支持)
-    if (typeof __filename !== 'undefined' && __filename) {
-      let currentDir = path.dirname(__filename);
+      
+      // 向上遍历查找
+      let currentDir = __dirname_esm;
       for (let i = 0; i < 10; i++) {
         const version = findPackageJson(currentDir);
         if (version) return version;
         const parentDir = path.dirname(currentDir);
         if (parentDir === currentDir) break;
         currentDir = parentDir;
+      }
+    }
+    
+    // 方法 2: 使用 CommonJS __dirname (Jest 测试环境)
+    if (typeof __dirname !== 'undefined' && __dirname) {
+      const candidatePaths = [
+        path.resolve(__dirname, '..'),
+        path.resolve(__dirname, '..', '..'),
+      ];
+      
+      for (const candidate of candidatePaths) {
+        const version = findPackageJson(candidate);
+        if (version) return version;
       }
     }
     

@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.3] - 2025-01-19
+
+### 🔧 Fixed / 修复
+
+- **真正修复 npx 更新失败问题** - ESM 模块环境下 `__dirname` 未定义的问题
+  - 使用 `import.meta.url` + `fileURLToPath` 获取当前模块路径
+  - 同时兼容 ESM 和 CommonJS (Jest 测试) 环境
+
+---
+
 ## [1.2.2] - 2025-01-19
 
 ### 🔧 Fixed / 修复
