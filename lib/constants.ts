@@ -6,11 +6,30 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { fileURLToPath } from 'url';
 
-// ESM 环境下获取 __dirname
-const __filename_esm = fileURLToPath(import.meta.url);
-const __dirname_esm = path.dirname(__filename_esm);
+/**
+ * 获取当前模块所在目录
+ * 兼容 ESM 和 CommonJS 环境
+ */
+function getCurrentDir(): string {
+  // CommonJS 环境 (Jest, Node CJS)
+  if (typeof __dirname !== 'undefined') {
+    return __dirname;
+  }
+  
+  // ESM 环境 - 动态导入 url 模块
+  try {
+    // 使用 eval 避免 TypeScript 在 CommonJS 模式下报错
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+    const getMetaUrl = new Function('return import.meta.url');
+    const metaUrl = getMetaUrl() as string;
+    const { fileURLToPath } = require('url') as { fileURLToPath: (url: string) => string };
+    return path.dirname(fileURLToPath(metaUrl));
+  } catch {
+    // 后备：返回 process.cwd()
+    return process.cwd();
+  }
+}
 
 // ==================== 版本和名称 ====================
 
@@ -35,44 +54,31 @@ function getPackageVersion(): string {
   };
 
   try {
-    // 方法 1: 使用 ESM 的 import.meta.url (主要方法)
-    if (__dirname_esm) {
-      const candidatePaths = [
-        path.resolve(__dirname_esm, '..'),           // lib/ -> 根目录
-        path.resolve(__dirname_esm, '..', '..'),     // dist/lib/ -> 根目录
-        path.resolve(__dirname_esm, '..', '..', '..'), // 深层嵌套
-      ];
-      
-      for (const candidate of candidatePaths) {
-        const version = findPackageJson(candidate);
-        if (version) return version;
-      }
-      
-      // 向上遍历查找
-      let currentDir = __dirname_esm;
-      for (let i = 0; i < 10; i++) {
-        const version = findPackageJson(currentDir);
-        if (version) return version;
-        const parentDir = path.dirname(currentDir);
-        if (parentDir === currentDir) break;
-        currentDir = parentDir;
-      }
+    const currentDir = getCurrentDir();
+    
+    // 方法 1: 从当前模块目录向上查找
+    const candidatePaths = [
+      path.resolve(currentDir, '..'),           // lib/ -> 根目录
+      path.resolve(currentDir, '..', '..'),     // dist/lib/ -> 根目录
+      path.resolve(currentDir, '..', '..', '..'), // 深层嵌套
+    ];
+    
+    for (const candidate of candidatePaths) {
+      const version = findPackageJson(candidate);
+      if (version) return version;
     }
     
-    // 方法 2: 使用 CommonJS __dirname (Jest 测试环境)
-    if (typeof __dirname !== 'undefined' && __dirname) {
-      const candidatePaths = [
-        path.resolve(__dirname, '..'),
-        path.resolve(__dirname, '..', '..'),
-      ];
-      
-      for (const candidate of candidatePaths) {
-        const version = findPackageJson(candidate);
-        if (version) return version;
-      }
+    // 向上遍历查找
+    let searchDir = currentDir;
+    for (let i = 0; i < 10; i++) {
+      const version = findPackageJson(searchDir);
+      if (version) return version;
+      const parentDir = path.dirname(searchDir);
+      if (parentDir === searchDir) break;
+      searchDir = parentDir;
     }
     
-    // 方法 3: 从 process.cwd() 查找（开发环境）
+    // 方法 2: 从 process.cwd() 查找（开发环境）
     const cwdVersion = findPackageJson(process.cwd());
     if (cwdVersion) return cwdVersion;
     
