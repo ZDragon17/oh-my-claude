@@ -4,10 +4,11 @@
  */
 
 import * as fs from 'fs';
+import * as path from 'path';
 import { execSync } from 'child_process';
 import { z } from 'zod';
 import { LOCK_TIMEOUT_MS, LOCK_STALE_MS, LOCK_RETRY_INTERVAL_MS } from './constants.js';
-import { warn, info, error } from '../scripts/logger.js';
+import { warn, info, error, success } from '../scripts/logger.js';
 
 // ==================== Zod 验证 Schema ====================
 
@@ -47,8 +48,9 @@ export function acquireLock(lockFile: string, timeout: number = LOCK_TIMEOUT_MS)
       // 尝试以排他模式创建锁文件
       fs.writeFileSync(validatedLockFile, JSON.stringify(lockContent), { flag: 'wx' });
       return true;
-    } catch (err) {
-      if (err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'EEXIST') {
+    } catch (err: unknown) {
+      const nodeErr = err as NodeJS.ErrnoException;
+      if (nodeErr.code === 'EEXIST') {
         // 锁文件已存在，检查是否过期
         try {
           const lockData = fs.readFileSync(validatedLockFile, 'utf8');
@@ -181,7 +183,7 @@ export function executeWithRollback(
     }
 
     // 步骤2: 创建目录结构
-    const parentDir = require('path').dirname(pluginDir);
+    const parentDir = path.dirname(pluginDir);
     if (!fs.existsSync(parentDir)) {
       fs.mkdirSync(parentDir, { recursive: true });
     }
@@ -211,7 +213,6 @@ export function executeWithRollback(
     if (fs.existsSync(backupDir)) {
       info('正在恢复之前的安装...');
       fs.renameSync(backupDir, pluginDir);
-      const { success } = require('../scripts/logger.js');
       success('已恢复之前的安装');
     }
 

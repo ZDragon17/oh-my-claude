@@ -86,9 +86,11 @@ describe('Agent 状态管理器', () => {
 
       const messages = manager.getSessionMessages(sessionId);
       expect(messages).toHaveLength(1);
-      expect(messages[0].agentId).toBe('agent1');
-      expect(messages[0].content).toBe('开始任务');
-      expect(messages[0].type).toBe('request');
+      const firstMessage = messages[0];
+      expect(firstMessage).toBeDefined();
+      expect(firstMessage!.agentId).toBe('agent1');
+      expect(firstMessage!.content).toBe('开始任务');
+      expect(firstMessage!.type).toBe('request');
     });
 
     test('应该能够结束会话', () => {

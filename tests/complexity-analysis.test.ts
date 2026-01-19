@@ -2,7 +2,7 @@
  * 复杂度分析函数单元测试
  */
 
-import { analyzeTaskComplexity } from '../scripts/cli';
+import { analyzeTaskComplexity } from '../lib/complexity-analyzer';
 
 describe('复杂度分析功能', () => {
   test('应该正确分析简单任务的复杂度', () => {

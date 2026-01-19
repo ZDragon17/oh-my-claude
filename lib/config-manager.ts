@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { z } from 'zod';
+import { VERSION } from './constants.js';
 
 // ==================== 配置类型定义 ====================
 
@@ -65,7 +66,7 @@ export interface OhMyClaudeConfig {
 // ==================== Zod 验证模式 ====================
 
 const OhMyClaudeConfigSchema = z.object({
-  version: z.string().default('1.0.19'),
+  version: z.string().default(VERSION),
   debug: z.boolean().default(false),
   logLevel: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
 
@@ -112,7 +113,7 @@ const OhMyClaudeConfigSchema = z.object({
 // ==================== 默认配置 ====================
 
 const DEFAULT_CONFIG: OhMyClaudeConfig = {
-  version: '1.0.19',
+  version: VERSION,
   debug: false,
   logLevel: 'info',
 
@@ -230,7 +231,11 @@ export class ConfigManager {
       config.debug = process.env.OH_MY_CLAUDE_DEBUG === 'true';
     }
     if (process.env.OH_MY_CLAUDE_LOG_LEVEL) {
-      config.logLevel = process.env.OH_MY_CLAUDE_LOG_LEVEL as any;
+      const validLevels = ['error', 'warn', 'info', 'debug'] as const;
+      const envLevel = process.env.OH_MY_CLAUDE_LOG_LEVEL;
+      if (validLevels.includes(envLevel as typeof validLevels[number])) {
+        config.logLevel = envLevel as typeof validLevels[number];
+      }
     }
 
     // Agent 配置
@@ -243,7 +248,11 @@ export class ConfigManager {
 
     // UI 配置
     if (process.env.OH_MY_CLAUDE_THEME) {
-      config.ui.theme = process.env.OH_MY_CLAUDE_THEME as any;
+      const validThemes = ['light', 'dark', 'auto'] as const;
+      const envTheme = process.env.OH_MY_CLAUDE_THEME;
+      if (validThemes.includes(envTheme as typeof validThemes[number])) {
+        config.ui.theme = envTheme as typeof validThemes[number];
+      }
     }
     if (process.env.OH_MY_CLAUDE_LANGUAGE) {
       config.ui.language = process.env.OH_MY_CLAUDE_LANGUAGE;
@@ -262,19 +271,23 @@ export class ConfigManager {
 
   /**
    * 深度合并对象
+   * @typeParam T - 配置对象类型
    */
-  private deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
+  private deepMerge<T>(target: T, source: Partial<T>): T {
     const result = { ...target };
 
     for (const key in source) {
       if (Object.prototype.hasOwnProperty.call(source, key)) {
         const sourceValue = source[key];
-        const targetValue = result[key];
+        const targetValue = (result as Record<string, unknown>)[key];
 
-        if (this.isObject(sourceValue) && this.isObject(targetValue)) {
-          result[key] = this.deepMerge(targetValue, sourceValue as any);
+        if (this.isPlainObject(sourceValue) && this.isPlainObject(targetValue)) {
+          (result as Record<string, unknown>)[key] = this.deepMerge(
+            targetValue,
+            sourceValue as Partial<typeof targetValue>
+          );
         } else if (sourceValue !== undefined) {
-          (result as any)[key] = sourceValue;
+          (result as Record<string, unknown>)[key] = sourceValue;
         }
       }
     }
@@ -283,9 +296,9 @@ export class ConfigManager {
   }
 
   /**
-   * 检查是否为对象
+   * 检查是否为普通对象（非数组、非 null）
    */
-  private isObject(value: any): value is Record<string, any> {
+  private isPlainObject(value: unknown): value is Record<string, unknown> {
     return value !== null && typeof value === 'object' && !Array.isArray(value);
   }
 
@@ -339,7 +352,10 @@ export class ConfigManager {
    * 使用同步方式保存，因为配置文件较小且操作不频繁
    */
   saveConfig(filePath?: string, config?: Partial<OhMyClaudeConfig>): void {
-    const targetFile = filePath || this.configFiles[1]; // 默认保存到用户配置
+    const targetFile = filePath ?? this.configFiles[1]; // 默认保存到用户配置
+    if (!targetFile) {
+      throw new Error('无法确定配置文件路径');
+    }
     const configToSave = config ? this.deepMerge(this.config, config) : this.config;
 
     // 确保目录存在
@@ -359,19 +375,26 @@ export class ConfigManager {
    * 移除默认值，只保存自定义配置
    */
   private removeDefaults(config: OhMyClaudeConfig): Partial<OhMyClaudeConfig> {
-    const result: any = {};
+    const result: Record<string, unknown> = {};
 
-    const compareObjects = (current: any, default_: any, path: string[] = []): void => {
+    const compareObjects = (
+      current: Record<string, unknown>,
+      default_: Record<string, unknown>,
+      _path: string[] = []
+    ): void => {
       for (const key in current) {
-        const currentPath = [...path, key];
         const currentValue = current[key];
         const defaultValue = default_[key];
 
         if (JSON.stringify(currentValue) !== JSON.stringify(defaultValue)) {
           // 值不同，保留
-          if (this.isObject(currentValue)) {
+          if (this.isPlainObject(currentValue) && this.isPlainObject(defaultValue)) {
             result[key] = {};
-            compareObjects(currentValue, defaultValue, currentPath);
+            compareObjects(
+              currentValue as Record<string, unknown>,
+              defaultValue as Record<string, unknown>,
+              [..._path, key]
+            );
           } else {
             result[key] = currentValue;
           }
@@ -379,8 +402,11 @@ export class ConfigManager {
       }
     };
 
-    compareObjects(config, DEFAULT_CONFIG);
-    return result;
+    compareObjects(
+      config as unknown as Record<string, unknown>,
+      DEFAULT_CONFIG as unknown as Record<string, unknown>
+    );
+    return result as Partial<OhMyClaudeConfig>;
   }
 
   /**
@@ -409,7 +435,7 @@ export class ConfigManager {
    * 禁用热重载
    */
   disableHotReload(): void {
-    for (const [filePath, watcher] of this.watchers) {
+    for (const [, watcher] of this.watchers) {
       watcher.close();
     }
     this.watchers.clear();
@@ -513,6 +539,6 @@ export function updateConfig(updates: Partial<OhMyClaudeConfig>): void {
 /**
  * 保存配置（便捷方法）
  */
-export async function saveConfig(filePath?: string, config?: Partial<OhMyClaudeConfig>): Promise<void> {
-  await configManager.saveConfig(filePath, config);
+export function saveConfig(filePath?: string, config?: Partial<OhMyClaudeConfig>): void {
+  configManager.saveConfig(filePath, config);
 }

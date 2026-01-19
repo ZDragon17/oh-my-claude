@@ -116,9 +116,9 @@ export function installSkills(packageDir: string): InstallResult {
           fs.copyFileSync(skillMdSrc, path.join(skillDestDir, 'SKILL.md'));
         }
 
-        // 复制其他支持文件
+        // 复制所有支持文件（包括 skill.json）
         const files = fs.readdirSync(skillSrcDir, { withFileTypes: true })
-          .filter(f => f.isFile() && f.name !== 'skill.json');
+          .filter(f => f.isFile());
 
         for (const file of files) {
           try {

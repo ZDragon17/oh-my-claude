@@ -3,7 +3,8 @@
  * 提供统一的消息格式化和输出函数
  */
 
-import { log, colors } from '../../scripts/logger.js';
+import * as os from 'os';
+import { log, info, warn } from '../../scripts/logger.js';
 import { DIVIDER_LENGTH, DIVIDER_LONG_LENGTH, GITHUB_ISSUES_URL, VERSION } from '../constants.js';
 
 /**
@@ -55,9 +56,6 @@ export function printSuccess(message: string = '完成!'): void {
  * 打印安装完成提示
  */
 export function printInstallComplete(pluginDir: string, commandsDir: string, skillsDir: string): void {
-  const { info, warn } = require('../../scripts/logger.js');
-  const os = require('os');
-
   printSuccess('安装完成!');
   log('');
   warn('重要：请完全退出并重新启动 Claude Code 以加载新命令');
@@ -91,9 +89,6 @@ export function printInstallComplete(pluginDir: string, commandsDir: string, ski
  * 打印更新完成提示
  */
 export function printUpdateComplete(): void {
-  const { info, warn } = require('../../scripts/logger.js');
-  const os = require('os');
-
   printSuccess('更新完成!');
   log('');
   warn('重要：请完全退出并重新启动 Claude Code 以加载新命令');

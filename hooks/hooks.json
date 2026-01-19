@@ -126,17 +126,15 @@
     "log_path": "$HOME/.oh-my-claude/logs/hooks.log"
   },
   "v2_migration": {
-    "note": "v2.0 循环机制变更说明",
+    "note": "v2.0 循环机制变更说明 - 已完成迁移",
+    "status": "completed",
+    "completed_at": "2026-01-19",
     "changes": [
       "Stop hooks 不再使用外部脚本检测完成状态",
       "循环机制通过 Agent System Prompt 和 Skill 规范实现",
       "关键词触发由 keyword-detector.sh 处理",
       "TODO 强制执行通过 Agent 行为规范确保"
     ],
-    "deprecated_files": [
-      "hooks/yishan-stop-hook.sh",
-      "hooks/yishan-stop-hook.ps1", 
-      "hooks/todo-enforcer.sh"
-    ]
+    "deprecated_files_cleaned": true
   }
 }

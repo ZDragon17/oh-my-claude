@@ -4,8 +4,8 @@
  */
 
 import { configManager, OhMyClaudeConfig } from './config-manager.js';
-import { log, success, info, error } from '../scripts/logger.js';
-import { printCommandTitle, printDivider } from './ui/messages.js';
+import { log, info, error } from '../scripts/logger.js';
+import { printCommandTitle } from './ui/messages.js';
 
 // ==================== 配置显示 ====================
 
@@ -131,15 +131,23 @@ export function setConfigValue(key: string, valueStr: string): void {
  * 深度设置嵌套对象的值
  */
 function setNestedValue(obj: unknown, keys: string[], value: unknown): unknown {
-  if (keys.length === 1) {
-    return { ...(obj as object), [keys[0]]: value };
+  if (keys.length === 0) {
+    return value;
   }
 
-  const [currentKey, ...remainingKeys] = keys;
+  const [firstKey, ...remainingKeys] = keys;
+  if (!firstKey) {
+    return value;
+  }
+
+  if (keys.length === 1) {
+    return { ...(obj as object), [firstKey]: value };
+  }
+
   const currentObj = obj as Record<string, unknown>;
   return {
     ...currentObj,
-    [currentKey]: setNestedValue(currentObj[currentKey] || {}, remainingKeys, value)
+    [firstKey]: setNestedValue(currentObj[firstKey] ?? {}, remainingKeys, value)
   };
 }
 
@@ -199,26 +207,31 @@ export async function handleConfigCommand(args: string[]): Promise<void> {
       showConfig();
       break;
 
-    case 'get':
-      if (args.length < 2) {
+    case 'get': {
+      const key = args[1];
+      if (!key) {
         error('用法: oh-my-claude config get <key>');
         error('示例: oh-my-claude config get debug');
         error('       oh-my-claude config get agents.defaultTimeout');
         process.exit(1);
       }
-      getConfigValue(args[1]);
+      getConfigValue(key);
       break;
+    }
 
-    case 'set':
-      if (args.length < 3) {
+    case 'set': {
+      const setKey = args[1];
+      const setValue = args[2];
+      if (!setKey || !setValue) {
         error('用法: oh-my-claude config set <key> <value>');
         error('示例: oh-my-claude config set debug true');
         error('       oh-my-claude config set agents.defaultTimeout 60000');
         error('       oh-my-claude config set ui.theme dark');
         process.exit(1);
       }
-      setConfigValue(args[1], args[2]);
+      setConfigValue(setKey, setValue);
       break;
+    }
 
     case 'save': {
       const configFilePath = args.length > 1 ? args[1] : undefined;

@@ -63,11 +63,12 @@ export interface InstallResult {
 export function safeReadFile(filePath: string): string | null {
   try {
     return fs.readFileSync(filePath, 'utf8');
-  } catch (err) {
-    if (err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT') {
+  } catch (err: unknown) {
+    const nodeErr = err as NodeJS.ErrnoException;
+    if (nodeErr.code === 'ENOENT') {
       return null;
     }
-    throw new Error(getUserFriendlyError(err as NodeJS.ErrnoException, filePath));
+    throw new Error(getUserFriendlyError(nodeErr, filePath));
   }
 }
 

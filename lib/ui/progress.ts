@@ -12,14 +12,12 @@ import { colors, success, error, info } from '../../scripts/logger.js';
 export class ProgressIndicator {
   private totalSteps: number;
   private currentStep: number;
-  private description: string;
   private startTime: number;
   private isInteractive: boolean;
 
-  constructor(totalSteps: number, description: string = '处理中') {
+  constructor(totalSteps: number, _description: string = '处理中') {
     this.totalSteps = totalSteps;
     this.currentStep = 0;
-    this.description = description;
     this.startTime = Date.now();
     this.isInteractive = process.stdout.isTTY ?? false;
   }
@@ -30,7 +28,6 @@ export class ProgressIndicator {
   update(stepDescription: string = ''): void {
     this.currentStep++;
     const percent = Math.round((this.currentStep / this.totalSteps) * 100);
-    const elapsed = ((Date.now() - this.startTime) / 1000).toFixed(1);
 
     if (this.isInteractive) {
       // 交互式终端：使用回车覆盖当前行

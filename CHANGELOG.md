@@ -18,6 +18,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.1] - 2025-01-19
+
+### 🧪 Testing / 测试
+
+#### 测试覆盖率优化 / Test Coverage Optimization
+
+**重大改进**：显著提升测试覆盖率，从 ~60% 提升至 ~75%。
+
+##### 新增测试文件 / New Test Files
+
+| 测试文件 | 测试数 | 覆盖模块 |
+|----------|--------|----------|
+| `tests/session-manager.test.ts` | 45 | SessionManager 会话管理 |
+| `tests/context-compression.test.ts` | 25 | 上下文压缩模块 |
+| `tests/config-commands.test.ts` | 23 | CLI 配置命令 |
+| `tests/messages.test.ts` | 20 | UI 消息输出 |
+| `tests/progress.test.ts` | 18 | 进度指示器 |
+| `tests/skill-loader.test.ts` | 27 | 技能加载器 |
+| `tests/error-handler.test.ts` | 14 | 错误处理 |
+| `tests/file-operations.test.ts` | 14 | 文件操作 |
+| `tests/plugin-installer.test.ts` | 11 | 插件安装器 |
+| `tests/config-manager.test.ts` | 11 | 配置管理 |
+| `tests/lock-manager.test.ts` | 9 | 锁管理器 |
+| `tests/verifier.test.ts` | 8 | 安装验证 |
+| `tests/installer.test.ts` | 8 | 安装器模块 |
+| `tests/complexity-analysis.test.ts` | 5 | 复杂度分析 |
+
+##### 代码覆盖率提升 / Coverage Improvement
+
+| 指标 | 之前 | 之后 | 提升 |
+|------|------|------|------|
+| Statements | ~60% | 74.3% | +14% |
+| Branches | ~45% | 59.5% | +14% |
+| Functions | ~60% | 76.2% | +16% |
+| Lines | ~60% | 74.5% | +14% |
+
+##### 100% 覆盖率模块 / Modules with 100% Coverage
+
+- `lib/agent/session-manager.ts` - **新增**
+- `lib/agent/types.ts`
+- `lib/agent-state-manager.ts`
+- `lib/ui/progress.ts`
+
+### 🔧 Fixed / 修复
+
+- **修复 `tests/setup.ts` lint 错误** - 将 `require` 语句改为 ESM `import` 导入
+
+### 📦 Technical / 技术改进
+
+- **Agent 模块重构** - 将 `agent-state-manager.ts` 拆分为独立模块：
+  - `lib/agent/session-manager.ts` - 会话管理
+  - `lib/agent/context-compression.ts` - 上下文压缩
+  - `lib/agent/state-manager.ts` - 状态管理
+  - `lib/agent/persistence.ts` - 持久化
+  - `lib/agent/types.ts` - 类型定义
+
+- **新增复杂度分析模块** - `lib/complexity-analyzer.ts` 从 `cli.ts` 提取
+
+- **测试基础设施完善**
+  - 15 个测试套件
+  - 253 个测试用例
+  - Jest 配置覆盖率阈值：statements 60%, branches 45%, functions 60%, lines 60%
+
+---
+
 ## [1.2.0] - 2025-01-19
 
 ### 🔧 Refactored / 重构
@@ -949,6 +1014,9 @@ After multiple iterations and improvements, oh-my-claude officially releases ver
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 1.2.1 | 2025-01-19 | 🧪 Test coverage optimization (253 tests, 75% coverage) / 测试覆盖率优化 |
+| 1.2.0 | 2025-01-19 | 🔧 CLI modular refactoring / CLI 模块化重构 |
+| 1.1.0 | 2025-01-19 | 🏔️ Yishan Loop v2.0 redesign / 愚公移山循环 v2.0 重新设计 |
 | 1.0.0 | 2025-01-15 | 🎉 First stable release, npm package `claude-pangu` / 首个正式版，npm 包 `claude-pangu` |
 | 0.9.0 | 2025-01-15 | 3 new agents (LiBai, GuKaiZhi, ChangE) / 新增李白、顾恺之、嫦娥 |
 | 0.8.2 | 2025-01-15 | CLI enhancements (update, verify), dev tools / CLI 增强，开发者工具 |

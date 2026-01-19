@@ -27,13 +27,48 @@ export function getPluginDir(): string {
 
 /**
  * 获取当前包的路径
+ * 兼容 ESM 和 CommonJS 环境
  */
 export function getPackageDir(): string {
-  const currentDir = path.dirname(new URL(import.meta.url).pathname);
-  const normalizedDir = process.platform === 'win32'
-    ? currentDir.replace(/^\/([A-Za-z]:)/, '$1')
-    : currentDir;
-  return path.resolve(normalizedDir, '..', '..');
+  // 方法 1: 使用 __dirname (CommonJS / Jest 环境)
+  if (typeof __dirname !== 'undefined' && __dirname) {
+    // 在 lib/ 目录下，需要向上两级到达项目根目录
+    // 在 dist/lib/ 目录下，也需要向上两级到达项目根目录
+    const candidatePaths = [
+      path.resolve(__dirname, '..'),        // lib/ -> 根目录
+      path.resolve(__dirname, '..', '..'),  // dist/lib/ -> 根目录
+    ];
+    
+    for (const candidate of candidatePaths) {
+      const pkgPath = path.join(candidate, 'package.json');
+      if (fs.existsSync(pkgPath)) {
+        try {
+          const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as { name?: string };
+          if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
+            return candidate;
+          }
+        } catch {
+          // 继续尝试下一个路径
+        }
+      }
+    }
+  }
+  
+  // 方法 2: 从 process.cwd() 查找（开发环境）
+  const cwdPkgPath = path.join(process.cwd(), 'package.json');
+  if (fs.existsSync(cwdPkgPath)) {
+    try {
+      const pkg = JSON.parse(fs.readFileSync(cwdPkgPath, 'utf-8')) as { name?: string };
+      if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
+        return process.cwd();
+      }
+    } catch {
+      // 忽略错误
+    }
+  }
+  
+  // 后备：返回当前工作目录
+  return process.cwd();
 }
 
 /**

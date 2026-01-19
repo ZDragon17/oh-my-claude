@@ -5,16 +5,56 @@
 
 import * as path from 'path';
 import * as os from 'os';
-import { createRequire } from 'module';
-
-// ESM 兼容的 require
-const require = createRequire(import.meta.url);
-const packageJson = require('../package.json');
+import * as fs from 'fs';
 
 // ==================== 版本和名称 ====================
 
+/**
+ * 获取 package.json 版本号
+ * 兼容 ESM 和 CommonJS 环境
+ */
+function getPackageVersion(): string {
+  try {
+    // 方法 1: 使用 __dirname (CommonJS / Jest 环境)
+    if (typeof __dirname !== 'undefined' && __dirname) {
+      const pkgPath = path.join(__dirname, '..', 'package.json');
+      if (fs.existsSync(pkgPath)) {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as { version?: string };
+        return pkg.version || '0.0.0';
+      }
+    }
+    
+    // 方法 2: 从 process.cwd() 查找
+    const cwdPkgPath = path.join(process.cwd(), 'package.json');
+    if (fs.existsSync(cwdPkgPath)) {
+      const pkg = JSON.parse(fs.readFileSync(cwdPkgPath, 'utf-8')) as { name?: string; version?: string };
+      if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
+        return pkg.version || '0.0.0';
+      }
+    }
+    
+    // 方法 3: 从脚本位置向上查找（已安装的 npm 包环境）
+    // 在 npm 安装后，dist/lib/constants.js 需要向上两级找到 package.json
+    const scriptDir = typeof __filename !== 'undefined' ? path.dirname(__filename) : '';
+    if (scriptDir) {
+      // 尝试从 dist/lib 向上找
+      const distPkgPath = path.join(scriptDir, '..', '..', 'package.json');
+      if (fs.existsSync(distPkgPath)) {
+        const pkg = JSON.parse(fs.readFileSync(distPkgPath, 'utf-8')) as { name?: string; version?: string };
+        if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
+          return pkg.version || '0.0.0';
+        }
+      }
+    }
+    
+    return '0.0.0';
+  } catch {
+    return '0.0.0';
+  }
+}
+
 /** 插件版本号（从 package.json 动态读取） */
-export const VERSION: string = packageJson.version;
+export const VERSION: string = getPackageVersion();
 
 /** 插件名称 */
 export const PLUGIN_NAME = 'oh-my-claude';
