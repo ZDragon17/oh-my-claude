@@ -5,13 +5,15 @@
         "type": "command",
         "command": "bash hooks/yishan-stop-hook.sh",
         "timeout": 10000,
-        "continueOnError": false
+        "continueOnError": false,
+        "description": "愚公移山循环 - 检查任务是否完成"
       },
       {
         "type": "command",
         "command": "bash hooks/todo-enforcer.sh",
         "timeout": 5000,
-        "continueOnError": true
+        "continueOnError": true,
+        "description": "TODO 强制执行 - 检查待办事项完成情况"
       }
     ],
     "UserPromptSubmit": [
@@ -19,32 +21,115 @@
         "type": "command",
         "command": "bash hooks/keyword-detector.sh",
         "timeout": 3000,
-        "continueOnError": true
+        "continueOnError": true,
+        "description": "关键词检测 - 自动触发相关模式"
       },
       {
         "type": "command",
         "command": "bash hooks/agent-collaboration.sh",
         "timeout": 5000,
-        "continueOnError": true
+        "continueOnError": true,
+        "description": "多 Agent 协作 - 检测和启动协作"
       },
       {
         "type": "command",
         "command": "bash hooks/task-checkpointing.sh",
         "timeout": 3000,
-        "continueOnError": true
+        "continueOnError": true,
+        "description": "任务检查点 - 记录任务状态用于恢复"
       },
       {
         "type": "command",
         "command": "bash hooks/context-compression.sh",
         "timeout": 3000,
-        "continueOnError": true
+        "continueOnError": true,
+        "description": "上下文压缩 - 智能信息压缩"
       },
       {
         "type": "command",
         "command": "bash hooks/error-recovery.sh",
         "timeout": 5000,
-        "continueOnError": true
+        "continueOnError": true,
+        "description": "错误恢复 - 自动检测和恢复策略"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/preemptive-compaction.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "抢占式压缩 - 在达到限制前主动压缩"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/lsp-tools.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "description": "LSP 工具 - 提供 IDE 级代码分析能力"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/ast-grep.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "description": "AST-Grep - 结构化代码搜索"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/code-quality-checker.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "代码质量检查 - 注释和风格验证"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/output-truncator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "输出截断器 - 智能截断大型输出"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/directory-agents-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "目录代理注入 - 根据目录推荐 Agent"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/rules-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "规则注入 - 加载项目和全局规则"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/think-mode.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "思维模式 - 深度思考和推理增强"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/auto-update-checker.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "description": "自动更新检查 - 检查新版本"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "bash hooks/output-truncator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "工具输出截断 - 处理大型工具输出"
       }
     ]
+  },
+  "disabled_hooks": [],
+  "hook_config": {
+    "parallel_execution": false,
+    "log_enabled": true,
+    "log_path": "$HOME/.oh-my-claude/logs/hooks.log"
   }
 }
