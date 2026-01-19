@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "oh-my-claude-agent-mapping",
+  "version": "1.0.0",
+  "description": "中国文化 Agents 到 Claude Code subagent_type 的映射表",
+  
+  "mapping": {
+    "wukong": {
+      "name": "悟空",
+      "alias": ["wukong", "huoyan", "悟空", "火眼"],
+      "subagent_type": "explore",
+      "description": "代码侦察，快速探索",
+      "useCase": "代码结构分析、文件查找、依赖追踪",
+      "promptPrefix": "作为悟空（代码侦察专家），请"
+    },
+    "zhuge": {
+      "name": "诸葛",
+      "alias": ["zhuge", "longzhong", "诸葛", "隆中"],
+      "subagent_type": "oracle",
+      "description": "战略顾问，架构设计",
+      "useCase": "架构决策、技术选型、设计评审",
+      "promptPrefix": "作为诸葛（战略顾问），请"
+    },
+    "luban": {
+      "name": "鲁班",
+      "alias": ["luban", "qiaogong", "鲁班", "巧工"],
+      "subagent_type": "general",
+      "description": "精工巧匠，代码实现",
+      "useCase": "功能实现、代码编写、重构优化",
+      "promptPrefix": "作为鲁班（精工巧匠），请"
+    },
+    "bianque": {
+      "name": "扁鹊",
+      "alias": ["bianque", "wangwen", "扁鹊", "望闻"],
+      "subagent_type": "debugger",
+      "description": "Bug 诊断，问题修复",
+      "useCase": "错误诊断、调试分析、问题定位",
+      "promptPrefix": "作为扁鹊（诊断专家），请"
+    },
+    "simaqian": {
+      "name": "司马迁",
+      "alias": ["simaqian", "shiji", "司马迁", "史记"],
+      "subagent_type": "document-writer",
+      "description": "文档撰写，变更记录",
+      "useCase": "API文档、README、技术文档",
+      "promptPrefix": "作为司马迁（文档史官），请"
+    },
+    "gukaizhi": {
+      "name": "顾恺之",
+      "alias": ["gukaizhi", "painter", "顾恺之", "画家"],
+      "subagent_type": "frontend-ui-ux-engineer",
+      "description": "UI/UX 设计，界面美学",
+      "useCase": "界面设计、组件开发、视觉优化",
+      "promptPrefix": "作为顾恺之（界面美学师），请"
+    },
+    "mozi": {
+      "name": "墨子",
+      "alias": ["mozi", "security", "墨子", "安全"],
+      "subagent_type": "security-auditor",
+      "description": "安全审计，防御编程",
+      "useCase": "安全扫描、漏洞检测、安全加固",
+      "promptPrefix": "作为墨子（安全专家），请"
+    },
+    "sunzi": {
+      "name": "孙子",
+      "alias": ["sunzi", "perf", "孙子", "性能"],
+      "subagent_type": "performance-engineer",
+      "description": "性能优化，系统调优",
+      "useCase": "性能分析、瓶颈定位、优化建议",
+      "promptPrefix": "作为孙子（性能专家），请"
+    },
+    "baozheng": {
+      "name": "包拯",
+      "alias": ["baozheng", "test", "包拯", "测试"],
+      "subagent_type": "test-engineer",
+      "description": "测试专家，TDD",
+      "useCase": "测试设计、单元测试、集成测试",
+      "promptPrefix": "作为包拯（测试专家），请"
+    },
+    "weizheng": {
+      "name": "魏征",
+      "alias": ["weizheng", "review", "魏征", "审查"],
+      "subagent_type": "code-reviewer",
+      "description": "代码审查，规范检查",
+      "useCase": "代码审查、规范检测、最佳实践",
+      "promptPrefix": "作为魏征（代码审查官），请"
+    },
+    "laozi": {
+      "name": "老子",
+      "alias": ["laozi", "simplify", "老子", "简化"],
+      "subagent_type": "general",
+      "description": "代码简化，Clean Code",
+      "useCase": "代码简化、重构、去除冗余",
+      "promptPrefix": "作为老子（简洁大师），请"
+    },
+    "cangjie": {
+      "name": "仓颉",
+      "alias": ["cangjie", "db", "仓颉", "数据库"],
+      "subagent_type": "database-architect",
+      "description": "数据库设计，SQL 优化",
+      "useCase": "数据建模、SQL优化、迁移设计",
+      "promptPrefix": "作为仓颉（数据库专家），请"
+    },
+    "zhenghe": {
+      "name": "郑和",
+      "alias": ["zhenghe", "api", "郑和", "接口"],
+      "subagent_type": "general",
+      "description": "API 集成，外部服务",
+      "useCase": "API设计、第三方集成、SDK封装",
+      "promptPrefix": "作为郑和（API远航家），请"
+    },
+    "zhangheng": {
+      "name": "张衡",
+      "alias": ["zhangheng", "monitor", "张衡", "监控"],
+      "subagent_type": "monitoring-specialist",
+      "description": "系统监控，可观测性",
+      "useCase": "监控设计、日志分析、告警配置",
+      "promptPrefix": "作为张衡（监控专家），请"
+    },
+    "libing": {
+      "name": "李冰",
+      "alias": ["libing", "devops", "李冰", "运维"],
+      "subagent_type": "devops-engineer",
+      "description": "DevOps，基础设施",
+      "useCase": "CI/CD、容器化、基础设施",
+      "promptPrefix": "作为李冰（DevOps水利家），请"
+    },
+    "libai": {
+      "name": "李白",
+      "alias": ["libai", "poet", "李白", "需求"],
+      "subagent_type": "general",
+      "description": "需求分析，用户故事",
+      "useCase": "需求提炼、用户故事、功能规划",
+      "promptPrefix": "作为李白（需求炼金师），请"
+    },
+    "change": {
+      "name": "嫦娥",
+      "alias": ["change", "cloud", "嫦娥", "云端"],
+      "subagent_type": "cloud-architect",
+      "description": "云服务，Serverless 部署",
+      "useCase": "云架构、Serverless、成本优化",
+      "promptPrefix": "作为嫦娥（云端仙子），请"
+    }
+  },
+
+  "taskDispatchRules": {
+    "探索": "wukong",
+    "架构": "zhuge",
+    "设计": "zhuge",
+    "实现": "luban",
+    "编码": "luban",
+    "调试": "bianque",
+    "诊断": "bianque",
+    "文档": "simaqian",
+    "界面": "gukaizhi",
+    "UI": "gukaizhi",
+    "安全": "mozi",
+    "性能": "sunzi",
+    "测试": "baozheng",
+    "审查": "weizheng",
+    "简化": "laozi",
+    "重构": "laozi",
+    "数据库": "cangjie",
+    "API": "zhenghe",
+    "监控": "zhangheng",
+    "部署": "libing",
+    "需求": "libai",
+    "云": "change"
+  },
+
+  "parallelGroups": {
+    "exploration": ["wukong", "simaqian"],
+    "design": ["zhuge", "cangjie"],
+    "implementation": ["luban", "gukaizhi"],
+    "quality": ["bianque", "baozheng", "weizheng"],
+    "optimization": ["sunzi", "laozi", "mozi"]
+  }
+}

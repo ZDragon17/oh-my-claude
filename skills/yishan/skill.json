@@ -1,21 +1,68 @@
 {
   "name": "yishan",
-  "version": "1.0.0",
-  "description": "愚公移山循环 - 自主持续执行直到任务完成",
-  "keywords": ["yishan", "yugong", "loop", "autonomous", "persist", "ultrawork"],
+  "version": "2.0.0",
+  "description": "愚公移山循环 v2.0 - 基于关键词触发和 TODO 强制执行的自主持续执行机制",
+  "keywords": ["yishan", "yugong", "loop", "autonomous", "persist", "ultrawork", "ulw", "移山", "愚公"],
   "author": "ZDragon17",
   "license": "MIT",
   "repository": "https://github.com/ZDragon17/oh-my-claude",
-  "loopConfig": {
-    "stateFile": ".claude/yishan-loop.local.md",
-    "defaultMaxIterations": 50,
-    "defaultCompletionPromise": "移山完毕"
+  
+  "triggers": {
+    "keywords": [
+      "ultrawork", "ulw",
+      "yishan", "yugong", 
+      "移山", "愚公",
+      "persist"
+    ],
+    "commands": ["/yishan", "/yugong", "/persist", "/ultrawork", "/ulw", "/愚公", "/移山"]
   },
+
+  "activation": {
+    "announcement": "🏔️ 愚公移山模式已激活！",
+    "mustSay": true
+  },
+
+  "rules": {
+    "todoEnforcement": {
+      "required": true,
+      "autoCheck": true,
+      "description": "必须使用 TodoWrite 分解任务，未完成前不能停止"
+    },
+    "verification": {
+      "required": true,
+      "evidence": ["build_exit_code", "test_results", "manual_verification"],
+      "description": "所有声明必须有证据支持"
+    },
+    "parallelAgents": {
+      "enabled": true,
+      "description": "独立任务应并行发起 background_task"
+    }
+  },
+
+  "prohibitions": [
+    "scope_reduction",
+    "mock_implementation", 
+    "partial_completion",
+    "premature_stopping",
+    "test_deletion"
+  ],
+
+  "completionMarker": {
+    "format": "<promise>移山完毕</promise>",
+    "conditions": [
+      "all_todos_completed",
+      "verification_passed",
+      "requirements_met"
+    ]
+  },
+
   "commandAliases": {
     "/yishan": ["/yugong", "/persist", "/ultrawork", "/ulw", "/愚公", "/移山"],
     "/cancel-yishan": ["/stop-yishan", "/cancel-yugong", "/stop-loop", "/取消移山", "/停止循环"]
   },
-  "hooks": {
-    "stop": "hooks/yishan-stop-hook.sh"
+
+  "deprecated": {
+    "stateFile": ".claude/yishan-loop.local.md",
+    "reason": "v2.0 不再依赖状态文件，循环机制内置于 Agent 行为规范中"
   }
 }

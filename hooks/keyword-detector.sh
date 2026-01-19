@@ -31,11 +31,11 @@ fi
 # 转换为小写进行匹配（带错误保护）
 prompt_lower=$(echo "$prompt" | tr '[:upper:]' '[:lower:]' 2>/dev/null) || prompt_lower="$prompt"
 
-# 检测愚公移山关键词
+# 检测愚公移山 / ultrawork 关键词
 if echo "$prompt_lower" | grep -qE '(ultra[-_]?work|ulw|移山|yi[-_]?shan|persist|愚公|yu[-_]?gong)'; then
     cat << 'EOF'
 {
-  "systemMessage": "\n\n🏔️ **愚公移山模式已激活**\n\n检测到任务关键词，已自动启用持续执行模式：\n- ✅ 必须使用 TodoWrite 跟踪所有任务\n- ✅ 所有 TODO 完成前不能停止\n- ✅ 遇到困难要调整策略继续前进\n\n愚公精神：坚持必将成功！\n"
+  "systemMessage": "\n\n<ultrawork-mode>\n🏔️ **愚公移山模式已激活！**\n\n[CODE RED] 最高精度要求。行动前深度思考。\n\n## 执行规则（非协商）\n\n### 1. TODO 强制执行\n- 必须使用 TodoWrite 分解任务\n- 完成一个就标记一个\n- TODO 未全部完成前不能停止\n\n### 2. 并行执行\n- 独立任务应并行发起 background_task\n- 不要顺序等待，浪费时间\n\n### 3. 验证保证\n- 没有证据 = 没有完成\n- 运行测试/构建，展示输出\n\n### 4. 零容忍\n- 禁止范围缩减（不做 demo/简化版）\n- 禁止部分完成（100% 或不做）\n- 禁止提前停止（TODO 全完成后才能停）\n\n### 5. 自检机制\n每次准备停止前：\n1. 读取 TODO 列表\n2. 检查有无 pending/in_progress\n3. 有 → 继续工作\n4. 全完成 → 可以停止\n\n**愚公精神：坚持必将成功！**\n</ultrawork-mode>\n"
 }
 EOF
     exit 0

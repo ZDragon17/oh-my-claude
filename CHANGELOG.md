@@ -18,6 +18,81 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2025-01-19
+
+### 🔄 Changed / 变更
+
+#### 🏔️ 愚公移山循环 v2.0 - 重新设计（含 Agent 调用机制）
+
+**重大变更**：循环机制从外部脚本依赖改为内置于 Agent 行为规范中。
+
+##### 问题诊断
+旧版本依赖外部工具存在以下问题：
+- 依赖 `jq` 工具，Windows 环境通常未安装
+- 依赖 `bash` 脚本解析 JSONL，跨平台兼容性差
+- Stop Hook 需要读取 transcript 文件，路径解析复杂
+
+##### 新设计（参考 oh-my-opencode）
+- **关键词触发**：检测 `ultrawork`/`ulw`/`移山`/`愚公` 等关键词自动激活
+- **System Prompt 强化**：循环规则内置于 Agent 行为规范中
+- **TODO 强制执行**：通过行为规范而非外部脚本确保任务完成
+- **自检机制**：Agent 准备停止前自动检查未完成的 TODO
+
+##### 移除的依赖
+- 不再需要 `jq` 工具
+- 不再需要创建 `.claude/yishan-loop.local.md` 状态文件
+- 不再依赖外部 Stop Hook 脚本
+
+##### Agent 智能分派机制（新增）
+
+愚公作为主编排者，可以调用专业 Agent 协作完成任务：
+
+| 中国文化 Agent | Claude Code subagent_type | 专长 |
+|---------------|---------------------------|------|
+| 悟空 (wukong) | `explore` | 代码侦察 |
+| 诸葛 (zhuge) | `oracle` | 架构顾问 |
+| 鲁班 (luban) | `general` | 代码实现 |
+| 扁鹊 (bianque) | `debugger` | Bug诊断 |
+| 司马迁 (simaqian) | `document-writer` | 文档撰写 |
+| 顾恺之 (gukaizhi) | `frontend-ui-ux-engineer` | UI/UX |
+| 包拯 (baozheng) | `test-engineer` | 测试 |
+| 魏征 (weizheng) | `code-reviewer` | 代码审查 |
+
+调用示例：
+```
+Task(subagent_type="explore", prompt="悟空：探索代码结构...")
+Task(subagent_type="oracle", prompt="诸葛：设计架构方案...")
+```
+
+##### 对应 oh-my-opencode 机制
+| oh-my-opencode | oh-my-claude |
+|----------------|--------------|
+| ultrawork / ulw | ultrawork / ulw / 移山 |
+| Sisyphus | 愚公 (YuGong) |
+| explore agent | 悟空 (WuKong) |
+| oracle agent | 诸葛 (ZhuGe) |
+| delegate_task() | Task(subagent_type=...) |
+| Todo Continuation Enforcer | TODO 强制执行规则 |
+| Ralph Loop | 移山循环 |
+
+#### 文件变更
+- `skills/yishan/SKILL.md` - 重写为 v2.0 规范，包含 Agent 调用机制
+- `skills/yishan/skill.json` - 更新为 v2.0 配置
+- `skills/yishan/agent-mapping.json` - **新增** Agent 映射表
+- `commands/yishan.md` - 简化并加入 Agent 调用示例
+- `commands/yugong.md` - 同步更新
+- `hooks/hooks.json` - 移除 Stop hooks 中的外部脚本依赖
+- `hooks/keyword-detector.sh` - 增强 ultrawork 模式消息
+
+### ⚠️ Deprecated / 废弃
+
+以下文件已废弃，保留仅供参考：
+- `hooks/yishan-stop-hook.sh` - v1.0 外部循环控制脚本
+- `hooks/yishan-stop-hook.ps1` - PowerShell 版本
+- `hooks/todo-enforcer.sh` - 外部 TODO 检查脚本
+
+---
+
 ## [1.0.19] - 2025-01-16
 
 ### ✨ Added / 新增

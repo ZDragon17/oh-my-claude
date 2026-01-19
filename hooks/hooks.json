@@ -3,17 +3,10 @@
     "Stop": [
       {
         "type": "command",
-        "command": "bash hooks/yishan-stop-hook.sh",
-        "timeout": 10000,
-        "continueOnError": false,
-        "description": "愚公移山循环 - 检查任务是否完成"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/todo-enforcer.sh",
-        "timeout": 5000,
+        "command": "bash hooks/todo-continuation.sh",
+        "timeout": 3000,
         "continueOnError": true,
-        "description": "TODO 强制执行 - 检查待办事项完成情况"
+        "description": "TODO 续航检查 - 如果有活跃循环则阻止停止"
       }
     ],
     "UserPromptSubmit": [
@@ -22,7 +15,7 @@
         "command": "bash hooks/keyword-detector.sh",
         "timeout": 3000,
         "continueOnError": true,
-        "description": "关键词检测 - 自动触发相关模式"
+        "description": "关键词检测 - 自动触发相关模式（包括 ultrawork/移山）"
       },
       {
         "type": "command",
@@ -131,5 +124,19 @@
     "parallel_execution": false,
     "log_enabled": true,
     "log_path": "$HOME/.oh-my-claude/logs/hooks.log"
+  },
+  "v2_migration": {
+    "note": "v2.0 循环机制变更说明",
+    "changes": [
+      "Stop hooks 不再使用外部脚本检测完成状态",
+      "循环机制通过 Agent System Prompt 和 Skill 规范实现",
+      "关键词触发由 keyword-detector.sh 处理",
+      "TODO 强制执行通过 Agent 行为规范确保"
+    ],
+    "deprecated_files": [
+      "hooks/yishan-stop-hook.sh",
+      "hooks/yishan-stop-hook.ps1", 
+      "hooks/todo-enforcer.sh"
+    ]
   }
 }
