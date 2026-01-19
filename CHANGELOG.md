@@ -18,13 +18,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.4] - 2025-01-19
+
+### 🔧 Fixed / 修复
+
+- **彻底修复 npx 更新失败问题** - 使用 `process.argv[1]` 定位包根目录
+  - `process.argv[1]` 包含入口脚本的完整路径，在所有环境下都可用
+  - 从脚本路径向上遍历查找包含 `package.json` 和 `agents/` 目录的包根目录
+  - 完全兼容 ESM、CommonJS、npx、全局安装等所有环境
+
+---
+
 ## [1.2.3] - 2025-01-19
 
 ### 🔧 Fixed / 修复
 
-- **真正修复 npx 更新失败问题** - ESM 模块环境下 `__dirname` 未定义的问题
-  - 使用 `import.meta.url` + `fileURLToPath` 获取当前模块路径
-  - 同时兼容 ESM 和 CommonJS (Jest 测试) 环境
+- **尝试修复 npx 更新失败问题** - 使用运行时检测 ESM/CJS 环境
+  - 使用 `new Function` 动态获取 `import.meta.url`（此方法在严格 ESM 环境下仍不工作）
 
 ---
 

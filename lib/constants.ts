@@ -8,27 +8,67 @@ import * as os from 'os';
 import * as fs from 'fs';
 
 /**
- * 获取当前模块所在目录
- * 兼容 ESM 和 CommonJS 环境
+ * 查找包含 package.json 的目录（claude-pangu 包根目录）
+ * 从给定路径向上遍历查找
  */
-function getCurrentDir(): string {
-  // CommonJS 环境 (Jest, Node CJS)
-  if (typeof __dirname !== 'undefined') {
-    return __dirname;
+function findPackageRoot(startDir: string): string | null {
+  let currentDir = startDir;
+  for (let i = 0; i < 15; i++) {
+    const pkgPath = path.join(currentDir, 'package.json');
+    if (fs.existsSync(pkgPath)) {
+      try {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as { name?: string };
+        if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
+          return currentDir;
+        }
+      } catch {
+        // 继续查找
+      }
+    }
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) break; // 到达根目录
+    currentDir = parentDir;
+  }
+  return null;
+}
+
+/**
+ * 获取包根目录
+ * 使用多种方法尝试定位
+ */
+function getPackageRoot(): string {
+  // 方法 1: CommonJS __dirname (Jest 测试环境)
+  if (typeof __dirname !== 'undefined' && __dirname) {
+    const found = findPackageRoot(__dirname);
+    if (found) return found;
   }
   
-  // ESM 环境 - 动态导入 url 模块
-  try {
-    // 使用 eval 避免 TypeScript 在 CommonJS 模式下报错
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-    const getMetaUrl = new Function('return import.meta.url');
-    const metaUrl = getMetaUrl() as string;
-    const { fileURLToPath } = require('url') as { fileURLToPath: (url: string) => string };
-    return path.dirname(fileURLToPath(metaUrl));
-  } catch {
-    // 后备：返回 process.cwd()
-    return process.cwd();
+  // 方法 2: 从入口脚本路径查找 (npx/node 执行环境)
+  // process.argv[1] 是执行的脚本路径，如 /path/to/node_modules/claude-pangu/dist/scripts/cli.js
+  if (process.argv[1]) {
+    const scriptDir = path.dirname(process.argv[1]);
+    const found = findPackageRoot(scriptDir);
+    if (found) return found;
   }
+  
+  // 方法 3: 从 process.cwd() 查找（开发环境）
+  const cwdFound = findPackageRoot(process.cwd());
+  if (cwdFound) return cwdFound;
+  
+  // 方法 4: 检查常见的全局安装路径
+  const globalPaths = [
+    path.join(process.env.APPDATA || '', 'npm', 'node_modules', 'claude-pangu'),
+    '/usr/local/lib/node_modules/claude-pangu',
+    '/usr/lib/node_modules/claude-pangu',
+  ];
+  for (const globalPath of globalPaths) {
+    if (fs.existsSync(path.join(globalPath, 'package.json'))) {
+      return globalPath;
+    }
+  }
+  
+  // 后备：返回 cwd
+  return process.cwd();
 }
 
 // ==================== 版本和名称 ====================
@@ -54,34 +94,9 @@ function getPackageVersion(): string {
   };
 
   try {
-    const currentDir = getCurrentDir();
-    
-    // 方法 1: 从当前模块目录向上查找
-    const candidatePaths = [
-      path.resolve(currentDir, '..'),           // lib/ -> 根目录
-      path.resolve(currentDir, '..', '..'),     // dist/lib/ -> 根目录
-      path.resolve(currentDir, '..', '..', '..'), // 深层嵌套
-    ];
-    
-    for (const candidate of candidatePaths) {
-      const version = findPackageJson(candidate);
-      if (version) return version;
-    }
-    
-    // 向上遍历查找
-    let searchDir = currentDir;
-    for (let i = 0; i < 10; i++) {
-      const version = findPackageJson(searchDir);
-      if (version) return version;
-      const parentDir = path.dirname(searchDir);
-      if (parentDir === searchDir) break;
-      searchDir = parentDir;
-    }
-    
-    // 方法 2: 从 process.cwd() 查找（开发环境）
-    const cwdVersion = findPackageJson(process.cwd());
-    if (cwdVersion) return cwdVersion;
-    
+    const packageRoot = getPackageRoot();
+    const version = findPackageJson(packageRoot);
+    if (version) return version;
     return '0.0.0';
   } catch {
     return '0.0.0';

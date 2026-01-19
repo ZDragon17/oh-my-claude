@@ -14,27 +14,32 @@ import { success, info, warn, error, log } from '../scripts/logger.js';
 import { printCommandTitle, printInstallComplete, printUpdateComplete } from './ui/messages.js';
 
 /**
- * 获取当前模块所在目录
- * 兼容 ESM 和 CommonJS 环境
+ * 查找包含 package.json 的目录（claude-pangu 包根目录）
+ * 从给定路径向上遍历查找
  */
-function getCurrentDir(): string {
-  // CommonJS 环境 (Jest, Node CJS)
-  if (typeof __dirname !== 'undefined') {
-    return __dirname;
+function findPackageRoot(startDir: string): string | null {
+  let currentDir = startDir;
+  for (let i = 0; i < 15; i++) {
+    const pkgPath = path.join(currentDir, 'package.json');
+    if (fs.existsSync(pkgPath)) {
+      try {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as { name?: string };
+        if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
+          // 还需要验证 agents 目录存在
+          const agentsDir = path.join(currentDir, 'agents');
+          if (fs.existsSync(agentsDir)) {
+            return currentDir;
+          }
+        }
+      } catch {
+        // 继续查找
+      }
+    }
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) break; // 到达根目录
+    currentDir = parentDir;
   }
-  
-  // ESM 环境 - 动态导入 url 模块
-  try {
-    // 使用 eval 避免 TypeScript 在 CommonJS 模式下报错
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-    const getMetaUrl = new Function('return import.meta.url');
-    const metaUrl = getMetaUrl() as string;
-    const { fileURLToPath } = require('url') as { fileURLToPath: (url: string) => string };
-    return path.dirname(fileURLToPath(metaUrl));
-  } catch {
-    // 后备：返回 process.cwd()
-    return process.cwd();
-  }
+  return null;
 }
 
 // 重新导出供 cli.ts 使用
@@ -69,38 +74,21 @@ export function getPackageDir(): string {
     }
   };
 
-  const currentDir = getCurrentDir();
-  
-  // 方法 1: 从当前模块目录向上查找
-  // 可能的目录结构:
-  // - lib/installer.ts -> 根目录 (开发环境, ts-node)
-  // - dist/lib/installer.js -> 根目录 (编译后)
-  // - node_modules/.pnpm/claude-pangu@x.x.x/node_modules/claude-pangu/dist/lib/installer.js
-  // - AppData/Local/npm-cache/_npx/.../node_modules/claude-pangu/dist/lib/installer.js
-  const candidatePaths = [
-    path.resolve(currentDir, '..'),           // lib/ -> 根目录
-    path.resolve(currentDir, '..', '..'),     // dist/lib/ -> 根目录
-    path.resolve(currentDir, '..', '..', '..'), // 深层嵌套情况
-  ];
-  
-  for (const candidate of candidatePaths) {
-    if (isValidPackageDir(candidate)) {
-      return candidate;
-    }
+  // 方法 1: CommonJS __dirname (Jest 测试环境)
+  if (typeof __dirname !== 'undefined' && __dirname) {
+    const found = findPackageRoot(__dirname);
+    if (found && isValidPackageDir(found)) return found;
   }
   
-  // 向上遍历查找
-  let searchDir = currentDir;
-  for (let i = 0; i < 10; i++) {
-    if (isValidPackageDir(searchDir)) {
-      return searchDir;
-    }
-    const parentDir = path.dirname(searchDir);
-    if (parentDir === searchDir) break; // 到达根目录
-    searchDir = parentDir;
+  // 方法 2: 从入口脚本路径查找 (npx/node 执行环境)
+  // process.argv[1] 是执行的脚本路径，如 /path/to/node_modules/claude-pangu/dist/scripts/cli.js
+  if (process.argv[1]) {
+    const scriptDir = path.dirname(process.argv[1]);
+    const found = findPackageRoot(scriptDir);
+    if (found && isValidPackageDir(found)) return found;
   }
   
-  // 方法 2: 从 process.cwd() 查找（开发环境）
+  // 方法 3: 从 process.cwd() 查找（开发环境）
   if (isValidPackageDir(process.cwd())) {
     return process.cwd();
   }
