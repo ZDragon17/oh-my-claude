@@ -18,6 +18,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.0] - 2025-01-19
+
+### 🔧 Refactored / 重构
+
+#### 📦 CLI 模块化重构 / CLI Modular Refactoring
+
+**重大改进**：将 1900+ 行的 `cli.ts` 拆分为 10+ 个独立模块，显著提升代码可维护性。
+
+##### 新增模块 / New Modules
+
+| 模块 | 行数 | 职责 |
+|------|------|------|
+| `lib/constants.ts` | 122 | 常量配置（版本、路径、时间、Agent配置） |
+| `lib/error-handler.ts` | 93 | 错误处理、日志记录、敏感信息脱敏 |
+| `lib/file-operations.ts` | 277 | 安全文件读写、智能复制、目录操作 |
+| `lib/lock-manager.ts` | 224 | 文件锁机制、并发控制、回滚保护 |
+| `lib/installer.ts` | 224 | 安装/卸载/更新主流程 |
+| `lib/plugin-installer.ts` | 165 | Commands 和 Skills 安装逻辑 |
+| `lib/verifier.ts` | 172 | 安装验证和健康检查 |
+| `lib/config-commands.ts` | 240 | CLI 配置命令处理 |
+| `lib/ui/progress.ts` | 89 | ProgressIndicator 进度显示类 |
+| `lib/ui/messages.ts` | 141 | UI 消息输出函数 |
+
+##### 代码质量改进 / Code Quality Improvements
+
+- **版本号动态读取** - 从 `package.json` 动态读取版本号，确保一致性
+- **async/await 修复** - 移除 `config-manager.ts` 中不必要的 async 声明
+- **类型安全增强** - 引入 `ContextValue`、`ContextRecord`、`MessageRecord`、`CheckpointData` 类型替代 `any`
+- **单一职责原则** - 每个模块职责明确，不超过 300 行
+
+##### 重构前后对比 / Before vs After
+
+| 指标 | 重构前 | 重构后 |
+|------|--------|--------|
+| cli.ts 行数 | 1917 行 | 220 行 (-88.5%) |
+| 模块数量 | 3 个 | 13 个 |
+| 单文件最大行数 | 1917 行 | 617 行 |
+| any 类型使用 | 34+ 处 | 显著减少 |
+
+### ✨ Added / 新增
+
+#### 类型系统增强 / Type System Enhancement
+
+在 `types/index.ts` 中新增以下类型定义：
+
+```typescript
+// 通用上下文值类型 - 替代 any
+export type ContextValue = string | number | boolean | null | ContextValue[] | { [key: string]: ContextValue };
+
+// 上下文记录类型
+export type ContextRecord = Record<string, ContextValue>;
+
+// 消息记录类型
+export interface MessageRecord { ... }
+
+// 检查点数据类型
+export interface CheckpointData { ... }
+```
+
+### 🔧 Fixed / 修复
+
+- **版本号硬编码问题** - cli.ts 中的版本号从硬编码改为从 package.json 动态读取
+- **async/await 不一致** - config-manager.ts 中 `loadConfig()` 和 `saveConfig()` 移除不必要的 async
+
+---
+
 ## [1.1.0] - 2025-01-19
 
 ### 🔄 Changed / 变更
