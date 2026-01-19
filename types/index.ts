@@ -1,4 +1,44 @@
 // 类型定义文件
+
+/**
+ * 通用上下文值类型 - 替代 any 提供更好的类型安全
+ * 支持常见的 JSON 兼容数据类型
+ */
+export type ContextValue =
+  | string
+  | number
+  | boolean
+  | null
+  | ContextValue[]
+  | { [key: string]: ContextValue };
+
+/**
+ * 上下文记录类型 - 替代 Record<string, any>
+ */
+export type ContextRecord = Record<string, ContextValue>;
+
+/**
+ * 消息记录类型
+ */
+export interface MessageRecord {
+  id: string;
+  timestamp: string;
+  agentId: string;
+  type: 'request' | 'response' | 'notification' | 'error';
+  content: string;
+  metadata?: ContextRecord;
+}
+
+/**
+ * 检查点数据类型
+ */
+export interface CheckpointData {
+  id: string;
+  timestamp: string;
+  description: string;
+  state: ContextRecord;
+}
+
 export interface PluginConfig {
   version: string;
   name?: string;
@@ -13,8 +53,8 @@ export interface TaskSnapshot {
   status: string;
   progress: number;
   agents: string[];
-  context: Record<string, any>;
-  checkpoint?: any;
+  context: ContextRecord;
+  checkpoint?: CheckpointData;
 }
 
 export interface AgentCollaboration {
@@ -30,7 +70,7 @@ export interface AgentCollaboration {
   };
   status: string;
   messages: string[];
-  context: Record<string, any>;
+  context: ContextRecord;
 }
 
 export interface CompressedContext {
@@ -38,14 +78,14 @@ export interface CompressedContext {
   timestamp: string;
   summary: string;
   keyPoints: string[];
-  references: Record<string, any>;
+  references: ContextRecord;
   size: number;
 }
 
 export interface ContextSnapshots {
   compressedContexts: Record<string, CompressedContext>;
-  keyReferences: Record<string, any>;
-  contextSnapshots: any[];
+  keyReferences: ContextRecord;
+  contextSnapshots: CheckpointData[];
 }
 
 export interface PluginState {
@@ -80,7 +120,7 @@ export interface PluginState {
   };
   agentCollaboration: {
     activeSessions: AgentCollaboration[];
-    agentStates: Record<string, any>;
+    agentStates: Record<string, AgentState>;
     collaborationHistory: AgentCollaboration[];
   };
   context: ContextSnapshots;
@@ -100,7 +140,7 @@ export interface TaskRecoveryPlan {
     lastProgress: number;
     currentStep: number;
     nextAction: string;
-    contextSnapshot: any;
+    contextSnapshot: ContextRecord;
     recoverySteps: string[];
   };
 }
@@ -128,9 +168,9 @@ export interface AgentState {
     successRate: number;
   };
   context: {
-    shortTerm: Record<string, any>;
-    longTerm: Record<string, any>;
-    preferences: Record<string, any>;
+    shortTerm: ContextRecord;
+    longTerm: ContextRecord;
+    preferences: ContextRecord;
   };
 }
 
@@ -141,23 +181,11 @@ export interface CollaborationSession {
   description: string;
   status: 'active' | 'completed' | 'failed' | 'paused';
   agents: AgentState[];
-  messages: Array<{
-    id: string;
-    timestamp: string;
-    agentId: string;
-    type: 'request' | 'response' | 'notification' | 'error';
-    content: string;
-    metadata?: Record<string, any>;
-  }>;
+  messages: MessageRecord[];
   context: {
-    shared: Record<string, any>;
+    shared: ContextRecord;
     compressed: CompressedContext[];
-    checkpoints: Array<{
-      id: string;
-      timestamp: string;
-      description: string;
-      state: Record<string, any>;
-    }>;
+    checkpoints: CheckpointData[];
   };
   metrics: {
     startTime: string;
@@ -183,7 +211,7 @@ export interface ContextCompression {
     summary?: string;
     keypoints?: string[];
     embedding?: number[];
-    hierarchy?: Record<string, any>;
+    hierarchy?: ContextRecord;
   };
 }
 
@@ -200,17 +228,17 @@ export interface AgentStateManager {
   endSession(sessionId: string, status: 'completed' | 'failed'): void;
 
   // 消息记录
-  recordMessage(sessionId: string, agentId: string, type: string, content: string, metadata?: Record<string, any>): void;
-  getSessionMessages(sessionId: string, limit?: number): any[];
+  recordMessage(sessionId: string, agentId: string, type: string, content: string, metadata?: ContextRecord): void;
+  getSessionMessages(sessionId: string, limit?: number): MessageRecord[];
 
   // 上下文管理
-  compressContext(sessionId: string, context: Record<string, any>, algorithm?: string): ContextCompression;
-  retrieveContext(compressionId: string): Record<string, any> | null;
+  compressContext(sessionId: string, context: ContextRecord, algorithm?: string): ContextCompression;
+  retrieveContext(compressionId: string): ContextRecord | null;
   cleanupExpiredContexts(): number;
 
   // 检查点管理
   createCheckpoint(sessionId: string, description: string): string;
-  restoreFromCheckpoint(sessionId: string, checkpointId: string): Record<string, any>;
+  restoreFromCheckpoint(sessionId: string, checkpointId: string): ContextRecord;
 
   // 性能监控
   recordPerformance(agentId: string, taskId: string, duration: number, success: boolean): void;
@@ -220,6 +248,6 @@ export interface AgentStateManager {
   // 数据持久化
   saveState(): Promise<void>;
   loadState(): Promise<void>;
-  exportSession(sessionId: string): Record<string, any>;
-  importSession(data: Record<string, any>): string;
+  exportSession(sessionId: string): ContextRecord;
+  importSession(data: ContextRecord): string;
 }

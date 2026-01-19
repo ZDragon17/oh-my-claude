@@ -186,8 +186,9 @@ export class ConfigManager {
 
   /**
    * 加载配置（支持分层覆盖）
+   * 使用同步方式加载，因为配置通常在应用启动时加载
    */
-  async loadConfig(): Promise<void> {
+  loadConfig(): void {
     let mergedConfig = { ...DEFAULT_CONFIG };
 
     // 1. 加载环境变量
@@ -335,8 +336,9 @@ export class ConfigManager {
 
   /**
    * 保存配置到文件
+   * 使用同步方式保存，因为配置文件较小且操作不频繁
    */
-  async saveConfig(filePath?: string, config?: Partial<OhMyClaudeConfig>): Promise<void> {
+  saveConfig(filePath?: string, config?: Partial<OhMyClaudeConfig>): void {
     const targetFile = filePath || this.configFiles[1]; // 默认保存到用户配置
     const configToSave = config ? this.deepMerge(this.config, config) : this.config;
 
