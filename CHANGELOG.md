@@ -18,6 +18,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.2] - 2025-01-19
+
+### 🔧 Fixed / 修复
+
+- **修复 npx 更新失败问题** - `npx claude-pangu@latest update` 命令现在可以正常工作
+  - 重写 `getPackageDir()` 函数，支持 npx 临时缓存目录环境
+  - 重写 `getPackageVersion()` 函数，正确遍历查找 package.json
+  - 添加包目录有效性验证（检查 agents 目录是否存在）
+
+### 🛠️ CI/CD
+
+- **修复 GitHub Actions 发布流程** - Release job 现在只在 tag push 时运行
+  - 避免每次 main 分支 push 都尝试 npm publish
+  - 更新为使用 `softprops/action-gh-release@v1` 自动生成 release notes
+  - 配置 NPM_TOKEN secret 支持自动发布
+
+---
+
 ## [1.2.1] - 2025-01-19
 
 ### 🧪 Testing / 测试

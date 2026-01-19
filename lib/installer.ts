@@ -27,47 +27,77 @@ export function getPluginDir(): string {
 
 /**
  * 获取当前包的路径
- * 兼容 ESM 和 CommonJS 环境
+ * 兼容 ESM、CommonJS 和 npx 环境
  */
 export function getPackageDir(): string {
-  // 方法 1: 使用 __dirname (CommonJS / Jest 环境)
+  // 验证路径是否为有效的 claude-pangu 包目录
+  const isValidPackageDir = (dir: string): boolean => {
+    const pkgPath = path.join(dir, 'package.json');
+    if (!fs.existsSync(pkgPath)) return false;
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as { name?: string };
+      if (pkg.name !== 'claude-pangu' && pkg.name !== 'oh-my-claude') return false;
+      // 还需要检查是否有 agents 目录（确保是完整的包）
+      const agentsDir = path.join(dir, 'agents');
+      return fs.existsSync(agentsDir);
+    } catch {
+      return false;
+    }
+  };
+
+  // 方法 1: 使用 __dirname (CommonJS / Jest / npx 环境)
   if (typeof __dirname !== 'undefined' && __dirname) {
-    // 在 lib/ 目录下，需要向上两级到达项目根目录
-    // 在 dist/lib/ 目录下，也需要向上两级到达项目根目录
+    // 可能的目录结构:
+    // - lib/installer.ts -> 根目录 (开发环境, ts-node)
+    // - dist/lib/installer.js -> 根目录 (编译后)
+    // - node_modules/.pnpm/claude-pangu@x.x.x/node_modules/claude-pangu/dist/lib/installer.js
+    // - AppData/Local/npm-cache/_npx/.../node_modules/claude-pangu/dist/lib/installer.js
     const candidatePaths = [
-      path.resolve(__dirname, '..'),        // lib/ -> 根目录
-      path.resolve(__dirname, '..', '..'),  // dist/lib/ -> 根目录
+      path.resolve(__dirname, '..'),           // lib/ -> 根目录
+      path.resolve(__dirname, '..', '..'),     // dist/lib/ -> 根目录
+      path.resolve(__dirname, '..', '..', '..'), // 深层嵌套情况
     ];
     
     for (const candidate of candidatePaths) {
-      const pkgPath = path.join(candidate, 'package.json');
-      if (fs.existsSync(pkgPath)) {
-        try {
-          const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as { name?: string };
-          if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
-            return candidate;
-          }
-        } catch {
-          // 继续尝试下一个路径
-        }
+      if (isValidPackageDir(candidate)) {
+        return candidate;
       }
     }
   }
   
-  // 方法 2: 从 process.cwd() 查找（开发环境）
-  const cwdPkgPath = path.join(process.cwd(), 'package.json');
-  if (fs.existsSync(cwdPkgPath)) {
-    try {
-      const pkg = JSON.parse(fs.readFileSync(cwdPkgPath, 'utf-8')) as { name?: string };
-      if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
-        return process.cwd();
+  // 方法 2: 使用 __filename 向上遍历查找 (更可靠的 npx 支持)
+  if (typeof __filename !== 'undefined' && __filename) {
+    let currentDir = path.dirname(__filename);
+    // 最多向上查找 10 层
+    for (let i = 0; i < 10; i++) {
+      if (isValidPackageDir(currentDir)) {
+        return currentDir;
       }
-    } catch {
-      // 忽略错误
+      const parentDir = path.dirname(currentDir);
+      if (parentDir === currentDir) break; // 到达根目录
+      currentDir = parentDir;
     }
   }
   
-  // 后备：返回当前工作目录
+  // 方法 3: 从 process.cwd() 查找（开发环境）
+  if (isValidPackageDir(process.cwd())) {
+    return process.cwd();
+  }
+  
+  // 方法 4: 检查全局 npm 安装路径
+  const globalPaths = [
+    path.join(process.env.APPDATA || '', 'npm', 'node_modules', 'claude-pangu'),
+    path.join(process.env.PREFIX || '/usr/local', 'lib', 'node_modules', 'claude-pangu'),
+    '/usr/local/lib/node_modules/claude-pangu',
+  ];
+  
+  for (const globalPath of globalPaths) {
+    if (isValidPackageDir(globalPath)) {
+      return globalPath;
+    }
+  }
+  
+  // 后备：返回当前工作目录（可能会失败，但至少会有清晰的错误信息）
   return process.cwd();
 }
 

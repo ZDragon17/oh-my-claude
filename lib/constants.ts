@@ -11,41 +11,54 @@ import * as fs from 'fs';
 
 /**
  * 获取 package.json 版本号
- * 兼容 ESM 和 CommonJS 环境
+ * 兼容 ESM、CommonJS 和 npx 环境
  */
 function getPackageVersion(): string {
-  try {
-    // 方法 1: 使用 __dirname (CommonJS / Jest 环境)
-    if (typeof __dirname !== 'undefined' && __dirname) {
-      const pkgPath = path.join(__dirname, '..', 'package.json');
-      if (fs.existsSync(pkgPath)) {
-        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as { version?: string };
-        return pkg.version || '0.0.0';
-      }
-    }
-    
-    // 方法 2: 从 process.cwd() 查找
-    const cwdPkgPath = path.join(process.cwd(), 'package.json');
-    if (fs.existsSync(cwdPkgPath)) {
-      const pkg = JSON.parse(fs.readFileSync(cwdPkgPath, 'utf-8')) as { name?: string; version?: string };
+  // 查找并验证 package.json
+  const findPackageJson = (dir: string): string | null => {
+    const pkgPath = path.join(dir, 'package.json');
+    if (!fs.existsSync(pkgPath)) return null;
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as { name?: string; version?: string };
       if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
         return pkg.version || '0.0.0';
       }
+    } catch {
+      // 忽略解析错误
     }
-    
-    // 方法 3: 从脚本位置向上查找（已安装的 npm 包环境）
-    // 在 npm 安装后，dist/lib/constants.js 需要向上两级找到 package.json
-    const scriptDir = typeof __filename !== 'undefined' ? path.dirname(__filename) : '';
-    if (scriptDir) {
-      // 尝试从 dist/lib 向上找
-      const distPkgPath = path.join(scriptDir, '..', '..', 'package.json');
-      if (fs.existsSync(distPkgPath)) {
-        const pkg = JSON.parse(fs.readFileSync(distPkgPath, 'utf-8')) as { name?: string; version?: string };
-        if (pkg.name === 'claude-pangu' || pkg.name === 'oh-my-claude') {
-          return pkg.version || '0.0.0';
-        }
+    return null;
+  };
+
+  try {
+    // 方法 1: 使用 __dirname 向上查找 (CommonJS / Jest / npx 环境)
+    if (typeof __dirname !== 'undefined' && __dirname) {
+      const candidatePaths = [
+        path.resolve(__dirname, '..'),           // lib/ -> 根目录
+        path.resolve(__dirname, '..', '..'),     // dist/lib/ -> 根目录
+        path.resolve(__dirname, '..', '..', '..'), // 深层嵌套
+      ];
+      
+      for (const candidate of candidatePaths) {
+        const version = findPackageJson(candidate);
+        if (version) return version;
       }
     }
+    
+    // 方法 2: 使用 __filename 向上遍历查找 (更可靠的 npx 支持)
+    if (typeof __filename !== 'undefined' && __filename) {
+      let currentDir = path.dirname(__filename);
+      for (let i = 0; i < 10; i++) {
+        const version = findPackageJson(currentDir);
+        if (version) return version;
+        const parentDir = path.dirname(currentDir);
+        if (parentDir === currentDir) break;
+        currentDir = parentDir;
+      }
+    }
+    
+    // 方法 3: 从 process.cwd() 查找（开发环境）
+    const cwdVersion = findPackageJson(process.cwd());
+    if (cwdVersion) return cwdVersion;
     
     return '0.0.0';
   } catch {
