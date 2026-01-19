@@ -103,9 +103,9 @@ $ARGUMENTS
 
 ## 开始移山
 
-现在，请：
+现在，我将开始执行任务：
 
-1. **创建状态文件** - 使用 Write 工具创建 `.claude/yishan-loop.local.md`
+1. **创建状态文件** - 自动创建 `.claude/yishan-loop.local.md`
 2. **分析任务** - 理解用户想要什么
 3. **探索现状** - 了解代码库当前状态
 4. **制定计划** - 使用 TodoWrite 创建任务列表
@@ -113,8 +113,26 @@ $ARGUMENTS
 6. **持续推进** - 直到所有任务完成
 7. **输出完成标记** - 只有真正完成后才输出 `<promise>移山完毕</promise>`
 
-> 提示：你也可以使用别名 `/yishan`、`/persist`、`/ultrawork`、`/ulw` 来调用此命令。
-
 记住愚公的信念：**只要方向正确，坚持就会成功。**
 
-开始吧，移山者！
+## 执行开始
+
+首先，我需要创建愚公移山循环的状态文件。
+
+```bash
+# 创建 .claude 目录（如果不存在）
+mkdir -p .claude
+
+# 创建状态文件
+cat > .claude/yishan-loop.local.md << 'EOF'
+---
+iteration: 1
+max_iterations: 50
+completion_promise: "移山完毕"
+---
+
+$ARGUMENTS
+EOF
+```
+
+状态文件已创建。现在开始移山...
