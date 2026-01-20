@@ -212,7 +212,7 @@ export function copyPluginFiles(packageDir: string, pluginDir: string, showProgr
     const dest = path.join(validatedPluginDir, dir);
 
     if (!fs.existsSync(src)) {
-      stats.errors.push(`目录不存在: ${dir}`);
+      // 源目录不存在时静默跳过，这不是错误（可能是可选目录）
       if (progress) progress.update(`跳过 ${dir}/`);
       continue;
     }

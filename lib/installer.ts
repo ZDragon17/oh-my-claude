@@ -280,6 +280,12 @@ export async function update(): Promise<void> {
       throw new Error(`关键目录复制失败: ${criticalErrors.join(', ')}`);
     }
 
+    // 输出非关键错误的详细信息（与 install 流程一致）
+    if (stats.errors.length > 0) {
+      warn('部分文件复制出现问题:');
+      stats.errors.forEach(e => console.log(`  - ${e}`));
+    }
+
     setHookPermissions(targetDir);
     success(`已更新到版本 ${VERSION}`);
   }, '更新');
