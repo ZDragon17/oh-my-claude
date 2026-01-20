@@ -59,6 +59,11 @@ Specialized agents based on Chinese cultural figures:
 | ⚖️ | **BaoZheng** (包拯) | Testing expert, TDD | `/baozheng` `/test` |
 | 🪞 | **WeiZheng** (魏征) | Code review, standards | `/weizheng` `/review` |
 | 📊 | **CangJie** (仓颉) | Database design, SQL optimization | `/cangjie` `/db` |
+| ✨ | **LiBai** (李白) | Requirements analysis, user stories | `/libai` `/poet` |
+| 🎨 | **GuKaiZhi** (顾恺之) | UI/UX design, aesthetics | `/gukaizhi` `/painter` |
+| 🌙 | **ChangE** (嫦娥) | Cloud services, deployment | `/change` `/cloud` |
+| 🖼️ | **HuiTu** (绘图) | Multimodal analysis, image understanding | `/huitu` `/looker` |
+| 🐢 | **XuanWu** (玄武) | Plan review, risk assessment | `/xuanwu` `/momus` |
 
 ### 🔄 YuGong Moving Mountains Mode
 
@@ -97,6 +102,23 @@ All commands support both Chinese and English:
 
 - **Todo Enforcer**: Detects incomplete tasks, prevents premature stopping
 - **Keyword Detector**: Auto-activates appropriate modes
+- **33+ Built-in Hooks**: Context management, error recovery, session notifications, and more
+
+### 🔌 Built-in MCP Servers (New in v1.7.0)
+
+Auto-configured on installation, no manual setup required:
+
+- **Context7** - Official documentation lookup
+- **Grep.app** - GitHub code search
+- **DeepWiki** - Open source project docs
+- **WebSearch** - Web search
+
+### 🛠️ Advanced Tools
+
+- **LSP Tools** - Code diagnostics, rename, go-to-definition
+- **AST-Grep** - Structural code search and replace
+- **Session Tools** - Session management, history search
+- **Playwright** - Browser automation skill
 
 ## 📦 Installation
 
@@ -408,6 +430,8 @@ oh-my-claude/
 | `/libai` | Summon LiBai requirements analyst |
 | `/gukaizhi` | Summon GuKaiZhi UI/UX designer |
 | `/change` | Summon ChangE cloud architect |
+| `/huitu` | Summon HuiTu multimodal analyst |
+| `/xuanwu` | Summon XuanWu plan reviewer |
 
 ### Tool Commands
 
@@ -531,6 +555,7 @@ The legendary creator of Chinese characters, who served as a historian during th
 - [x] v1.4.0 - P1 feature alignment (Retry Hooks, Session Recovery, Metis/Prometheus)
 - [x] v1.5.0 - P2 enhancement features (JSONC config, Monitor Hooks)
 - [x] v1.6.0 - **Feature alignment complete** 🎯 (~95% aligned with oh-my-opencode)
+- [x] v1.7.0 - **100% Feature Alignment** 🚀 (MCP auto-install, Session tools, new Agents)
 
 ## 🤝 Contributing
 

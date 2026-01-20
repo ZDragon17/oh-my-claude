@@ -65,6 +65,8 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 | ✨ | **李白** (LiBai) | 需求分析，用户故事 | `/libai` `/poet` |
 | 🎨 | **顾恺之** (GuKaiZhi) | UI/UX 设计，界面美学 | `/gukaizhi` `/painter` |
 | 🌙 | **嫦娥** (ChangE) | 云服务，DevOps 部署 | `/change` `/cloud` |
+| 🖼️ | **绘图** (HuiTu) | 多模态分析，图像理解 | `/huitu` `/looker` |
+| 🐢 | **玄武** (XuanWu) | 计划审查，风险评估 | `/xuanwu` `/momus` |
 
 ### 🔄 愚公移山模式
 
@@ -103,6 +105,23 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 
 - **Todo 强制执行器**：检测未完成任务，阻止过早停止
 - **关键词检测器**：自动激活相应模式
+- **33+ 内置 Hooks**：上下文管理、错误恢复、会话通知等
+
+### 🔌 内置 MCP 服务器 (v1.7.0 新增)
+
+安装后自动配置，无需手动设置：
+
+- **Context7** - 官方文档查询
+- **Grep.app** - GitHub 代码搜索
+- **DeepWiki** - 开源项目文档
+- **WebSearch** - 网络搜索
+
+### 🛠️ 高级工具
+
+- **LSP 工具** - 代码诊断、重命名、定义跳转
+- **AST-Grep** - 结构化代码搜索和替换
+- **Session 工具** - 会话管理、历史搜索
+- **Playwright** - 浏览器自动化技能
 
 ## 📦 安装
 
@@ -412,6 +431,8 @@ oh-my-claude/
 | `/libai` | 召唤李白需求炼金师 |
 | `/gukaizhi` | 召唤顾恺之界面美学师 |
 | `/change` | 召唤嫦娥云端仙子 |
+| `/huitu` | 召唤绘图多模态分析 |
+| `/xuanwu` | 召唤玄武计划审查 |
 
 ### 工具命令
 
@@ -654,6 +675,7 @@ model: sonnet
 - [x] v1.4.0 - P1 功能对齐（重试 Hooks、会话恢复、Metis/Prometheus）
 - [x] v1.5.0 - P2 增强功能（JSONC 配置、监控 Hooks）
 - [x] v1.6.0 - **功能对齐完成** 🎯（与 oh-my-opencode 95% 对齐）
+- [x] v1.7.0 - **100% 功能对齐** 🚀（MCP 自动安装、Session 工具、新 Agent）
 
 ## 🤝 贡献
 

@@ -1,64 +1,18 @@
 {
-  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/mcp-schema.json",
-  "mcpServers": {
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"],
-      "description": "Context7 实时文档获取服务 - 获取最新的库文档和代码示例",
-      "enabled": true,
-      "env": {}
-    },
-    "grep-app": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/grep-app-mcp"],
-      "description": "Grep.app 跨 GitHub 仓库代码搜索",
-      "enabled": true,
-      "env": {}
-    },
-    "deepwiki": {
-      "command": "npx",
-      "args": ["-y", "mcp-deepwiki"],
-      "description": "DeepWiki 文档获取 - 获取开源项目的深度文档",
-      "enabled": true,
-      "env": {}
-    },
-    "exa": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/exa-mcp"],
-      "description": "Exa 语义搜索引擎 - 高质量网络搜索",
-      "enabled": false,
-      "env": {
-        "EXA_API_KEY": ""
-      }
-    },
-    "websearch": {
-      "command": "npx",
-      "args": ["-y", "open-websearch-mcp"],
-      "description": "开放网络搜索 - 支持 DuckDuckGo/Bing/Brave",
-      "enabled": true,
-      "env": {}
-    },
-    "postgres": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/postgres-mcp"],
-      "description": "PostgreSQL 数据库连接 (可选)",
-      "enabled": false,
-      "env": {
-        "DATABASE_URL": ""
-      }
-    },
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/playwright-mcp"],
-      "description": "Playwright 浏览器自动化 (可选)",
-      "enabled": false,
-      "env": {}
-    }
+  "context7": {
+    "command": "npx",
+    "args": ["-y", "@upstash/context7-mcp"]
   },
-  "disabled_mcps": [],
-  "mcp_config": {
-    "auto_enable_new_mcps": false,
-    "timeout_ms": 30000,
-    "max_retries": 3
+  "grep-app": {
+    "command": "npx",
+    "args": ["-y", "@anthropic/grep-app-mcp"]
+  },
+  "deepwiki": {
+    "command": "npx",
+    "args": ["-y", "mcp-deepwiki"]
+  },
+  "open-websearch": {
+    "command": "npx",
+    "args": ["-y", "open-websearch-mcp"]
   }
 }

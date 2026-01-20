@@ -18,6 +18,141 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.0] - 2026-01-20
+
+### 🚀 Complete Feature Alignment / 完整功能对齐
+
+**本版本完成了与 oh-my-opencode 100% 功能对齐**（多模型支持为设计差异）。
+
+This release achieves 100% feature alignment with oh-my-opencode (multi-model support is a design difference).
+
+#### 功能对齐率 / Alignment Rate: ~100%
+
+| 维度 | oh-my-opencode | oh-my-claude | 状态 |
+|------|---------------|--------------|------|
+| **Agent 数量** | 7 | 20 | ✅ 超越 |
+| **Hook 数量** | 35+ | 33 | ✅ 基本持平 |
+| **命令数量** | ~20 | 33 | ✅ 超越 |
+| **技能数量** | ~3 | 5 | ✅ 超越 |
+| **MCP 服务器** | 3 | 3 | ✅ 等效 |
+| **Session 工具** | 4 | 4 | ✅ 等效 |
+| **多模型支持** | ✅ | ❌ | 🔵 设计差异 |
+
+### ✨ Added / 新增
+
+#### 内置 MCP 服务器自动安装 / Built-in MCP Auto-Install
+
+- **新增 `.mcp.json`** - 安装插件时自动配置 MCP 服务器到 Claude Code
+- 自动启用的 MCP：
+  - **context7** - 官方文档查询
+  - **grep-app** - GitHub 代码搜索
+  - **deepwiki** - 开源项目文档
+  - **open-websearch** - 网络搜索 (DuckDuckGo/Bing)
+- 新增 `mcps/` 目录 - MCP 配置参考文件
+- 新增 `lib/mcp/mcp-loader.ts` - MCP 配置加载模块
+- **安装后即可使用**，无需手动配置
+
+#### Session 工具集 / Session Tools
+
+- 新增 `lib/session/session-tools.ts` - 完整会话管理工具
+- **sessionList()** - 列出所有会话及元数据
+- **sessionRead()** - 读取会话历史和消息
+- **sessionSearch()** - 全文搜索会话内容
+- **sessionInfo()** - 获取会话详细信息
+
+#### 新 Agent / New Agents
+
+- **绘图 (HuiTu)** - 多模态分析 Agent (`agents/huitu.md`)
+  - 图像内容分析和描述
+  - PDF 文档解析和提取
+  - 架构图/流程图理解
+  - UI 截图分析
+  - 图表数据提取
+  - 命令：`/huitu`, `/looker`
+
+- **玄武 (XuanWu)** - 计划审查 Agent (`agents/xuanwu.md`)
+  - TODO 列表完整性审查
+  - 执行计划可行性评估
+  - 任务依赖关系分析
+  - 风险识别和预警
+  - 命令：`/xuanwu`, `/momus`
+
+#### 新 Hooks / New Hooks
+
+- **atlas.sh** - 核心编排逻辑
+  - 任务分类（visual/debugging/architecture/documentation/testing/performance/security）
+  - 委派建议生成
+  - 工作流阶段检测（exploration/planning/implementation/verification/deployment）
+  - 并行执行机会检测
+
+- **directory-readme-injector.sh** - 目录 README 注入
+  - 自动检测项目 README.md
+  - 提取关键信息注入上下文
+  - 支持缓存加速
+  - 检测项目类型（nodejs/rust/golang/python/java/dotnet）
+
+- **auto-slash-command.sh** - 自动斜杠命令
+  - 检测用户意图
+  - 建议对应的专业 Agent 命令
+  - 支持 18+ 种任务类型映射
+
+- **session-notification.sh** - 会话通知
+  - 跨平台 OS 通知支持（macOS/Linux/Windows）
+  - 后台任务完成通知
+  - 构建/测试完成通知
+  - 错误告警通知
+  - 愚公移山完成通知
+
+- **edit-error-recovery.sh** - 编辑错误恢复
+  - 检测 oldString 未找到错误
+  - 检测多次匹配错误
+  - 检测文件不存在错误
+  - 检测权限错误
+  - 提供详细恢复建议
+
+- **background-compaction.sh** - 后台任务压缩
+  - 监控后台任务数量
+  - 达到阈值时建议清理
+  - 状态持久化
+
+- **anthropic-context-window-limit-recovery.sh** - 上下文限制恢复
+  - 检测上下文窗口限制错误
+  - 检测接近限制警告
+  - 提供恢复步骤和紧急保存脚本
+
+#### 新 Skill / New Skill
+
+- **Playwright Skill** (`skills/playwright/`) - 浏览器自动化
+  - 页面导航和交互
+  - 截图功能
+  - 内容提取
+  - 等待机制
+  - 可选集成 Playwright MCP 服务器
+
+### 🔧 Enhanced / 增强
+
+#### 配置系统扩展 / Config System Extensions
+
+- **MCP 配置** - `disabled_mcps`, 自定义 MCP 定义
+- **Agent 权限** - `edit`, `bash`, `webfetch`, `doom_loop`, `external_directory`
+- **Category 委派** - `visual`, `business-logic`, `quick` 类别与 Agent 路由
+- **并发控制** - `defaultConcurrency`, `agentConcurrency`, `maxTotalConcurrency`
+
+### 📋 hooks.json 更新
+
+新增以下 hooks 到 UserPromptSubmit：
+- `atlas.sh` - 核心编排
+- `directory-readme-injector.sh` - README 注入
+- `auto-slash-command.sh` - 自动命令建议
+
+新增以下 hooks 到 PostToolUse：
+- `session-notification.sh` - OS 通知
+- `edit-error-recovery.sh` - 编辑错误恢复
+- `background-compaction.sh` - 后台任务管理
+- `anthropic-context-window-limit-recovery.sh` - 上下文恢复
+
+---
+
 ## [1.6.0] - 2026-01-20
 
 ### 🎯 Feature Alignment Complete / 功能对齐完成

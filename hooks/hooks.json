@@ -19,6 +19,13 @@
     "UserPromptSubmit": [
       {
         "type": "command",
+        "command": "bash hooks/atlas.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "Atlas 核心编排 - 任务分类、委派建议、工作流阶段检测"
+      },
+      {
+        "type": "command",
         "command": "bash hooks/keyword-detector.sh",
         "timeout": 3000,
         "continueOnError": true,
@@ -96,6 +103,13 @@
       },
       {
         "type": "command",
+        "command": "bash hooks/directory-readme-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "目录 README 注入 - 自动提取项目文档关键信息"
+      },
+      {
+        "type": "command",
         "command": "bash hooks/rules-injector.sh",
         "timeout": 3000,
         "continueOnError": true,
@@ -107,6 +121,13 @@
         "timeout": 3000,
         "continueOnError": true,
         "description": "思维模式 - 深度思考和推理增强"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/auto-slash-command.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "自动斜杠命令 - 检测意图并建议相应 Agent"
       },
       {
         "type": "command",
@@ -186,6 +207,34 @@
         "timeout": 2000,
         "continueOnError": true,
         "description": "思维块验证 - 检测 extended thinking 相关错误"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/session-notification.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "会话通知 - 在重要事件时发送 OS 通知"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/edit-error-recovery.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "编辑错误恢复 - 检测 Edit 工具错误并提供恢复建议"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/background-compaction.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "后台任务压缩 - 监控后台任务数量并建议清理"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/anthropic-context-window-limit-recovery.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "上下文限制恢复 - 检测上下文窗口限制并提供恢复策略"
       }
     ]
   },

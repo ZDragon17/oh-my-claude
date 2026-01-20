@@ -173,10 +173,10 @@ export const GITHUB_ISSUES_URL = `https://github.com/${GITHUB_REPO}/issues`;
 // ==================== 插件目录和文件配置 ====================
 
 /** 插件核心目录列表 */
-export const PLUGIN_DIRS = ['agents', 'commands', 'hooks', 'skills', '.claude-plugin'] as const;
+export const PLUGIN_DIRS = ['agents', 'commands', 'hooks', 'skills', '.claude-plugin', 'mcps'] as const;
 
-/** 插件附加文件列表 */
-export const PLUGIN_FILES = ['README.md', 'README_EN.md', 'LICENSE'] as const;
+/** 插件附加文件列表（包含 MCP 配置） */
+export const PLUGIN_FILES = ['README.md', 'README_EN.md', 'LICENSE', '.mcp.json'] as const;
 
 // ==================== Agent 配置 ====================
 

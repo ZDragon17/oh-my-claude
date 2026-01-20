@@ -1,0 +1,59 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/misc/mcp-server-schema.json",
+  "name": "grep_app",
+  "description": "GitHub 代码搜索 MCP，在数百万公开 GitHub 仓库中搜索代码模式和实现示例",
+  "version": "1.0.0",
+  "command": "npx",
+  "args": ["-y", "@anthropic-ai/mcp-grep-app"],
+  "env": {},
+  "tools": [
+    {
+      "name": "searchGitHub",
+      "description": "从数百万公开 GitHub 仓库中查找真实代码示例。搜索字面代码模式（如 grep），而非关键词。适用于：实现不熟悉的 API、查找正确的语法/参数、寻找生产级示例和最佳实践",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "要搜索的字面代码模式（如 'useState('、'import React from'、'async function'）"
+          },
+          "language": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "按编程语言过滤（如 ['TypeScript', 'TSX']、['Python']）"
+          },
+          "repo": {
+            "type": "string",
+            "description": "按仓库过滤（如 'facebook/react'、'vercel/ai'）"
+          },
+          "path": {
+            "type": "string",
+            "description": "按文件路径过滤（如 'src/components/'、'README.md'）"
+          },
+          "useRegexp": {
+            "type": "boolean",
+            "description": "是否将查询解释为正则表达式",
+            "default": false
+          },
+          "matchCase": {
+            "type": "boolean",
+            "description": "是否区分大小写",
+            "default": false
+          },
+          "matchWholeWords": {
+            "type": "boolean",
+            "description": "是否仅匹配完整单词",
+            "default": false
+          }
+        },
+        "required": ["query"]
+      }
+    }
+  ],
+  "metadata": {
+    "provider": "grep.app",
+    "website": "https://grep.app",
+    "pricing": "免费",
+    "rateLimit": "合理使用"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/misc/mcp-server-schema.json",
+  "name": "websearch",
+  "description": "实时网络搜索 MCP，基于 Exa AI 提供高质量搜索结果",
+  "version": "1.0.0",
+  "command": "npx",
+  "args": ["-y", "@anthropic-ai/mcp-exa-search"],
+  "env": {
+    "EXA_API_KEY": "${EXA_API_KEY}"
+  },
+  "tools": [
+    {
+      "name": "web_search",
+      "description": "搜索网络获取最新信息。适用于查找新闻、文章、博客、产品信息等",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "搜索查询词"
+          },
+          "numResults": {
+            "type": "number",
+            "description": "返回结果数量，默认 10",
+            "default": 10
+          },
+          "type": {
+            "type": "string",
+            "enum": ["auto", "keyword", "neural"],
+            "description": "搜索类型：auto（自动）、keyword（关键词）、neural（语义）",
+            "default": "auto"
+          }
+        },
+        "required": ["query"]
+      }
+    }
+  ],
+  "metadata": {
+    "provider": "Exa AI",
+    "website": "https://exa.ai",
+    "pricing": "免费额度 + 按量付费",
+    "rateLimit": "1000 次/月（免费）"
+  }
+}

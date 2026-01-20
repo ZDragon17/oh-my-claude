@@ -1,0 +1,110 @@
+{
+  "name": "playwright",
+  "version": "1.0.0",
+  "description": "Playwright 浏览器自动化技能 - 提供网页自动化、截图、测试能力",
+  "keywords": [
+    "browser", "浏览器", "automation", "自动化",
+    "screenshot", "截图", "web", "网页",
+    "test", "测试", "e2e", "端到端"
+  ],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": [
+      "playwright", "browser", "浏览器",
+      "screenshot", "截图", "capture",
+      "web automation", "网页自动化",
+      "e2e test", "端到端测试",
+      "click", "点击", "fill", "填写",
+      "navigate", "导航", "page"
+    ],
+    "commands": ["/playwright", "/browser", "/screenshot"]
+  },
+
+  "mcp": {
+    "name": "playwright-mcp",
+    "description": "Playwright MCP Server for browser automation",
+    "command": "npx",
+    "args": ["@anthropic/playwright-mcp"],
+    "env": {
+      "PLAYWRIGHT_HEADLESS": "true",
+      "PLAYWRIGHT_TIMEOUT": "30000"
+    },
+    "auto_start": false,
+    "install_hint": "npm install -g @anthropic/playwright-mcp"
+  },
+
+  "config": {
+    "headless": true,
+    "timeout": 30000,
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "screenshot_format": "png",
+    "screenshot_quality": 80,
+    "default_browser": "chromium"
+  },
+
+  "capabilities": {
+    "navigation": {
+      "description": "Navigate to URLs, go back/forward, refresh",
+      "tools": ["navigate", "goBack", "goForward", "reload"]
+    },
+    "interaction": {
+      "description": "Click, type, fill forms, select options",
+      "tools": ["click", "type", "fill", "select", "hover"]
+    },
+    "screenshot": {
+      "description": "Capture full page or element screenshots",
+      "tools": ["screenshot", "elementScreenshot"]
+    },
+    "content": {
+      "description": "Extract page content and information",
+      "tools": ["getContent", "getText", "getAttribute", "evaluate"]
+    },
+    "waiting": {
+      "description": "Wait for elements, navigation, network",
+      "tools": ["waitForSelector", "waitForNavigation", "waitForTimeout"]
+    }
+  },
+
+  "use_cases": [
+    {
+      "scenario": "网页截图",
+      "example": "截取 example.com 的页面截图",
+      "workflow": ["navigate", "waitForSelector", "screenshot"]
+    },
+    {
+      "scenario": "表单填写",
+      "example": "自动填写登录表单",
+      "workflow": ["navigate", "fill", "click", "waitForNavigation"]
+    },
+    {
+      "scenario": "数据提取",
+      "example": "从网页提取文本内容",
+      "workflow": ["navigate", "waitForSelector", "getText"]
+    },
+    {
+      "scenario": "E2E 测试",
+      "example": "测试用户注册流程",
+      "workflow": ["navigate", "fill", "click", "waitForSelector", "getText"]
+    }
+  ],
+
+  "safety": {
+    "blocked_domains": [],
+    "require_confirmation_domains": [
+      "*.bank.*",
+      "*.gov.*"
+    ],
+    "max_requests_per_minute": 60,
+    "forbidden_actions": [
+      "密码输入（除非明确授权）",
+      "支付操作",
+      "账户删除操作"
+    ]
+  }
+}

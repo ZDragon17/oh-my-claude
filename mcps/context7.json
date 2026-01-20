@@ -1,0 +1,53 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/misc/mcp-server-schema.json",
+  "name": "context7",
+  "description": "官方文档查询 MCP，获取任何编程库/框架的最新官方文档",
+  "version": "1.0.0",
+  "command": "npx",
+  "args": ["-y", "@anthropic-ai/mcp-context7"],
+  "env": {},
+  "tools": [
+    {
+      "name": "resolve-library-id",
+      "description": "将包/产品名称解析为 Context7 兼容的库 ID。在调用 query-docs 之前必须先调用此工具获取有效的库 ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "libraryName": {
+            "type": "string",
+            "description": "要搜索的库名称"
+          },
+          "query": {
+            "type": "string",
+            "description": "用户原始问题或任务，用于按相关性排序库结果"
+          }
+        },
+        "required": ["query", "libraryName"]
+      }
+    },
+    {
+      "name": "query-docs",
+      "description": "从 Context7 检索和查询任何编程库或框架的最新文档和代码示例",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "libraryId": {
+            "type": "string",
+            "description": "精确的 Context7 兼容库 ID（如 '/mongodb/docs', '/vercel/next.js'）"
+          },
+          "query": {
+            "type": "string",
+            "description": "需要帮助的问题或任务，要具体并包含相关细节"
+          }
+        },
+        "required": ["libraryId", "query"]
+      }
+    }
+  ],
+  "metadata": {
+    "provider": "Context7",
+    "website": "https://context7.com",
+    "pricing": "免费",
+    "rateLimit": "无限制"
+  }
+}

@@ -109,6 +109,74 @@ export interface OhMyClaudeConfig {
     enableTracing: boolean;
     customHooks: Record<string, string>;
   };
+
+  // MCP 配置
+  mcp: {
+    /** 禁用的内置 MCP 列表 */
+    disabled_mcps: string[];
+    /** 自定义 MCP 配置 */
+    custom: Record<string, MCPConfig>;
+  };
+
+  // Agent 权限配置
+  agentPermissions: Record<string, AgentPermission>;
+
+  // Category 委派配置
+  categories: Record<string, CategoryConfig>;
+
+  // 并发控制配置
+  concurrency: {
+    /** 默认并发数 */
+    defaultConcurrency: number;
+    /** Agent 级别并发限制 */
+    agentConcurrency: Record<string, number>;
+    /** 最大总并发数 */
+    maxTotalConcurrency: number;
+  };
+}
+
+/**
+ * MCP 配置接口
+ */
+export interface MCPConfig {
+  command: string;
+  args: string[];
+  env?: Record<string, string>;
+  disabled?: boolean;
+}
+
+/**
+ * Agent 权限配置接口
+ */
+export interface AgentPermission {
+  /** 文件编辑权限 */
+  edit: 'ask' | 'allow' | 'deny';
+  /** Bash 命令执行权限 */
+  bash: 'ask' | 'allow' | 'deny' | Record<string, 'allow' | 'deny'>;
+  /** 网络请求权限 */
+  webfetch: 'ask' | 'allow' | 'deny';
+  /** 无限循环检测覆盖 */
+  doom_loop: 'ask' | 'allow' | 'deny';
+  /** 项目外目录访问 */
+  external_directory: 'ask' | 'allow' | 'deny';
+}
+
+/**
+ * Category 委派配置接口
+ */
+export interface CategoryConfig {
+  /** 目标 Agent */
+  agent: string;
+  /** 模型覆盖 */
+  model_override?: string;
+  /** 温度参数 */
+  temperature?: number;
+  /** Top P 参数 */
+  top_p?: number;
+  /** 最大 Token 数 */
+  maxTokens?: number;
+  /** 附加提示 */
+  prompt_append?: string;
 }
 
 /**
@@ -193,6 +261,42 @@ const OhMyClaudeConfigSchema = z.object({
     enableProfiling: z.boolean().default(false),
     enableTracing: z.boolean().default(false),
     customHooks: z.record(z.string()).default({})
+  }).default({}),
+
+  mcp: z.object({
+    disabled_mcps: z.array(z.string()).default([]),
+    custom: z.record(z.object({
+      command: z.string(),
+      args: z.array(z.string()),
+      env: z.record(z.string()).optional(),
+      disabled: z.boolean().optional()
+    })).default({})
+  }).default({}),
+
+  agentPermissions: z.record(z.object({
+    edit: z.enum(['ask', 'allow', 'deny']).default('ask'),
+    bash: z.union([
+      z.enum(['ask', 'allow', 'deny']),
+      z.record(z.enum(['allow', 'deny']))
+    ]).default('ask'),
+    webfetch: z.enum(['ask', 'allow', 'deny']).default('allow'),
+    doom_loop: z.enum(['ask', 'allow', 'deny']).default('deny'),
+    external_directory: z.enum(['ask', 'allow', 'deny']).default('ask')
+  })).default({}),
+
+  categories: z.record(z.object({
+    agent: z.string(),
+    model_override: z.string().optional(),
+    temperature: z.number().min(0).max(2).optional(),
+    top_p: z.number().min(0).max(1).optional(),
+    maxTokens: z.number().optional(),
+    prompt_append: z.string().optional()
+  })).default({}),
+
+  concurrency: z.object({
+    defaultConcurrency: z.number().min(1).max(20).default(5),
+    agentConcurrency: z.record(z.number()).default({}),
+    maxTotalConcurrency: z.number().min(1).max(50).default(20)
   }).default({})
 });
 
@@ -267,6 +371,40 @@ const DEFAULT_CONFIG: OhMyClaudeConfig = {
     enableProfiling: false,
     enableTracing: false,
     customHooks: {}
+  },
+
+  mcp: {
+    disabled_mcps: [],
+    custom: {}
+  },
+
+  agentPermissions: {},
+
+  categories: {
+    visual: {
+      agent: 'gukaizhi',
+      temperature: 0.7,
+      prompt_append: '专注于视觉设计、UI/UX 和用户体验。使用现代设计原则和美学标准。'
+    },
+    'business-logic': {
+      agent: 'zhuge',
+      temperature: 0.1,
+      prompt_append: '专注于业务逻辑、架构设计和战略规划。保持严谨和逻辑性。'
+    },
+    quick: {
+      agent: 'wukong',
+      temperature: 0.3,
+      prompt_append: '快速完成任务，节省上下文。专注于代码探索和信息收集。'
+    }
+  },
+
+  concurrency: {
+    defaultConcurrency: 5,
+    agentConcurrency: {
+      wukong: 10,    // 探索 Agent 高并发
+      zhuge: 2       // 顾问 Agent 限制并发
+    },
+    maxTotalConcurrency: 20
   }
 };
 
@@ -333,7 +471,7 @@ export class ConfigManager {
 
     // 3. 验证配置
     try {
-      this.config = OhMyClaudeConfigSchema.parse(mergedConfig);
+      this.config = OhMyClaudeConfigSchema.parse(mergedConfig) as OhMyClaudeConfig;
       console.log('✅ 配置加载完成');
     } catch (error) {
       console.warn('⚠️ 配置验证失败，使用默认配置:', error);
@@ -449,7 +587,7 @@ export class ConfigManager {
     const validated = OhMyClaudeConfigSchema.safeParse(testConfig);
 
     if (validated.success) {
-      this.config = validated.data;
+      this.config = validated.data as OhMyClaudeConfig;
       this.notifyListeners();
     } else {
       throw new Error(`配置验证失败: ${validated.error.message}`);
@@ -464,7 +602,7 @@ export class ConfigManager {
     const validated = OhMyClaudeConfigSchema.safeParse(newConfig);
 
     if (validated.success) {
-      this.config = validated.data;
+      this.config = validated.data as OhMyClaudeConfig;
       this.notifyListeners();
     } else {
       throw new Error(`配置验证失败: ${validated.error.message}`);
@@ -621,7 +759,7 @@ export class ConfigManager {
     if (data.config && data.version) {
       const importedConfig = OhMyClaudeConfigSchema.safeParse(data.config);
       if (importedConfig.success) {
-        this.config = importedConfig.data;
+        this.config = importedConfig.data as OhMyClaudeConfig;
         this.notifyListeners();
         console.log('✅ 配置导入成功');
       } else {
