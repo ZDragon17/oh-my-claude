@@ -62,8 +62,8 @@ Specialized agents based on Chinese cultural figures:
 | ✨ | **LiBai** (李白) | Requirements analysis, user stories | `/libai` `/poet` |
 | 🎨 | **GuKaiZhi** (顾恺之) | UI/UX design, aesthetics | `/gukaizhi` `/painter` |
 | 🌙 | **ChangE** (嫦娥) | Cloud services, deployment | `/change` `/cloud` |
-| 🖼️ | **HuiTu** (绘图) | Multimodal analysis, image understanding | `/huitu` `/looker` |
-| 🐢 | **XuanWu** (玄武) | Plan review, risk assessment | `/xuanwu` `/momus` |
+| 🖼️ | **LiLou** (离娄) | Multimodal analysis, image understanding | `/lilou` `/looker` |
+| 🔮 | **LiuBoWen** (刘伯温) | Plan review, risk assessment | `/liubowen` `/momus` |
 
 ### 🔄 YuGong Moving Mountains Mode
 
@@ -430,8 +430,8 @@ oh-my-claude/
 | `/libai` | Summon LiBai requirements analyst |
 | `/gukaizhi` | Summon GuKaiZhi UI/UX designer |
 | `/change` | Summon ChangE cloud architect |
-| `/huitu` | Summon HuiTu multimodal analyst |
-| `/xuanwu` | Summon XuanWu plan reviewer |
+| `/lilou` | Summon LiLou multimodal analyst |
+| `/liubowen` | Summon LiuBoWen plan reviewer |
 
 ### Tool Commands
 

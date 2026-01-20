@@ -18,6 +18,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.2] - 2026-01-21
+
+### 🎭 Changed / 变更
+
+#### Agent 重命名 - 文化深度提升 / Agent Renaming for Cultural Depth
+
+为提升文化内涵和辨识度，重命名了两个 Agent：
+
+| 旧名称 | 新名称 | 文化背景 |
+|--------|--------|---------|
+| 绘图 (HuiTu) | **离娄** (LiLou) | 《孟子》中视力超群之人，"离娄之明，察秋毫之末"，成语"明察秋毫"由此而来 |
+| 玄武 (XuanWu) | **刘伯温** (LiuBoWen) | 明代开国军师，"前知五百年，后知五百年"，善于预判风险、审时度势 |
+
+**命令变更**：
+- `/huitu` → `/lilou` (多模态分析)
+- `/xuanwu` → `/liubowen` (计划审查)
+
+**别名保持不变**：
+- `/looker` - 调用离娄
+- `/momus` - 调用刘伯温
+
+---
+
 ## [1.7.1] - 2026-01-20
 
 ### 🔧 Fixed / 修复

@@ -65,8 +65,8 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 | ✨ | **李白** (LiBai) | 需求分析，用户故事 | `/libai` `/poet` |
 | 🎨 | **顾恺之** (GuKaiZhi) | UI/UX 设计，界面美学 | `/gukaizhi` `/painter` |
 | 🌙 | **嫦娥** (ChangE) | 云服务，DevOps 部署 | `/change` `/cloud` |
-| 🖼️ | **绘图** (HuiTu) | 多模态分析，图像理解 | `/huitu` `/looker` |
-| 🐢 | **玄武** (XuanWu) | 计划审查，风险评估 | `/xuanwu` `/momus` |
+| 🖼️ | **离娄** (LiLou) | 多模态分析，图像理解 | `/lilou` `/looker` |
+| 🔮 | **刘伯温** (LiuBoWen) | 计划审查，风险评估 | `/liubowen` `/momus` |
 
 ### 🔄 愚公移山模式
 
@@ -431,8 +431,8 @@ oh-my-claude/
 | `/libai` | 召唤李白需求炼金师 |
 | `/gukaizhi` | 召唤顾恺之界面美学师 |
 | `/change` | 召唤嫦娥云端仙子 |
-| `/huitu` | 召唤绘图多模态分析 |
-| `/xuanwu` | 召唤玄武计划审查 |
+| `/lilou` | 召唤离娄多模态分析 |
+| `/liubowen` | 召唤刘伯温计划审查 |
 
 ### 工具命令
 
