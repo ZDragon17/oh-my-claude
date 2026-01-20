@@ -1,0 +1,68 @@
+{
+  "name": "git-master",
+  "version": "1.0.0",
+  "description": "Git Master 智能 Git 操作技能 - 安全的提交、分支、PR 管理",
+  "keywords": [
+    "git", "commit", "提交", "branch", "分支", 
+    "pr", "pull request", "merge", "合并",
+    "push", "推送", "rebase", "cherry-pick"
+  ],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": [
+      "commit", "提交", "git commit",
+      "branch", "分支", "git branch",
+      "pr", "pull request", "创建 PR",
+      "merge", "合并", "git merge",
+      "push", "推送", "git push",
+      "rebase", "cherry-pick",
+      "git log", "git status", "git diff"
+    ],
+    "commands": ["/git", "/commit", "/pr", "/branch"]
+  },
+
+  "config": {
+    "commit_footer": true,
+    "include_co_authored_by": true,
+    "conventional_commits": true,
+    "auto_stage": false,
+    "sign_commits": false,
+    "commit_message_max_length": 72,
+    "body_wrap_length": 80
+  },
+
+  "safety": {
+    "blocked_commands": [
+      "git push --force",
+      "git push -f",
+      "git reset --hard",
+      "git clean -fd",
+      "git checkout -- .",
+      "git config --global"
+    ],
+    "require_confirmation": [
+      "git push",
+      "git rebase",
+      "git merge",
+      "git reset"
+    ],
+    "protected_branches": ["main", "master", "develop", "production"]
+  },
+
+  "commit_types": {
+    "feat": "新功能",
+    "fix": "Bug 修复",
+    "docs": "文档更新",
+    "style": "代码格式（不影响代码运行的变动）",
+    "refactor": "重构（既不是新功能，也不是修复 bug）",
+    "perf": "性能优化",
+    "test": "测试相关",
+    "build": "构建系统或外部依赖",
+    "ci": "CI 配置",
+    "chore": "其他杂项",
+    "revert": "回退"
+  }
+}

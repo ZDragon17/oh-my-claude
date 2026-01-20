@@ -18,6 +18,287 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.0] - 2026-01-20
+
+### 🎯 Feature Alignment Complete / 功能对齐完成
+
+**本版本完成了与 oh-my-opencode 的全面功能对齐**（多模型支持除外）。
+
+This release completes comprehensive feature alignment with oh-my-opencode (except multi-model support).
+
+#### 功能对齐率 / Alignment Rate: ~95%
+
+| 维度 | oh-my-opencode | oh-my-claude | 状态 |
+|------|---------------|--------------|------|
+| **Agent 数量** | 7 | 18 | ✅ 超越 |
+| **Hook 数量** | 35+ | 26 | ✅ 基本持平 |
+| **命令数量** | ~20 | 31 | ✅ 超越 |
+| **技能数量** | ~3 | 4 | ✅ 等效 |
+| **多模型支持** | ✅ | ❌ | 🔵 设计差异 |
+
+### 🔧 P2 Additional Hooks / P2 附加 Hooks
+
+本版本新增多个辅助 Hooks，完善 oh-my-opencode 功能对齐。
+
+### ✨ Added / 新增
+
+#### Interactive Bash Session Hook / 交互式 Bash 会话 Hook
+
+- 新增 `hooks/interactive-bash-session.sh` - tmux 会话管理
+- **长时间运行检测** - 识别 dev server、docker、kubectl 等长时间运行命令
+- **tmux 会话建议** - 提供会话创建和管理的命令示例
+- **会话命名规范** - 使用 `omo-{name}` 格式
+- **tmux 可用性检查** - 未安装时提供安装建议
+
+#### Thinking Block Validator Hook / 思维块验证 Hook
+
+- 新增 `hooks/thinking-block-validator.sh` - Extended thinking 错误检测
+- **预算超出检测** - 识别 thinking token 预算超出
+- **格式错误检测** - 识别思考块格式问题
+- **超时检测** - 识别思考过程超时
+- **流式输出错误** - 检测 streaming 相关问题
+- **响应截断检测** - 识别 API 响应被截断
+- **上下文超出检测** - 识别上下文窗口限制
+
+#### Agent Usage Reminder Hook / Agent 使用提醒 Hook
+
+- 新增 `hooks/agent-usage-reminder.sh` - 智能 Agent 推荐
+- **任务类型识别** - 根据用户输入识别任务类型
+- **Agent 推荐** - 为不同任务推荐合适的专业 Agent：
+  - 架构/设计 → 诸葛 (ZhuGe)
+  - 测试 → 包拯 (BaoZheng)
+  - 安全 → 墨子 (MoZi)
+  - 性能 → 孙子 (SunZi)
+  - 数据库 → 仓颉 (CangJie)
+  - 文档 → 司马迁 (SimaQian)
+  - 代码审查 → 魏征 (WeiZheng)
+  - UI/UX → 顾恺之 (GuKaiZhi)
+- **冷却期机制** - 5 分钟内不重复提醒
+- **智能过滤** - 已使用相关 Agent 时不再提醒
+
+### 📋 hooks.json 更新
+
+- 添加 `interactive-bash-session.sh` 到 UserPromptSubmit hooks
+- 添加 `thinking-block-validator.sh` 到 PostToolUse hooks
+- 添加 `agent-usage-reminder.sh` 到 UserPromptSubmit hooks
+
+---
+
+## [1.5.0] - 2026-01-20
+
+### 🛠️ P2 Enhancement Features / P2 增强功能
+
+本版本新增 JSONC 配置支持、扩展配置选项和辅助监控 hooks。
+
+### ✨ Added / 新增
+
+#### JSONC 配置支持 / JSONC Config Support
+
+- 新增 `lib/jsonc-parser.ts` - JSONC (JSON with Comments) 解析器
+- **单行注释支持** - 支持 `//` 风格的单行注释
+- **多行注释支持** - 支持 `/* */` 风格的多行注释
+- **尾随逗号支持** - 允许数组和对象末尾的逗号
+- **错误定位** - 解析错误时提供行号和列号信息
+- **配置文件扩展** - 现在支持 `.json` 和 `.jsonc` 两种格式
+
+#### 配置扩展 / Config Extensions
+
+新增以下配置选项：
+
+**agents.categories** - Agent 分类配置
+```json
+{
+  "agents": {
+    "categories": {
+      "enabled": ["core", "development", "operations"],
+      "disabled": [],
+      "custom": {}
+    }
+  }
+}
+```
+
+**notification** - 通知配置
+```json
+{
+  "notification": {
+    "enabled": true,
+    "level": "important",
+    "backgroundTaskCompletion": true,
+    "taskFailure": true,
+    "sessionRecovery": true,
+    "quietHours": {
+      "enabled": false,
+      "start": 22,
+      "end": 8
+    }
+  }
+}
+```
+
+**backgroundTask** - 后台任务配置
+```json
+{
+  "backgroundTask": {
+    "maxConcurrency": 5,
+    "defaultTimeout": 120000,
+    "autoRetry": 2,
+    "retryDelay": 5000,
+    "enablePriorityQueue": true,
+    "saveHistory": true,
+    "historyRetentionDays": 7
+  }
+}
+```
+
+#### 辅助监控 Hooks / Helper Monitor Hooks
+
+- 新增 `hooks/context-window-monitor.sh` - 上下文窗口监控
+  - **使用率估算** - 估算当前上下文 token 使用量
+  - **阈值警告** - 在 70% 和 85% 使用率时提供警告
+  - **压缩建议** - 提供上下文压缩和会话管理建议
+  
+- 新增 `hooks/tool-output-validator.sh` - 工具输出验证
+  - **权限错误检测** - EACCES、EPERM 等
+  - **文件不存在检测** - ENOENT 等
+  - **超时错误检测** - ETIMEDOUT 等
+  - **连接错误检测** - ECONNREFUSED 等
+  - **内存错误检测** - ENOMEM 等
+  - **磁盘空间检测** - ENOSPC 等
+  - **语法错误检测** - SyntaxError 等
+  - **修复建议** - 为每种错误类型提供针对性建议
+
+### 📋 hooks.json 更新
+
+- 添加 `context-window-monitor.sh` 到 PostToolUse hooks
+- 添加 `tool-output-validator.sh` 到 PostToolUse hooks
+
+### 🔧 Enhanced / 增强
+
+- **ConfigManager** - 现在支持加载 `.jsonc` 格式的配置文件
+- **配置文件搜索顺序** - 同时搜索 `.json` 和 `.jsonc` 扩展名
+
+---
+
+## [1.4.0] - 2026-01-20
+
+### 🔄 P1 Important Features / P1 重要功能
+
+本版本继续对齐 oh-my-opencode 的重要功能，新增多个增强 Hook 和 Agent 能力升级。
+
+### ✨ Added / 新增
+
+#### Delegate Task Retry Hook / 任务委派重试 Hook
+
+- 新增 `hooks/delegate-task-retry.sh` - 自动检测失败的委派任务
+- **失败检测** - 识别 error、failed、timeout 等错误模式
+- **重试建议** - 提供详细的重试指导和调整建议
+- **状态追踪** - 记录失败任务以便后续分析
+
+#### Background Notification Hook / 后台任务通知 Hook
+
+- 新增 `hooks/background-notification.sh` - 后台任务完成通知
+- **状态监控** - 追踪 completed、running、failed 状态
+- **批量通知** - 支持多个任务同时完成的通知
+- **结果摘要** - 提供任务完成情况的简洁摘要
+
+#### Session Recovery Hook / 会话恢复 Hook
+
+- 新增 `hooks/session-recovery.sh` - 增强的会话恢复机制
+- **Thinking Block 错误检测** - 识别 extended thinking 相关错误
+- **上下文窗口限制检测** - 识别 token limit 相关问题
+- **会话中断检测** - 识别连接断开等问题
+- **TODO 状态恢复** - 从保存的状态文件中恢复任务进度
+- **检查点恢复** - 支持从任务检查点继续执行
+
+#### Empty Task Response Detector Hook / 空任务响应检测 Hook
+
+- 新增 `hooks/empty-task-response-detector.sh` - 检测委派任务的空响应
+- **空响应检测** - 识别完全空的任务结果
+- **占位符检测** - 识别 TODO、PLACEHOLDER 等占位符响应
+- **模板响应检测** - 识别 Agent 只给出意图但未执行的情况
+- **错误响应检测** - 识别包含错误信息的响应
+
+### 🔧 Enhanced / 增强
+
+#### 李白 (LiBai) - Metis 能力集成
+
+- **INVEST 原则验证** - 用户故事质量检查
+- **MoSCoW 优先级框架** - 需求优先级排序
+- **RICE 评分系统** - 功能价值评估
+- **需求追踪矩阵** - 从业务目标到测试用例的完整追踪
+- **与愚公协作增强** - 自动将结构化需求转换为任务列表
+
+#### 诸葛 (ZhuGe) - Prometheus 能力集成
+
+- **Work Breakdown Structure** - 任务分解到 Epic/Feature/Story/Task 层级
+- **执行计划生成** - 带时间估算和依赖关系的计划
+- **关键路径分析** - 识别阻塞依赖和并行机会
+- **架构决策记录 (ADR)** - 标准化的决策文档格式
+- **与愚公协作增强** - 将执行计划转换为 TODO 列表
+
+### 📋 hooks.json 更新
+
+- 添加 `delegate-task-retry.sh` 到 PostToolUse hooks
+- 添加 `background-notification.sh` 到 PostToolUse hooks
+- 添加 `empty-task-response-detector.sh` 到 PostToolUse hooks
+- 添加 `session-recovery.sh` 到 UserPromptSubmit hooks
+
+---
+
+## [1.3.0] - 2026-01-20
+
+### 🎯 Major Feature Alignment / 重大功能对齐
+
+本版本重点对齐 oh-my-opencode 的核心功能（多模型支持除外）。
+
+### ✨ Added / 新增
+
+#### 愚公系统提示词增强 / Yugong System Prompt Enhancement
+
+- **Phase 0-3 工作流** - 添加完整的 Intent Gate → Codebase Assessment → Implementation → Completion 工作流
+- **Frontend Gate 决策** - 添加 Frontend 文件变更类型分类（视觉/逻辑/混合）和委派规则
+- **GitHub Workflow** - 添加从 Issue 到 PR 的完整工作周期指引
+- **Delegation Prompt Structure** - 强制 7 部分委派提示格式（TASK, EXPECTED OUTCOME, REQUIRED SKILLS, REQUIRED TOOLS, MUST DO, MUST NOT DO, CONTEXT）
+- **并行执行指引** - 明确 explore/librarian agent 应并行后台调用
+
+#### Git Master 技能 / Git Master Skill
+
+- 新增 `skills/git-master/` 目录
+- **安全协议** - 禁止破坏性操作（force push, hard reset）、跳过 hooks、未经请求提交
+- **Conventional Commits** - 支持 feat/fix/docs/style/refactor/perf/test/build/ci/chore/revert 类型
+- **Co-authored-by** - 自动添加 AI 协作者标记
+- **Git Commit --amend 规则** - 明确 amend 的使用条件
+- 新增 `/git` 命令
+
+#### Ralph Loop 循环机制 / Ralph Loop Mechanism
+
+- 新增 `hooks/ralph-loop.sh` - 独立的自引用循环控制 Hook
+- **完成承诺检测** - 检测 `<promise>DONE</promise>` 标记
+- **自动继续** - 未完成时自动阻止停止
+- **迭代控制** - 支持最大迭代次数配置（默认 100）
+- 新增 `/ralph-loop` 命令 - 启动 Ralph Loop
+- 新增 `/cancel-ralph` 命令 - 取消循环
+
+#### 新命令 / New Commands
+
+- `/init-deep` - 深度项目初始化，全面分析项目结构、技术栈、依赖关系
+- `/start-work` - 开始工作流，从需求/Issue 到交付的完整流程
+- `/refactor` - 安全重构模板，支持重命名、提取、移动、简化等操作
+
+### 🛠️ Improved / 改进
+
+- **hooks.json** - 添加 ralph-loop.sh 到 Stop hooks
+- **Agent 委派表** - 明确各领域委派给哪个 Agent
+
+### 📚 Documentation / 文档
+
+- 新增 `docs/GAP_ANALYSIS_REPORT.md` - 与 oh-my-opencode 的详细差距分析
+- 新增 `docs/IMPLEMENTATION_ROADMAP.md` - 功能对齐实施路线图
+- 更新 `docs/FEATURE_ALIGNMENT.md` - 功能对齐状态
+
+---
+
 ## [1.2.5] - 2025-01-20
 
 ### 🔧 Fixed / 修复
@@ -1078,6 +1359,10 @@ After multiple iterations and improvements, oh-my-claude officially releases ver
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 1.6.0 | 2026-01-20 | 🔧 P2 additional hooks: interactive-bash, thinking-validator, agent-reminder / P2 附加 Hooks |
+| 1.5.0 | 2026-01-20 | 🛠️ P2 features: JSONC config, notification/backgroundTask config, monitor hooks / P2 增强功能 |
+| 1.4.0 | 2026-01-20 | 🔄 P1 features: retry hooks, session recovery, Metis/Prometheus integration / P1 功能对齐 |
+| 1.3.0 | 2026-01-20 | 🎯 P0 features: Yugong enhancement, Git Master, Ralph Loop / P0 功能对齐 |
 | 1.2.1 | 2025-01-19 | 🧪 Test coverage optimization (253 tests, 75% coverage) / 测试覆盖率优化 |
 | 1.2.0 | 2025-01-19 | 🔧 CLI modular refactoring / CLI 模块化重构 |
 | 1.1.0 | 2025-01-19 | 🏔️ Yishan Loop v2.0 redesign / 愚公移山循环 v2.0 重新设计 |

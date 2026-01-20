@@ -8,6 +8,7 @@ import * as path from 'path';
 import * as os from 'os';
 import { z } from 'zod';
 import { VERSION } from './constants.js';
+import { parseJsonc, isJsoncFile } from './jsonc-parser.js';
 
 // ==================== 配置类型定义 ====================
 
@@ -23,6 +24,15 @@ export interface OhMyClaudeConfig {
     maxConcurrentTasks: number;
     enableCollaboration: boolean;
     contextCompression: boolean;
+    /** Agent 分类配置 */
+    categories: {
+      /** 启用的 Agent 分类 */
+      enabled: string[];
+      /** 禁用的 Agent 分类 */
+      disabled: string[];
+      /** 自定义分类映射 */
+      custom: Record<string, string[]>;
+    };
   };
 
   // UI 配置
@@ -55,6 +65,44 @@ export interface OhMyClaudeConfig {
     trustedDomains: string[];
   };
 
+  // 通知配置
+  notification: {
+    /** 启用通知 */
+    enabled: boolean;
+    /** 通知级别: all, important, error */
+    level: 'all' | 'important' | 'error';
+    /** 后台任务完成通知 */
+    backgroundTaskCompletion: boolean;
+    /** 任务失败通知 */
+    taskFailure: boolean;
+    /** 会话恢复通知 */
+    sessionRecovery: boolean;
+    /** 静默时段（小时） */
+    quietHours: {
+      enabled: boolean;
+      start: number;
+      end: number;
+    };
+  };
+
+  // 后台任务配置
+  backgroundTask: {
+    /** 最大并发后台任务数 */
+    maxConcurrency: number;
+    /** 默认超时时间（毫秒） */
+    defaultTimeout: number;
+    /** 自动重试次数 */
+    autoRetry: number;
+    /** 重试延迟（毫秒） */
+    retryDelay: number;
+    /** 任务优先级队列 */
+    enablePriorityQueue: boolean;
+    /** 保存任务历史 */
+    saveHistory: boolean;
+    /** 历史保留天数 */
+    historyRetentionDays: number;
+  };
+
   // 高级配置
   advanced: {
     enableProfiling: boolean;
@@ -84,7 +132,12 @@ const OhMyClaudeConfigSchema = z.object({
     defaultTimeout: z.number().min(1000).max(300000).default(30000),
     maxConcurrentTasks: z.number().min(1).max(10).default(3),
     enableCollaboration: z.boolean().default(true),
-    contextCompression: z.boolean().default(true)
+    contextCompression: z.boolean().default(true),
+    categories: z.object({
+      enabled: z.array(z.string()).default(['core', 'development', 'operations']),
+      disabled: z.array(z.string()).default([]),
+      custom: z.record(z.array(z.string())).default({})
+    }).default({})
   }).default({}),
 
   ui: z.object({
@@ -113,6 +166,29 @@ const OhMyClaudeConfigSchema = z.object({
     trustedDomains: z.array(z.string()).default(['github.com', 'npmjs.com'])
   }).default({}),
 
+  notification: z.object({
+    enabled: z.boolean().default(true),
+    level: z.enum(['all', 'important', 'error']).default('important'),
+    backgroundTaskCompletion: z.boolean().default(true),
+    taskFailure: z.boolean().default(true),
+    sessionRecovery: z.boolean().default(true),
+    quietHours: z.object({
+      enabled: z.boolean().default(false),
+      start: z.number().min(0).max(23).default(22),
+      end: z.number().min(0).max(23).default(8)
+    }).default({})
+  }).default({}),
+
+  backgroundTask: z.object({
+    maxConcurrency: z.number().min(1).max(20).default(5),
+    defaultTimeout: z.number().min(5000).max(600000).default(120000),
+    autoRetry: z.number().min(0).max(5).default(2),
+    retryDelay: z.number().min(1000).max(60000).default(5000),
+    enablePriorityQueue: z.boolean().default(true),
+    saveHistory: z.boolean().default(true),
+    historyRetentionDays: z.number().min(1).max(365).default(7)
+  }).default({}),
+
   advanced: z.object({
     enableProfiling: z.boolean().default(false),
     enableTracing: z.boolean().default(false),
@@ -131,7 +207,12 @@ const DEFAULT_CONFIG: OhMyClaudeConfig = {
     defaultTimeout: 30000,
     maxConcurrentTasks: 3,
     enableCollaboration: true,
-    contextCompression: true
+    contextCompression: true,
+    categories: {
+      enabled: ['core', 'development', 'operations'],
+      disabled: [],
+      custom: {}
+    }
   },
 
   ui: {
@@ -159,6 +240,29 @@ const DEFAULT_CONFIG: OhMyClaudeConfig = {
     trustedDomains: ['github.com', 'npmjs.com']
   },
 
+  notification: {
+    enabled: true,
+    level: 'important',
+    backgroundTaskCompletion: true,
+    taskFailure: true,
+    sessionRecovery: true,
+    quietHours: {
+      enabled: false,
+      start: 22,
+      end: 8
+    }
+  },
+
+  backgroundTask: {
+    maxConcurrency: 5,
+    defaultTimeout: 120000,
+    autoRetry: 2,
+    retryDelay: 5000,
+    enablePriorityQueue: true,
+    saveHistory: true,
+    historyRetentionDays: 7
+  },
+
   advanced: {
     enableProfiling: false,
     enableTracing: false,
@@ -181,16 +285,22 @@ export class ConfigManager {
 
   /**
    * 初始化配置文件路径
+   * 支持 .json 和 .jsonc 格式
    */
   private initializeConfigFiles(): void {
     const home = os.homedir();
     const cwd = process.cwd();
 
     // 按优先级排序：环境变量 > 项目配置 > 用户配置 > 全局配置
+    // 同时支持 .json 和 .jsonc 格式
     this.configFiles = [
+      path.join(home, '.oh-my-claude', 'config', 'global.jsonc'),    // 全局配置 (JSONC)
       path.join(home, '.oh-my-claude', 'config', 'global.json'),     // 全局配置
+      path.join(home, '.oh-my-claude', 'config.jsonc'),              // 用户配置 (JSONC)
       path.join(home, '.oh-my-claude', 'config.json'),               // 用户配置
+      path.join(cwd, '.oh-my-claude.jsonc'),                         // 项目配置 (JSONC)
       path.join(cwd, '.oh-my-claude.json'),                          // 项目配置
+      path.join(cwd, 'oh-my-claude.config.jsonc'),                   // 项目备用配置 (JSONC)
       path.join(cwd, 'oh-my-claude.config.json')                     // 项目备用配置
     ];
   }
@@ -205,11 +315,15 @@ export class ConfigManager {
     // 1. 加载环境变量
     mergedConfig = this.loadFromEnv(mergedConfig);
 
-    // 2. 加载配置文件
+    // 2. 加载配置文件（支持 JSONC 格式）
     for (const configFile of this.configFiles) {
       if (fs.existsSync(configFile)) {
         try {
-          const fileConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+          const content = fs.readFileSync(configFile, 'utf8');
+          // 根据文件扩展名决定解析方式
+          const fileConfig = isJsoncFile(configFile) 
+            ? parseJsonc<Partial<OhMyClaudeConfig>>(content)
+            : JSON.parse(content);
           mergedConfig = this.deepMerge(mergedConfig, fileConfig);
         } catch (error) {
           console.warn(`配置文件加载失败 ${configFile}:`, error);

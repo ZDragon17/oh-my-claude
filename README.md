@@ -648,6 +648,12 @@ model: sonnet
 - [x] v0.8.0 - 更多 Agent（包拯、魏征、仓颉）
 - [x] v0.9.0 - 更多 Agent（李白、顾恺之、嫦娥）
 - [x] v1.0.0 - 首个正式版发布 🎉
+- [x] v1.1.0 - 愚公移山循环 v2.0 重设计
+- [x] v1.2.0 - CLI 模块化重构、测试覆盖率优化
+- [x] v1.3.0 - P0 功能对齐（愚公增强、Git Master、Ralph Loop）
+- [x] v1.4.0 - P1 功能对齐（重试 Hooks、会话恢复、Metis/Prometheus）
+- [x] v1.5.0 - P2 增强功能（JSONC 配置、监控 Hooks）
+- [x] v1.6.0 - **功能对齐完成** 🎯（与 oh-my-opencode 95% 对齐）
 
 ## 🤝 贡献
 

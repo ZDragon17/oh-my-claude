@@ -328,7 +328,7 @@ oh-my-claude/
 ├── .github/                  # GitHub configuration
 │   ├── ISSUE_TEMPLATE/       # Issue templates
 │   └── PULL_REQUEST_TEMPLATE.md
-├── agents/                   # Agent definitions (15 agents)
+├── agents/                   # Agent definitions (18 agents)
 │   ├── yugong.md             # YuGong - Main orchestrator
 │   ├── zhuge.md              # ZhuGe - Strategic advisor
 │   ├── luban.md              # LuBan - Master craftsman
@@ -523,7 +523,14 @@ The legendary creator of Chinese characters, who served as a historian during th
 - [x] v0.6.0 - More agents (ZhengHe, ZhangHeng, LiBing)
 - [x] v0.7.0 - More agents (LaoZi)
 - [x] v0.8.0 - More agents (BaoZheng, WeiZheng, CangJie)
-- [ ] v1.0.0 - Stable release
+- [x] v0.9.0 - More agents (LiBai, GuKaiZhi, ChangE)
+- [x] v1.0.0 - First stable release 🎉
+- [x] v1.1.0 - YuGong Loop v2.0 redesign
+- [x] v1.2.0 - CLI modular refactoring, test coverage optimization
+- [x] v1.3.0 - P0 feature alignment (YuGong enhancement, Git Master, Ralph Loop)
+- [x] v1.4.0 - P1 feature alignment (Retry Hooks, Session Recovery, Metis/Prometheus)
+- [x] v1.5.0 - P2 enhancement features (JSONC config, Monitor Hooks)
+- [x] v1.6.0 - **Feature alignment complete** 🎯 (~95% aligned with oh-my-opencode)
 
 ## 🤝 Contributing
 

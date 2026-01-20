@@ -3,6 +3,13 @@
     "Stop": [
       {
         "type": "command",
+        "command": "bash hooks/ralph-loop.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "Ralph Loop - 自引用循环控制（检测完成承诺）"
+      },
+      {
+        "type": "command",
         "command": "bash hooks/todo-continuation.sh",
         "timeout": 3000,
         "continueOnError": true,
@@ -107,6 +114,27 @@
         "timeout": 5000,
         "continueOnError": true,
         "description": "自动更新检查 - 检查新版本"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/session-recovery.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "会话恢复 - 检测会话中断信号并提供恢复策略"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/interactive-bash-session.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "交互式 Bash 会话 - 检测长时间运行进程并建议使用 tmux"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/agent-usage-reminder.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "Agent 使用提醒 - 根据任务类型推荐合适的 Agent"
       }
     ],
     "PostToolUse": [
@@ -116,6 +144,48 @@
         "timeout": 2000,
         "continueOnError": true,
         "description": "工具输出截断 - 处理大型工具输出"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/delegate-task-retry.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "description": "任务委派重试 - 检测失败的委派任务并提供重试建议"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/background-notification.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "description": "后台任务通知 - 检测完成的后台任务并发送通知"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/empty-task-response-detector.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "空任务响应检测 - 检测委派任务的空响应或无效响应"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/context-window-monitor.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "上下文窗口监控 - 监控上下文使用率并提供预警"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/tool-output-validator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "工具输出验证 - 检测工具执行错误并提供修复建议"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/thinking-block-validator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "description": "思维块验证 - 检测 extended thinking 相关错误"
       }
     ]
   },
