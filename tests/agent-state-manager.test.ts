@@ -183,9 +183,9 @@ describe('Agent 状态管理器', () => {
       // 保存状态
       await manager.saveState();
 
-      // 创建新的管理器实例
+      // 创建新的管理器实例并显式加载状态
       const newManager = new AgentStateManagerImpl();
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await newManager.loadState();
 
       // 检查状态是否加载
       const loadedAgent = newManager.getAgentState(uniqueId);

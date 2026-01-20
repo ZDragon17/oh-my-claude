@@ -18,6 +18,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.5] - 2025-01-20
+
+### 🔧 Fixed / 修复
+
+- **修复 ESLint any 类型警告** - 创建 `ConfigExportData` 接口替代 any 类型
+  - `exportConfig()` 和 `importConfig()` 方法现在使用强类型定义
+  - 测试文件中合理使用 eslint-disable 注释
+
+### 🛠️ Improved / 改进
+
+- **优化 Agent 状态管理器初始化** - 改进测试环境兼容性
+  - 添加 `skipAutoInit` 选项支持测试环境
+  - 新增 `waitForInit()` 方法用于确保初始化完成
+  - 测试环境中跳过自动状态加载，避免异步操作悬挂
+
+- **改进 Zod Schema 类型注释** - 添加设计意图说明
+  - 在 `lib/agent/types.ts` 中说明 `z.any()` 的使用原因
+  - 上下文数据使用 any 是故意的设计决策（动态 JSON 结构）
+
+### 🧹 Chores / 杂项
+
+- **删除 Windows 保留文件** - 移除意外创建的 `nul` 文件
+- **优化测试设置** - 简化 `tests/setup.ts` 中的清理逻辑
+
+---
+
 ## [1.2.4] - 2025-01-19
 
 ### 🔧 Fixed / 修复

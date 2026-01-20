@@ -2,7 +2,7 @@
  * 配置管理系统测试
  */
 
-import { ConfigManager, OhMyClaudeConfig } from '../lib/config-manager';
+import { ConfigManager, OhMyClaudeConfig, ConfigExportData } from '../lib/config-manager';
 
 describe('配置管理系统', () => {
   let configManager: ConfigManager;
@@ -45,6 +45,7 @@ describe('配置管理系统', () => {
 
     test('应该验证配置值', () => {
       expect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         configManager.set('logLevel', 'invalid' as any);
       }).toThrow();
 
@@ -103,6 +104,7 @@ describe('配置管理系统', () => {
 
     test('应该能够导入配置', () => {
       const testConfig: Partial<OhMyClaudeConfig> = {
+        version: '1.2.0',
         debug: true,
         ui: {
           theme: 'light',
@@ -112,8 +114,8 @@ describe('配置管理系统', () => {
         }
       };
 
-      const exportData = {
-        config: testConfig,
+      const exportData: ConfigExportData = {
+        config: testConfig as OhMyClaudeConfig,
         files: [],
         exportedAt: new Date().toISOString(),
         version: '1.2.0'

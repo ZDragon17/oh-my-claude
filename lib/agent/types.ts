@@ -1,5 +1,10 @@
 /**
  * Agent 模块类型定义和 Zod 验证 Schema
+ * 
+ * 注意：context 字段使用 z.any() 是故意的设计决策：
+ * 1. 上下文数据是动态的 JSON 结构，在运行时验证
+ * 2. 类型安全由 types/index.ts 中的 ContextRecord 接口提供
+ * 3. Zod 的 z.any() 在这里作为"透传"验证器
  */
 
 import { z } from 'zod';
@@ -11,6 +16,9 @@ export const MAX_SESSIONS_HISTORY = 100;
 export const MAX_CONTEXT_CACHE_SIZE = 50;
 
 // ==================== Zod 验证模式 ====================
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// 上下文数据使用 any 类型是故意的，因为上下文内容是动态的 JSON 结构
 
 export const AgentStateSchema = z.object({
   id: z.string(),
@@ -66,6 +74,8 @@ export const CollaborationSessionSchema = z.object({
     estimatedCompletion: z.string().optional()
   })
 });
+
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 // ==================== 类型推断 ====================
 

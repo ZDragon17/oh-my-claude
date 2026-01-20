@@ -63,6 +63,16 @@ export interface OhMyClaudeConfig {
   };
 }
 
+/**
+ * 配置导出数据格式
+ */
+export interface ConfigExportData {
+  config: OhMyClaudeConfig;
+  files: string[];
+  exportedAt: string;
+  version: string;
+}
+
 // ==================== Zod 验证模式 ====================
 
 const OhMyClaudeConfigSchema = z.object({
@@ -479,9 +489,9 @@ export class ConfigManager {
   }
 
   /**
-   * 导出配置
+   * 导出配置数据格式
    */
-  exportConfig(): Record<string, any> {
+  exportConfig(): ConfigExportData {
     return {
       config: this.config,
       files: this.configFiles,
@@ -493,7 +503,7 @@ export class ConfigManager {
   /**
    * 导入配置
    */
-  importConfig(data: Record<string, any>): void {
+  importConfig(data: ConfigExportData): void {
     if (data.config && data.version) {
       const importedConfig = OhMyClaudeConfigSchema.safeParse(data.config);
       if (importedConfig.success) {

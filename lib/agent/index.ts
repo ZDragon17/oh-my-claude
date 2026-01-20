@@ -36,13 +36,22 @@ export class AgentStateManagerImpl implements AgentStateManager {
   private sessionManager: SessionManager;
   private persistence: PersistenceManager;
   private initialized: boolean = false;
+  private initPromise: Promise<void> | null = null;
 
-  constructor() {
+  constructor(options?: { skipAutoInit?: boolean }) {
     this.agentStore = new AgentStateStore();
     this.contextCache = new ContextCacheManager();
     this.sessionManager = new SessionManager(this.contextCache);
     this.persistence = new PersistenceManager(this.agentStore, this.sessionManager, this.contextCache);
-    this.initialize();
+    
+    // 在非测试环境中自动初始化，或者明确指定跳过
+    const skipInit = options?.skipAutoInit ?? (process.env.NODE_ENV === 'test');
+    if (!skipInit) {
+      this.initPromise = this.initialize();
+    } else {
+      // 跳过自动初始化，标记为已初始化
+      this.initialized = true;
+    }
   }
 
   private async initialize(): Promise<void> {
@@ -55,6 +64,15 @@ export class AgentStateManagerImpl implements AgentStateManager {
     } catch (error) {
       console.warn('⚠️  Agent 状态管理器初始化失败，使用默认状态:', error);
       this.initialized = true;
+    }
+  }
+  
+  /**
+   * 等待初始化完成（用于需要确保初始化完成的场景）
+   */
+  async waitForInit(): Promise<void> {
+    if (this.initPromise) {
+      await this.initPromise;
     }
   }
 

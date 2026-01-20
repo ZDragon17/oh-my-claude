@@ -11,20 +11,14 @@ import * as crypto from 'crypto';
 // 设置测试环境变量
 process.env.NODE_ENV = 'test';
 
-// 全局测试超时
-// 注意：这里不设置全局超时，让每个测试文件自己控制
-
-// 清理控制台输出（可选）
-// beforeAll(() => {
-//   console.log('🚀 开始运行测试套件');
-// });
-
-// afterAll(() => {
-//   console.log('✅ 测试套件运行完成');
-// });
-
-// 如果需要全局 mock，可以在这里添加
-// 例如：mock 文件系统操作等
+// 全局清理 - 确保所有异步操作完成
+afterAll(async () => {
+  // 清理所有 Jest 定时器
+  jest.clearAllTimers();
+  
+  // 等待一小段时间让微任务队列清空
+  await new Promise(resolve => setImmediate(resolve));
+});
 
 // 测试工具函数
 export const testUtils = {
