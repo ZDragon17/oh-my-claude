@@ -89,12 +89,14 @@ jobs:
         if (Test-Path "hooks/notify-windows.ps1") {
           Write-Host "✅ Windows notification script exists"
           # 语法检查
+          $errors = $null
+          $tokens = $null
           $null = [System.Management.Automation.Language.Parser]::ParseFile(
             "$PWD/hooks/notify-windows.ps1",
-            [ref]$null,
+            [ref]$tokens,
             [ref]$errors
           )
-          if ($errors.Count -eq 0) {
+          if ($null -eq $errors -or $errors.Count -eq 0) {
             Write-Host "✅ notify-windows.ps1 syntax is valid"
           } else {
             Write-Host "❌ notify-windows.ps1 has syntax errors"
