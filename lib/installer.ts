@@ -307,7 +307,14 @@ export function performUninstall(pluginDir: string): void {
     info(`已删除 ${skillsRemoved} 个 skill 目录`);
   }
 
-  // 5. 清理本地状态文件（项目目录和用户目录）
+  // 5. 清理项目本地的旧版 zcf 目录（v1.0.8 及之前版本在项目目录安装）
+  const projectZcfDir = path.join(process.cwd(), '.claude', 'commands', 'zcf');
+  if (fs.existsSync(projectZcfDir)) {
+    fs.rmSync(projectZcfDir, { recursive: true, force: true });
+    info('已清理项目本地旧版 zcf 子目录');
+  }
+
+  // 6. 清理本地状态文件
   const stateFilesInCwd = [
     '.claude/ralph-loop.local.md',
     '.claude/yishan-state.json',
@@ -325,7 +332,7 @@ export function performUninstall(pluginDir: string): void {
     }
   }
 
-  // 6. 清理全局状态目录
+  // 7. 清理全局状态目录
   const globalStateDir = path.join(process.env.HOME || process.env.USERPROFILE || '', '.oh-my-claude');
   if (fs.existsSync(globalStateDir)) {
     // 只清理日志，保留用户可能的自定义配置
@@ -341,6 +348,7 @@ export function performUninstall(pluginDir: string): void {
   info(`  • 插件目录: ${pluginDir}`);
   info(`  • 命令文件: ${commandsRemoved} 个`);
   info(`  • Skill 目录: ${skillsRemoved} 个`);
+  info(`  • 项目本地 zcf: 已清理`);
   info(`  • 状态文件: 已清理`);
   log('');
   info('如需重新安装，请运行: npx claude-pangu install');

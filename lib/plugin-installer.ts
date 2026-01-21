@@ -38,15 +38,27 @@ export function installCommands(packageDir: string): InstallResult {
 
   info('正在安装 slash commands...');
 
-  // 清理旧版本的 zcf 子目录
+  // 清理旧版本的 zcf 子目录（用户全局目录）
   const legacyZcfDir = path.join(commandsDir, 'zcf');
   if (fs.existsSync(legacyZcfDir)) {
     try {
       fs.rmSync(legacyZcfDir, { recursive: true, force: true });
       stats.cleaned = true;
-      info('已清理旧版本 zcf 子目录');
+      info('已清理用户目录旧版 zcf 子目录');
     } catch (err) {
       warn(`清理旧版本目录失败: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    }
+  }
+
+  // 清理项目本地的旧版 zcf 子目录（v1.0.8 及之前版本在项目目录安装）
+  const projectZcfDir = path.join(process.cwd(), '.claude', 'commands', 'zcf');
+  if (fs.existsSync(projectZcfDir)) {
+    try {
+      fs.rmSync(projectZcfDir, { recursive: true, force: true });
+      stats.cleaned = true;
+      info('已清理项目本地旧版 zcf 子目录');
+    } catch (err) {
+      warn(`清理项目本地旧版目录失败: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   }
 

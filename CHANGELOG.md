@@ -18,6 +18,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.6] - 2026-01-21
+
+### 🧹 Fixed / 修复
+
+- **项目本地 zcf 清理**: 安装和卸载时自动清理项目目录的旧版命令
+  - 清理 `<项目>/.claude/commands/zcf/` 目录
+  - 解决旧版本在项目本地安装导致 `/zcf:yishan` 等命令残留的问题
+  - install 和 uninstall 都会执行此清理
+  - 跨平台兼容（Windows/macOS/Linux）
+
+---
+
 ## [2.0.5] - 2026-01-21
 
 ### 🧹 Fixed / 修复
