@@ -16,6 +16,15 @@
         "continueOnError": true,
         "priority": "critical",
         "description": "TODO 续航检查 - 如果有活跃循环则阻止停止"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/agent-ready-notification.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "Agent 就绪通知 - Agent 停止时发送 OS 级通知（类似 OpenCode）"
       }
     ],
     "UserPromptSubmit": [
