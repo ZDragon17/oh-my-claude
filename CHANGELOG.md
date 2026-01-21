@@ -18,6 +18,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.5] - 2026-01-21
+
+### 🧹 Fixed / 修复
+
+- **卸载完整清理**: `uninstall` 命令现在会清理所有安装的文件
+  - 删除 `~/.claude/commands/` 中本插件安装的所有命令文件
+  - 删除 `~/.claude/skills/` 中本插件安装的所有 skill 目录
+  - 清理旧版本 `zcf` 子目录（v1.0.8 及之前版本遗留）
+  - 清理本地状态文件（ralph-loop、checkpoint 等）
+  - 清理全局日志目录
+  - 支持动态扫描和备用列表双重保障，跨平台兼容
+
+---
+
 ## [2.0.4] - 2026-01-21
 
 ### 🔧 Fixed / 修复

@@ -175,18 +175,175 @@ export async function install(): Promise<void> {
 // ==================== 卸载流程 ====================
 
 /**
- * 执行卸载操作
+ * 从插件包中获取实际的命令文件列表
+ * 动态扫描，避免硬编码
+ */
+function getCommandFilesFromPackage(packageDir: string): string[] {
+  const commandsSrc = path.join(packageDir, 'commands');
+  if (!fs.existsSync(commandsSrc)) {
+    return [];
+  }
+  return fs.readdirSync(commandsSrc).filter(f => f.endsWith('.md'));
+}
+
+/**
+ * 从插件包中获取实际的 skill 目录列表
+ * 动态扫描，避免硬编码
+ */
+function getSkillDirsFromPackage(packageDir: string): string[] {
+  const skillsSrc = path.join(packageDir, 'skills');
+  if (!fs.existsSync(skillsSrc)) {
+    return [];
+  }
+  return fs.readdirSync(skillsSrc, { withFileTypes: true })
+    .filter(d => d.isDirectory())
+    .map(d => d.name);
+}
+
+/**
+ * 备用：硬编码的命令文件列表（当无法访问包目录时使用）
+ */
+function getFallbackCommandFiles(): string[] {
+  return [
+    'baozheng.md', 'bianque.md', 'cangjie.md', 'change.md', 'gukaizhi.md',
+    'laozi.md', 'libai.md', 'libing.md', 'luban.md', 'mozi.md',
+    'progress.md', 'simaqian.md', 'sunzi.md', 'weizheng.md', 'wukong.md',
+    'zhangheng.md', 'zhenghe.md', 'zhuge.md', 'team.md', 'yishan.md',
+    'yugong.md', 'ulw.md', 'ultrawork.md', 'persist.md', 'git.md',
+    'ralph-loop.md', 'cancel-ralph.md', 'init-deep.md', 'start-work.md',
+    'refactor.md', 'lilou.md', 'liubowen.md', 'start.md', 'status.md',
+    'skip.md', 'rollback.md', 'cancel-yishan.md', 'interrupt.md',
+    'retry.md', 'pause.md', 'yishan-resume.md', 'help.md'
+  ];
+}
+
+/**
+ * 备用：硬编码的 skill 目录列表（当无法访问包目录时使用）
+ */
+function getFallbackSkillDirs(): string[] {
+  return [
+    'agent-handoff', 'bilingual', 'error-guide', 'git-master',
+    'help', 'onboarding', 'playwright', 'progress', 'yishan'
+  ];
+}
+
+/**
+ * 执行卸载操作 - 完整清理所有安装的文件
  */
 export function performUninstall(pluginDir: string): void {
+  info('正在卸载插件...');
+
+  // 获取包目录（尝试动态扫描，失败则用备用列表）
+  let packageDir: string | null = null;
   try {
-    info('正在卸载插件...');
-    execSync(`claude plugins uninstall ${PLUGIN_NAME}`, { stdio: 'inherit' });
+    packageDir = getPackageDir();
   } catch {
-    // 忽略错误
+    // 忽略
   }
 
-  fs.rmSync(pluginDir, { recursive: true, force: true });
-  success('插件已卸载');
+  // 1. 尝试使用 claude CLI 卸载（可能失败，忽略）
+  try {
+    execSync(`claude plugins uninstall ${PLUGIN_NAME}`, { stdio: 'pipe' });
+  } catch {
+    // 忽略错误 - CLI 可能不存在或插件未通过 CLI 安装
+  }
+
+  // 2. 删除插件主目录
+  if (fs.existsSync(pluginDir)) {
+    fs.rmSync(pluginDir, { recursive: true, force: true });
+    info('已删除插件目录');
+  }
+
+  // 3. 清理 commands 目录中本插件安装的文件
+  const commandsDir = getCommandsDir();
+  const commandFiles = packageDir
+    ? getCommandFilesFromPackage(packageDir)
+    : getFallbackCommandFiles();
+  let commandsRemoved = 0;
+
+  for (const file of commandFiles) {
+    const filePath = path.join(commandsDir, file);
+    if (fs.existsSync(filePath)) {
+      try {
+        fs.unlinkSync(filePath);
+        commandsRemoved++;
+      } catch {
+        // 忽略单个文件删除错误
+      }
+    }
+  }
+
+  // 清理旧版本的 zcf 子目录（v1.0.8 及之前）
+  const legacyZcfDir = path.join(commandsDir, 'zcf');
+  if (fs.existsSync(legacyZcfDir)) {
+    fs.rmSync(legacyZcfDir, { recursive: true, force: true });
+    info('已清理旧版本 zcf 子目录');
+  }
+
+  if (commandsRemoved > 0) {
+    info(`已删除 ${commandsRemoved} 个命令文件`);
+  }
+
+  // 4. 清理 skills 目录中本插件安装的目录
+  const skillsDir = getSkillsDir();
+  const skillDirs = packageDir
+    ? getSkillDirsFromPackage(packageDir)
+    : getFallbackSkillDirs();
+  let skillsRemoved = 0;
+
+  for (const dir of skillDirs) {
+    const dirPath = path.join(skillsDir, dir);
+    if (fs.existsSync(dirPath)) {
+      try {
+        fs.rmSync(dirPath, { recursive: true, force: true });
+        skillsRemoved++;
+      } catch {
+        // 忽略单个目录删除错误
+      }
+    }
+  }
+
+  if (skillsRemoved > 0) {
+    info(`已删除 ${skillsRemoved} 个 skill 目录`);
+  }
+
+  // 5. 清理本地状态文件（项目目录和用户目录）
+  const stateFilesInCwd = [
+    '.claude/ralph-loop.local.md',
+    '.claude/yishan-state.json',
+    '.claude/checkpoint.json'
+  ];
+
+  for (const file of stateFilesInCwd) {
+    const filePath = path.join(process.cwd(), file);
+    if (fs.existsSync(filePath)) {
+      try {
+        fs.unlinkSync(filePath);
+      } catch {
+        // 忽略
+      }
+    }
+  }
+
+  // 6. 清理全局状态目录
+  const globalStateDir = path.join(process.env.HOME || process.env.USERPROFILE || '', '.oh-my-claude');
+  if (fs.existsSync(globalStateDir)) {
+    // 只清理日志，保留用户可能的自定义配置
+    const logsDir = path.join(globalStateDir, 'logs');
+    if (fs.existsSync(logsDir)) {
+      fs.rmSync(logsDir, { recursive: true, force: true });
+    }
+  }
+
+  success('插件已完全卸载');
+  log('');
+  info('清理内容:');
+  info(`  • 插件目录: ${pluginDir}`);
+  info(`  • 命令文件: ${commandsRemoved} 个`);
+  info(`  • Skill 目录: ${skillsRemoved} 个`);
+  info(`  • 状态文件: 已清理`);
+  log('');
+  info('如需重新安装，请运行: npx claude-pangu install');
   log('');
 }
 
