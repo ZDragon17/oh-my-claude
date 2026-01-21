@@ -170,7 +170,12 @@ describe('配置管理系统', () => {
             defaultTimeout: -1, // 无效值
             maxConcurrentTasks: 3,
             enableCollaboration: true,
-            contextCompression: true
+            contextCompression: true,
+            categories: {
+              enabled: [],
+              disabled: [],
+              custom: {}
+            }
           }
         });
       }).toThrow();

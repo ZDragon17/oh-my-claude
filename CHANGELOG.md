@@ -18,6 +18,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.3] - 2026-01-21
+
+### ✨ Added / 新增
+
+#### 文档国际化 / Documentation Internationalization
+
+新增 5 篇英文技术文档，帮助国际用户理解系统架构：
+
+| 文档 | 内容 |
+|------|------|
+| `docs/AGENT_PROTOCOL_EN.md` | Agent 协作协议 |
+| `docs/AGENT_COLLABORATION_PROTOCOL_EN.md` | 多 Agent 协作详解 |
+| `docs/CONTEXT_COMPRESSION_EN.md` | 上下文压缩机制 |
+| `docs/ERROR_RECOVERY_EN.md` | 错误恢复与重试机制 |
+| `docs/TASK_CHECKPOINTING_EN.md` | 任务检查点与恢复机制 |
+
+#### 示例项目 / Example Projects
+
+新增完整的自定义示例，帮助用户快速上手：
+
+- `examples/custom-agent/` - 自定义 Agent 示例（3 个文件）
+- `examples/custom-hook/` - 自定义 Hook 示例（3 个 Shell 脚本）
+- `examples/configs/development.jsonc` - 开发环境配置
+- `examples/configs/enterprise.jsonc` - 企业级安全配置
+
+### 🔧 Changed / 变更
+
+#### 性能优化 / Performance Optimization
+
+- **新增 Hook 懒加载模块** (`lib/hook-loader.ts`)
+  - 支持 30 秒 TTL 缓存
+  - 按事件类型过滤 Hook
+  - Hook 统计和状态检查
+  - 单例模式，便于使用
+
+#### 用户体验增强 / UX Enhancement
+
+- **安装后引导增强** (`scripts/postinstall.cjs`)
+  - 自动检测语言环境（中/英文）
+  - 显示快速入门命令
+  - 显示功能亮点
+  - 提供文档链接和帮助资源
+
+- **错误处理增强** (`lib/error-handler.ts`)
+  - 新增双语错误消息
+  - 新增 `getEnhancedError()` 提供恢复建议
+  - 新增 `formatEnhancedError()` 用户友好输出
+  - 新增错误类型支持（ECONNREFUSED、ETIMEDOUT、ENOTFOUND）
+
+### 🐛 Fixed / 修复
+
+- 修复 `config-manager.test.ts` 类型定义缺少 `categories` 属性的问题
+
+---
+
 ## [1.7.2] - 2026-01-21
 
 ### 🎭 Changed / 变更

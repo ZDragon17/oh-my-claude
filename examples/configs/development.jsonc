@@ -1,0 +1,84 @@
+{
+  // Development Configuration for oh-my-claude
+  // Optimized for active development and debugging
+
+  "version": "1.7.2",
+
+  // Enable debug mode for verbose output
+  "debug": true,
+  "logLevel": "debug",
+
+  // Agent configuration - longer timeouts for debugging
+  "agents": {
+    "defaultTimeout": 60000,
+    "maxConcurrentTasks": 5,
+    "enableCollaboration": true,
+    "contextCompression": true,
+    "categories": {
+      "enabled": ["core", "development", "operations"],
+      "disabled": [],
+      "custom": {}
+    }
+  },
+
+  // UI preferences
+  "ui": {
+    "theme": "auto",
+    "language": "zh-CN",
+    "showProgress": true,
+    "enableNotifications": true
+  },
+
+  // Performance - disable cache for fresh code during dev
+  "performance": {
+    "enableCache": false,
+    "cacheSize": 100,
+    "maxMemoryUsage": 300,
+    "enableMetrics": true
+  },
+
+  // Network - longer timeout for slow connections
+  "network": {
+    "timeout": 60000,
+    "retries": 5
+  },
+
+  // Plugins - enable third-party for testing
+  "plugins": {
+    "autoUpdate": true,
+    "enableThirdParty": true,
+    "trustedDomains": ["github.com", "npmjs.com", "localhost"]
+  },
+
+  // Notifications - all notifications for dev
+  "notification": {
+    "enabled": true,
+    "level": "all",
+    "backgroundTaskCompletion": true,
+    "taskFailure": true,
+    "sessionRecovery": true,
+    "quietHours": {
+      "enabled": false,
+      "start": 22,
+      "end": 8
+    }
+  },
+
+  // Background tasks - more concurrent for faster dev
+  "backgroundTask": {
+    "maxConcurrency": 10,
+    "defaultTimeout": 180000,
+    "autoRetry": 3,
+    "retryDelay": 3000,
+    "enablePriorityQueue": true,
+    "saveHistory": true,
+    "historyRetentionDays": 30
+  },
+
+  // Advanced - enable profiling for performance analysis
+  "advanced": {
+    "enableProfiling": true,
+    "enableTracing": true,
+    "customHooks": {}
+  }
+}

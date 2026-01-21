@@ -1,0 +1,109 @@
+{
+  // Enterprise Configuration for oh-my-claude
+  // Optimized for security, compliance, and team usage
+
+  "version": "1.7.2",
+
+  // Minimal logging for security
+  "debug": false,
+  "logLevel": "error",
+
+  // Agent configuration - conservative settings
+  "agents": {
+    "defaultTimeout": 30000,
+    "maxConcurrentTasks": 2,
+    "enableCollaboration": true,
+    "contextCompression": true,
+    "categories": {
+      "enabled": ["core"],
+      "disabled": ["experimental", "third-party"],
+      "custom": {}
+    }
+  },
+
+  // UI preferences
+  "ui": {
+    "theme": "light",
+    "language": "en-US",
+    "showProgress": true,
+    "enableNotifications": true
+  },
+
+  // Performance - enable cache, limit memory
+  "performance": {
+    "enableCache": true,
+    "cacheSize": 50,
+    "maxMemoryUsage": 100,
+    "enableMetrics": false
+  },
+
+  // Network - strict settings
+  "network": {
+    "timeout": 20000,
+    "retries": 2
+    // Note: Set proxy via environment variable OH_MY_CLAUDE_PROXY if needed
+  },
+
+  // Plugins - disable third-party
+  "plugins": {
+    "autoUpdate": false,
+    "enableThirdParty": false,
+    "trustedDomains": ["github.com"]
+  },
+
+  // Notifications - errors only
+  "notification": {
+    "enabled": true,
+    "level": "error",
+    "backgroundTaskCompletion": false,
+    "taskFailure": true,
+    "sessionRecovery": true,
+    "quietHours": {
+      "enabled": true,
+      "start": 20,
+      "end": 8
+    }
+  },
+
+  // Background tasks - limited
+  "backgroundTask": {
+    "maxConcurrency": 3,
+    "defaultTimeout": 60000,
+    "autoRetry": 1,
+    "retryDelay": 10000,
+    "enablePriorityQueue": true,
+    "saveHistory": false,
+    "historyRetentionDays": 1
+  },
+
+  // Advanced - all disabled for security
+  "advanced": {
+    "enableProfiling": false,
+    "enableTracing": false,
+    "customHooks": {}
+  },
+
+  // MCP - disable external MCPs
+  "mcp": {
+    "disabled_mcps": ["deepwiki", "websearch"],
+    "custom": {}
+  },
+
+  // Agent permissions - strict defaults
+  "agentPermissions": {
+    "default": {
+      "edit": "ask",
+      "bash": "ask",
+      "webfetch": "deny",
+      "doom_loop": "deny",
+      "external_directory": "deny"
+    }
+  },
+
+  // Concurrency - limited
+  "concurrency": {
+    "defaultConcurrency": 3,
+    "maxTotalConcurrency": 10,
+    "agentConcurrency": {}
+  }
+}
