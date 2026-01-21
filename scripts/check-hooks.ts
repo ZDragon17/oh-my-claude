@@ -13,9 +13,8 @@ import * as path from 'path';
 import * as os from 'os';
 import { execSync } from 'child_process';
 
-// Hook 兼容性配置（保留供将来扩展使用）
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type HookPriority = 'critical' | 'high' | 'normal' | 'low';
+// Hook 优先级类型（用于将来扩展）
+export type HookPriority = 'critical' | 'high' | 'normal' | 'low';
 
 // 从 hooks.json 读取配置
 function loadHooksConfig(): any {
@@ -66,7 +65,7 @@ function detectEnvironment(): {
 function extractHookName(command: string | undefined): string {
   if (!command) return 'unknown';
   const match = command.match(/hooks\/([^.]+)\.sh/);
-  return match ? match[1] : command;
+  return match && match[1] ? match[1] : command;
 }
 
 // 检查单个 Hook 的兼容性
