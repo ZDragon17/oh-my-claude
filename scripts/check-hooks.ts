@@ -13,14 +13,9 @@ import * as path from 'path';
 import * as os from 'os';
 import { execSync } from 'child_process';
 
-// Hook 兼容性配置
-interface HookCompatibility {
-  name: string;
-  description: string;
-  windowsCompatible: boolean;
-  requires: string[];
-  priority: 'critical' | 'high' | 'normal' | 'low';
-}
+// Hook 兼容性配置（保留供将来扩展使用）
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type HookPriority = 'critical' | 'high' | 'normal' | 'low';
 
 // 从 hooks.json 读取配置
 function loadHooksConfig(): any {
@@ -68,7 +63,8 @@ function detectEnvironment(): {
 }
 
 // 提取 Hook 文件名
-function extractHookName(command: string): string {
+function extractHookName(command: string | undefined): string {
+  if (!command) return 'unknown';
   const match = command.match(/hooks\/([^.]+)\.sh/);
   return match ? match[1] : command;
 }
@@ -85,7 +81,8 @@ function checkHookCompatibility(
 } {
   const name = extractHookName(hook.command);
   const isWindowsIncompatible = hook.windows_compatible === false;
-  const priority = hook.priority || 'normal';
+  // priority reserved for future use
+  // const priority = hook.priority || 'normal';
 
   // Windows 平台检测
   if (env.platform === 'win32') {

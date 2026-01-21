@@ -147,9 +147,11 @@ function printSlowest(statsMap: Map<string, HookStats>, top: number = 5): void {
 
   for (let i = 0; i < sorted.length; i++) {
     const stats = sorted[i];
-    const bar = '█'.repeat(Math.min(20, Math.round(stats.avgTime / 100)));
-    console.log(`${i + 1}. ${stats.name}`);
-    console.log(`   ${bar} ${stats.avgTime}ms (最大: ${stats.maxTime}ms)`);
+    if (stats) {
+      const bar = '█'.repeat(Math.min(20, Math.round(stats.avgTime / 100)));
+      console.log(`${i + 1}. ${stats.name}`);
+      console.log(`   ${bar} ${stats.avgTime}ms (最大: ${stats.maxTime}ms)`);
+    }
   }
 }
 
