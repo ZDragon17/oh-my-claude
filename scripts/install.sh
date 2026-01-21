@@ -155,8 +155,8 @@ install_plugin() {
         cp "$TMP_DIR/README_EN.md" "$INSTALL_DIR/" 2>/dev/null || true
         cp "$TMP_DIR/LICENSE" "$INSTALL_DIR/" 2>/dev/null || true
 
-        # 设置 hook 脚本执行权限（Windows 环境会忽略）
-        chmod +x "$INSTALL_DIR/hooks/"*.sh 2>/dev/null || true
+        # 设置 hook 脚本执行权限（递归处理子目录如 hooks/lib/）
+        find "$INSTALL_DIR/hooks" -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
 
         # 安装 slash commands 到 ~/.claude/commands/zcf/
         info "正在安装 slash commands..."

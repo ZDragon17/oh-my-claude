@@ -18,6 +18,120 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.0] - 2026-01-21 🎉
+
+### 🚀 Major Release / 重大版本发布
+
+**本版本是一个重大 UX 优化版本**，包含 14 项用户体验改进、新命令、新 Hook 和完善的任务恢复机制。
+
+This is a major UX optimization release with 14 user experience improvements, new commands, new hooks, and a refined task recovery mechanism.
+
+### ✨ Added / 新增
+
+#### 新命令 / New Commands
+
+| 命令 | 功能 | 用途 |
+|------|------|------|
+| `/retry` | 重试最近失败的操作 | 自动恢复最近失败的命令执行 |
+| `/skip` | 跳过当前阻塞的任务 | 标记任务完成并继续后续工作 |
+| `/rollback` | 回滚到上一个检查点 | 撤销最近的更改，恢复到稳定状态 |
+
+#### 新 Hooks / New Hooks
+
+| Hook | 功能 | 触发时机 |
+|------|------|---------|
+| `agent-usage-tracker.sh` | Agent 使用追踪 | UserPromptSubmit |
+| `operation-history.sh` | 操作历史记录 | PostToolUse |
+| `hooks/lib/message-dedup.sh` | 消息去重库 | 共享库 |
+
+#### 渐进式新手引导 / Progressive Onboarding
+
+- **5 阶段渐进式引导系统**
+  - 阶段 1-2：新用户，详细推荐提示
+  - 阶段 3-5：中级用户，简洁单行提示
+  - 阶段 6+：熟练用户，静默模式（不打扰）
+- 基于实际使用次数自动调整提示详细程度
+- 追踪每个 Agent 的使用情况
+
+#### 统一检查点格式 / Unified Checkpoint Format
+
+```json
+{
+  "version": "2.0",
+  "timestamp": "ISO 8601",
+  "task_context": { "original_request": "", "current_phase": "" },
+  "completed_items": ["..."],
+  "pending_items": ["..."],
+  "next_action": "",
+  "recovery_hint": ""
+}
+```
+
+### 🔧 Changed / 变更
+
+#### UX 优化 / UX Improvements
+
+- **P0: 任务中断恢复增强**
+  - `/interrupt` 命令强制包含显式状态保存步骤
+  - `/pause` 命令使用统一检查点格式
+
+- **P1: 失败透明度提升**
+  - `failure-transparency.sh` 添加内容哈希去重
+  - 集成 `message-dedup.sh` 库防止重复消息
+
+- **P2: 子任务移交规范**
+  - `SKILL.md` 强制要求完整的移交报告
+  - 包含工件清单、验证状态、后续步骤
+
+- **P2: 进度通知去重**
+  - `progress-notifier.sh` 集成消息去重
+  - 60 秒 TTL 防止重复通知
+
+- **P3: 帮助文档完善**
+  - `/help` 命令显示最近使用的命令
+  - 添加 jq 未安装时的降级方案说明
+
+#### 安装流程修复 / Installation Fix
+
+- **递归 Hook 权限设置**
+  - `setHookPermissions()` 现在递归处理 `hooks/lib/` 子目录
+  - `install.sh` 使用 `find` 命令递归设置 `.sh` 文件权限
+
+### 📋 文件变更清单 / File Changes
+
+**新增文件 / New Files:**
+- `commands/retry.md` - 重试命令
+- `commands/skip.md` - 跳过命令
+- `commands/rollback.md` - 回滚命令
+- `hooks/agent-usage-tracker.sh` - Agent 使用追踪
+- `hooks/operation-history.sh` - 操作历史记录
+- `hooks/lib/message-dedup.sh` - 消息去重共享库
+
+**修改文件 / Modified Files:**
+- `commands/interrupt.md` - 添加显式状态保存步骤
+- `commands/pause.md` - 使用统一检查点格式
+- `commands/yishan-resume.md` - 检查点格式文档
+- `commands/cancel-yishan.md` - 检查点清理选项
+- `commands/help.md` - 最近使用 + jq 降级说明
+- `hooks/first-use-onboarding.sh` - 5 阶段渐进引导
+- `hooks/failure-transparency.sh` - 内容哈希 + 去重集成
+- `hooks/progress-notifier.sh` - 去重集成
+- `skills/yishan/SKILL.md` - 强制移交报告
+- `lib/file-operations.ts` - 递归 Hook 权限
+- `scripts/install.sh` - 递归 chmod
+
+### 🏆 版本升级原因 / Why 2.0
+
+此版本升级到 2.0 的原因：
+
+1. **用户体验重大改进** - 14 项 UX 优化覆盖从新手引导到专家使用的完整用户旅程
+2. **新命令系统** - `/retry`、`/skip`、`/rollback` 三个关键恢复命令
+3. **统一检查点机制** - 全新的任务状态保存和恢复架构
+4. **智能去重系统** - 避免重复消息干扰用户
+5. **渐进式引导** - 根据用户熟练度自动调整提示详细程度
+
+---
+
 ## [1.7.3] - 2026-01-21
 
 ### ✨ Added / 新增
@@ -1586,6 +1700,8 @@ After multiple iterations and improvements, oh-my-claude officially releases ver
 
 | Version / 版本 | Date / 日期 | Highlights / 亮点 |
 |----------------|-------------|-------------------|
+| 2.0.0 | 2026-01-21 | 🎉 Major UX optimization: 14 improvements, new commands, progressive onboarding / 重大 UX 优化版本 |
+| 1.7.3 | 2026-01-21 | 📚 Documentation i18n, examples, performance & UX enhancements / 文档国际化、示例、性能优化 |
 | 1.6.0 | 2026-01-20 | 🔧 P2 additional hooks: interactive-bash, thinking-validator, agent-reminder / P2 附加 Hooks |
 | 1.5.0 | 2026-01-20 | 🛠️ P2 features: JSONC config, notification/backgroundTask config, monitor hooks / P2 增强功能 |
 | 1.4.0 | 2026-01-20 | 🔄 P1 features: retry hooks, session recovery, Metis/Prometheus integration / P1 功能对齐 |

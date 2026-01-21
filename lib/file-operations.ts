@@ -260,6 +260,7 @@ export function copyPluginFiles(packageDir: string, pluginDir: string, showProgr
 
 /**
  * 设置 hook 脚本权限（Unix）
+ * 递归处理所有子目录中的 .sh 文件（如 hooks/lib/）
  */
 export function setHookPermissions(pluginDir: string): void {
   if (os.platform() === 'win32') return;
@@ -267,12 +268,22 @@ export function setHookPermissions(pluginDir: string): void {
   const hooksDir = path.join(pluginDir, 'hooks');
   if (!fs.existsSync(hooksDir)) return;
 
-  const hookFiles = fs.readdirSync(hooksDir).filter(f => f.endsWith('.sh'));
-  for (const hookFile of hookFiles) {
-    try {
-      fs.chmodSync(path.join(hooksDir, hookFile), '755');
-    } catch {
-      // 忽略权限设置失败
+  // 递归设置权限
+  const setPermissionsRecursive = (dir: string): void => {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        setPermissionsRecursive(fullPath);
+      } else if (entry.name.endsWith('.sh')) {
+        try {
+          fs.chmodSync(fullPath, '755');
+        } catch {
+          // 忽略权限设置失败
+        }
+      }
     }
-  }
+  };
+
+  setPermissionsRecursive(hooksDir);
 }

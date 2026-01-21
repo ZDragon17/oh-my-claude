@@ -40,19 +40,29 @@ send_linux_notification() {
     fi
 }
 
-# Windows 通知 (PowerShell)
+# Windows 通知 (PowerShell) - 使用专用脚本实现多种回退方式
 send_windows_notification() {
     local title="$1"
     local message="$2"
-    
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+    # 方法 1: 使用专用 PowerShell 脚本（支持多种通知方式）
+    if [ -f "$script_dir/notify-windows.ps1" ]; then
+        powershell.exe -ExecutionPolicy Bypass -File "$script_dir/notify-windows.ps1" -Title "$title" -Message "$message" 2>/dev/null && return
+    fi
+
+    # 方法 2: 使用 PowerShell BalloonTip（更可靠）
     powershell.exe -Command "
-        [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > \$null
-        \$template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
-        \$textNodes = \$template.GetElementsByTagName('text')
-        \$textNodes.Item(0).AppendChild(\$template.CreateTextNode('$title')) > \$null
-        \$textNodes.Item(1).AppendChild(\$template.CreateTextNode('$message')) > \$null
-        \$notifier = [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('oh-my-claude')
-        \$notifier.Show([Windows.UI.Notifications.ToastNotification]::new(\$template))
+        Add-Type -AssemblyName System.Windows.Forms
+        \$balloon = New-Object System.Windows.Forms.NotifyIcon
+        \$balloon.Icon = [System.Drawing.SystemIcons]::Information
+        \$balloon.BalloonTipIcon = 'Info'
+        \$balloon.BalloonTipTitle = '$title'
+        \$balloon.BalloonTipText = '$message'
+        \$balloon.Visible = \$true
+        \$balloon.ShowBalloonTip(5000)
+        Start-Sleep -Seconds 1
+        \$balloon.Dispose()
     " 2>/dev/null || true
 }
 
@@ -165,9 +175,22 @@ main() {
         fi
     fi
     
-    # 4. 愚公移山完成
-    if echo "$TOOL_OUTPUT" | grep -qiE '(移山完成|yishan complete|all todos completed)'; then
-        send_notification "oh-my-claude" "Yishan mode completed all tasks!"
+    # 4. 愚公移山完成 - 检测更多完成标志
+    if echo "$TOOL_OUTPUT" | grep -qiE '(移山完成|yishan complete|all todos completed|愚公移山.*任务完成|🎉.*愚公移山|100%.*完成)'; then
+        send_notification "🏔️ oh-my-claude" "愚公移山模式已完成所有任务！"
+    fi
+
+    # 5. TodoWrite 全部完成检测
+    if [ "$TOOL_NAME" = "TodoWrite" ]; then
+        # 检测 todos 是否全部完成
+        if echo "$TOOL_OUTPUT" | grep -qiE '(all.*completed|全部完成|100%)'; then
+            send_notification "🏔️ oh-my-claude" "所有任务已完成！"
+        fi
+    fi
+
+    # 6. 长时间运行任务完成
+    if detect_long_running_complete "$TOOL_NAME" "$TOOL_OUTPUT"; then
+        send_notification "oh-my-claude" "Long-running task completed"
     fi
 }
 

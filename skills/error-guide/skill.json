@@ -1,0 +1,58 @@
+{
+  "name": "error-guide",
+  "version": "1.0.0",
+  "description": "错误智能引导系统 - 当 Agent 执行失败时自动提供诊断建议和恢复路径",
+  "auto_activate": true,
+  "triggers": [
+    "/error-guide",
+    "/错误引导",
+    "/diagnose",
+    "/诊断"
+  ],
+  "integration": {
+    "yishan": true,
+    "team": true,
+    "all_agents": true
+  },
+  "error_patterns": {
+    "type_error": {
+      "patterns": ["TypeScript", "type.*error", "Property.*does not exist", "Type.*is not assignable"],
+      "suggest": "/bianque",
+      "quick_fix": "检查类型定义和接口"
+    },
+    "permission_error": {
+      "patterns": ["Permission denied", "EACCES", "权限"],
+      "suggest": "/bianque",
+      "quick_fix": "检查文件权限或以管理员运行"
+    },
+    "not_found": {
+      "patterns": ["not found", "ENOENT", "找不到", "does not exist"],
+      "suggest": "/wukong",
+      "quick_fix": "使用 /wukong 定位正确路径"
+    },
+    "syntax_error": {
+      "patterns": ["SyntaxError", "Unexpected token", "语法错误"],
+      "suggest": "/bianque",
+      "quick_fix": "检查代码语法，注意括号和引号匹配"
+    },
+    "dependency_error": {
+      "patterns": ["Cannot find module", "Module not found", "依赖", "package"],
+      "suggest": "/bianque",
+      "quick_fix": "运行 npm install 或 pip install"
+    },
+    "timeout": {
+      "patterns": ["timeout", "ETIMEDOUT", "超时"],
+      "suggest": "/status",
+      "quick_fix": "检查网络连接或增加超时时间"
+    }
+  },
+  "auto_retry": {
+    "enabled": true,
+    "max_retries": 3,
+    "escalate_after": 2
+  },
+  "logging": {
+    "enabled": true,
+    "path": "~/.oh-my-claude/logs/errors.log"
+  }
+}

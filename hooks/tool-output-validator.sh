@@ -1,107 +1,134 @@
 #!/usr/bin/env sh
 # ============================================================================
-# Tool Output Validator - 工具输出验证器
+# Tool Output Validator - 工具输出验证器 (PostToolUse Hook)
 # ============================================================================
-# 验证工具调用的输出是否有效，检测常见错误模式
-#
 # 功能：
 # 1. 检测工具执行错误
-# 2. 检测超时和连接问题
-# 3. 检测权限和文件系统错误
-# 4. 提供修复建议
+# 2. 引用 error-guide skill 提供智能引导
+# 3. 提供具体的修复建议和 Agent 推荐
+#
+# 触发条件：PostToolUse
 # ============================================================================
 
-# 获取工具调用信息
-tool_name="${CLAUDE_TOOL_NAME:-}"
-tool_result="${CLAUDE_TOOL_RESULT:-}"
-exit_code="${CLAUDE_TOOL_EXIT_CODE:-0}"
+# 读取 stdin
+input=$(cat 2>/dev/null) || input=""
 
-# 如果没有工具结果，直接退出
-if [ -z "$tool_result" ]; then
+if [ -z "$input" ]; then
     exit 0
 fi
 
-# 错误检测标志
-has_error=false
-error_type=""
-error_details=""
-suggestions=""
-
-# 检测常见错误模式
-
-# 1. 权限错误
-if echo "$tool_result" | grep -qiE '(permission denied|access denied|EACCES|EPERM|权限|拒绝访问)'; then
-    has_error=true
-    error_type="权限错误"
-    error_details="工具执行遇到权限问题"
-    suggestions="1. 检查文件/目录权限\\n2. 尝试使用管理员权限\\n3. 确认目标路径可写"
+# 提取工具信息
+if command -v jq > /dev/null 2>&1; then
+    tool_name=$(echo "$input" | jq -r '.tool_name // .toolName // empty' 2>/dev/null)
+    tool_output=$(echo "$input" | jq -r '.tool_output // .output // .result // empty' 2>/dev/null)
+    tool_error=$(echo "$input" | jq -r '.error // .tool_error // empty' 2>/dev/null)
+    exit_code=$(echo "$input" | jq -r '.exit_code // .exitCode // "0"' 2>/dev/null)
+else
+    tool_output="$input"
+    tool_error=""
+    tool_name="unknown"
+    exit_code="0"
 fi
 
-# 2. 文件不存在
-if echo "$tool_result" | grep -qiE '(no such file|not found|ENOENT|does not exist|找不到|不存在)'; then
-    has_error=true
-    error_type="文件不存在"
-    error_details="请求的文件或目录不存在"
-    suggestions="1. 验证路径是否正确\\n2. 检查文件是否已创建\\n3. 使用 Glob 工具搜索正确路径"
+# 合并内容用于检测
+content="$tool_output $tool_error"
+
+# 如果内容为空，退出
+if [ -z "$content" ] || [ "$content" = " " ]; then
+    exit 0
 fi
 
-# 3. 超时错误
-if echo "$tool_result" | grep -qiE '(timeout|timed out|ETIMEDOUT|超时)'; then
-    has_error=true
-    error_type="超时错误"
-    error_details="工具执行超时"
-    suggestions="1. 增加超时时间\\n2. 将操作拆分为更小的步骤\\n3. 检查网络连接（如适用）"
+# ============================================================================
+# 错误模式检测与智能引导
+# ============================================================================
+
+# 检测权限错误
+if echo "$content" | grep -qiE '(permission denied|access denied|EACCES|EPERM|权限|拒绝访问)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n⚠️ **权限错误检测**\n\n📁 工具执行遇到权限问题\n\n💡 **快速修复**:\n• 检查文件/目录权限\n• 尝试使用管理员权限运行\n• 确认目标路径可写\n\n🎭 **推荐 Agent**:\n• `/bianque` - 让扁鹊诊断具体权限问题\n• `@扁鹊` - 直接召唤\n"
+}
+EOF
+    exit 0
 fi
 
-# 4. 连接错误
-if echo "$tool_result" | grep -qiE '(connection refused|ECONNREFUSED|network error|无法连接|连接失败)'; then
-    has_error=true
-    error_type="连接错误"
-    error_details="无法建立连接"
-    suggestions="1. 检查目标服务是否运行\\n2. 验证网络配置\\n3. 检查防火墙设置"
+# 检测文件不存在
+if echo "$content" | grep -qiE '(no such file|not found|ENOENT|does not exist|找不到|不存在)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n⚠️ **文件不存在**\n\n📁 请求的文件或目录不存在\n\n💡 **快速修复**:\n• 验证路径是否正确（注意大小写）\n• 检查文件是否已创建\n\n🎭 **推荐 Agent**:\n• `/wukong` - 让悟空快速搜索正确路径\n• `@悟空` - 直接召唤\n"
+}
+EOF
+    exit 0
 fi
 
-# 5. 内存错误
-if echo "$tool_result" | grep -qiE '(out of memory|ENOMEM|heap|内存不足)'; then
-    has_error=true
-    error_type="内存错误"
-    error_details="内存不足"
-    suggestions="1. 释放系统内存\\n2. 将操作拆分为更小的批次\\n3. 增加可用内存"
+# 检测超时错误
+if echo "$content" | grep -qiE '(timeout|timed out|ETIMEDOUT|超时)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n⏰ **操作超时**\n\n当前操作执行时间过长\n\n💡 **建议**:\n• 将操作拆分为更小的步骤\n• 检查网络连接（如适用）\n• 使用 `/status` 查看当前状态\n\n🔧 如需中断: Ctrl+C 或 `/cancel-yishan`\n"
+}
+EOF
+    exit 0
 fi
 
-# 6. 磁盘空间错误
-if echo "$tool_result" | grep -qiE '(no space|disk full|ENOSPC|磁盘空间不足)'; then
-    has_error=true
-    error_type="磁盘空间错误"
-    error_details="磁盘空间不足"
-    suggestions="1. 清理不需要的文件\\n2. 扩展磁盘空间\\n3. 使用不同的存储位置"
+# 检测语法错误
+if echo "$content" | grep -qiE '(SyntaxError|parse error|Unexpected token|语法错误|解析错误)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n❌ **语法错误**\n\n代码或配置存在语法问题\n\n💡 **快速修复**:\n• 检查括号和引号是否匹配\n• 验证 JSON/YAML 格式\n• 查看报错行号附近的代码\n\n🎭 **推荐 Agent**:\n• `/bianque` - 让扁鹊诊断语法问题\n• `/weizheng` - 让魏征检查代码规范\n"
+}
+EOF
+    exit 0
 fi
 
-# 7. 语法/解析错误
-if echo "$tool_result" | grep -qiE '(syntax error|parse error|SyntaxError|语法错误|解析错误)'; then
-    has_error=true
-    error_type="语法错误"
-    error_details="代码或配置存在语法错误"
-    suggestions="1. 检查相关文件的语法\\n2. 使用 lsp_diagnostics 获取详细错误\\n3. 验证 JSON/YAML 格式"
+# 检测类型错误
+if echo "$content" | grep -qiE '(TypeError|Type.*error|Property.*does not exist|Type.*is not assignable|类型错误)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n❌ **类型错误**\n\nTypeScript/JavaScript 类型不匹配\n\n💡 **快速修复**:\n• 检查变量类型定义\n• 确认接口属性是否完整\n• 验证导入的类型是否正确\n\n🎭 **推荐 Agent**:\n• `/bianque` - 让扁鹊诊断类型问题\n• `/wukong 找到接口定义` - 定位相关类型\n"
+}
+EOF
+    exit 0
 fi
 
-# 8. 非零退出码
-if [ "$exit_code" != "0" ] && [ "$has_error" = "false" ]; then
-    has_error=true
-    error_type="执行失败"
-    error_details="工具以非零退出码 ($exit_code) 结束"
-    suggestions="1. 查看详细输出了解原因\\n2. 检查命令参数\\n3. 验证前置条件"
+# 检测依赖错误
+if echo "$content" | grep -qiE '(Cannot find module|Module not found|依赖|package.*not found)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n📦 **依赖错误**\n\n缺少必要的模块或包\n\n💡 **快速修复**:\n• 运行 `npm install` 或 `pip install`\n• 检查 package.json/requirements.txt\n• 验证包名是否正确\n\n🔧 修复后重新运行即可\n"
+}
+EOF
+    exit 0
 fi
 
-# 如果检测到错误，发送警告
-if [ "$has_error" = "true" ]; then
-    # 截断过长的结果（保留前 500 字符）
-    truncated_result=$(echo "$tool_result" | head -c 500)
-    if [ ${#tool_result} -gt 500 ]; then
-        truncated_result="${truncated_result}... (truncated)"
-    fi
-    
-    printf '{"systemMessage":"\\n\\n[TOOL OUTPUT VALIDATION]\\n\\n**检测到 %s**\\n\\n工具: %s\\n退出码: %s\\n\\n**问题**: %s\\n\\n**输出摘要**:\\n```\\n%s\\n```\\n\\n**修复建议**:\\n%s\\n"}\n' "$error_type" "$tool_name" "$exit_code" "$error_details" "$truncated_result" "$suggestions"
+# 检测内存错误
+if echo "$content" | grep -qiE '(out of memory|ENOMEM|heap|内存不足|JavaScript heap)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n💾 **内存不足**\n\n操作消耗内存过大\n\n💡 **建议**:\n• 将操作拆分为更小的批次\n• 释放系统内存\n• 考虑使用流式处理\n\n🎭 **推荐 Agent**:\n• `/sunzi` - 让孙子分析性能瓶颈\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测连接错误
+if echo "$content" | grep -qiE '(connection refused|ECONNREFUSED|network error|无法连接|连接失败)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n🌐 **连接错误**\n\n无法建立网络连接\n\n💡 **检查**:\n• 目标服务是否运行\n• 网络配置是否正确\n• 防火墙是否阻止连接\n"
+}
+EOF
+    exit 0
+fi
+
+# 检测一般错误（通过退出码或关键词）
+if [ "$exit_code" != "0" ] && [ "$exit_code" != "" ]; then
+    cat << EOF
+{
+  "systemMessage": "\n\n⚠️ **执行失败** (退出码: ${exit_code})\n\n💡 **建议**:\n• 查看上方输出了解具体原因\n• 使用 \`/bianque\` 获取深度诊断\n• 使用 \`@扁鹊\` 直接召唤诊断专家\n"
+}
+EOF
     exit 0
 fi
 

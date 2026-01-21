@@ -82,6 +82,14 @@ Core feature: **Never stop until it's done**
 - ✅ Intelligent error recovery
 - ✅ Transparent progress reporting
 
+#### 🆕 Task Recovery Commands (New in v2.0)
+
+| Command | Function | Usage |
+|---------|----------|-------|
+| `/retry` | Retry failed operation | Auto-recover from recent failure |
+| `/skip` | Skip blocked task | Mark complete and continue |
+| `/rollback` | Rollback to checkpoint | Undo changes, restore stable state |
+
 ### 🌐 Bilingual Support
 
 All commands support both Chinese and English:

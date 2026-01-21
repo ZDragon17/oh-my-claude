@@ -1,42 +1,142 @@
 #!/usr/bin/env sh
-# 进度通知器 - Notification Hook
-# 在任务状态变化时显示简洁进度信息
+# ============================================================================
+# 进度通知器 - Progress Notifier (PostToolUse Hook)
+# ============================================================================
+# 在 TodoWrite 工具调用后自动显示简洁进度信息
+# 解决问题：用户执行 yishan 时没有进度反馈
+#
+# 触发条件：PostToolUse 事件中 tool_name = "TodoWrite"
+# 输出格式：📊 ████████░░░░░░░░░░░░░░░░░░░░░░ 25% (2/8) 🚀
+#
+# 优化：支持无 jq 时的降级方案
+# ============================================================================
 
-# 依赖检查 - jq 是可选的
-has_jq=0
-if command -v jq > /dev/null 2>&1; then
-    has_jq=1
+# 加载去重库（如果存在）
+SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
+if [ -f "$SCRIPT_DIR/lib/message-dedup.sh" ]; then
+    . "$SCRIPT_DIR/lib/message-dedup.sh"
+    USE_DEDUP=1
+else
+    USE_DEDUP=0
 fi
+
+# 带去重的消息输出
+safe_printf() {
+    local message="$1"
+    if [ "$USE_DEDUP" -eq 1 ]; then
+        if should_show_message "$message"; then
+            printf '%s\n' "$message"
+        fi
+    else
+        printf '%s\n' "$message"
+    fi
+}
 
 # 读取 stdin 中的 JSON 数据（带错误保护）
 input=$(cat 2>/dev/null) || input=""
 
-# 如果没有 jq 或输入为空，静默退出
-if [ "$has_jq" -eq 0 ] || [ -z "$input" ]; then
+# 如果输入为空，静默退出
+if [ -z "$input" ]; then
     exit 0
 fi
 
-# 提取消息类型
-message_type=$(echo "$input" | jq -r '.type // empty' 2>/dev/null)
+# ============================================================================
+# 检测是否有 jq
+# ============================================================================
+HAS_JQ=0
+if command -v jq > /dev/null 2>&1; then
+    HAS_JQ=1
+fi
 
-# 只处理 todo 相关的通知
-if [ "$message_type" != "todo_update" ]; then
+# ============================================================================
+# 无 jq 时的降级解析函数
+# ============================================================================
+
+# 简单的 JSON 值提取（纯 shell 实现）
+extract_json_value() {
+    local json="$1"
+    local key="$2"
+    # 尝试匹配 "key": "value" 或 "key": value
+    echo "$json" | sed -n "s/.*\"$key\"[[:space:]]*:[[:space:]]*\"\{0,1\}\([^\",:}]*\)\"\{0,1\}.*/\1/p" | head -1
+}
+
+# 统计 JSON 数组中特定状态的数量（纯 shell 实现）
+count_status() {
+    local json="$1"
+    local status="$2"
+    # 计算 "status": "xxx" 出现的次数
+    echo "$json" | grep -o "\"status\"[[:space:]]*:[[:space:]]*\"$status\"" | wc -l | tr -d ' '
+}
+
+# 提取当前进行中的任务内容（纯 shell 实现）
+extract_current_task() {
+    local json="$1"
+    # 查找 in_progress 状态附近的 content
+    # 这是一个简化的实现，可能不够精确但足够使用
+    echo "$json" | grep -B2 '"status"[[:space:]]*:[[:space:]]*"in_progress"' | \
+        grep -o '"content"[[:space:]]*:[[:space:]]*"[^"]*"' | \
+        sed 's/.*"content"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' | head -1
+}
+
+# ============================================================================
+# 主逻辑
+# ============================================================================
+
+# 检查是否是 TodoWrite 工具调用
+if [ "$HAS_JQ" -eq 1 ]; then
+    tool_name=$(echo "$input" | jq -r '.tool_name // .toolName // empty' 2>/dev/null)
+else
+    tool_name=$(extract_json_value "$input" "tool_name")
+    if [ -z "$tool_name" ]; then
+        tool_name=$(extract_json_value "$input" "toolName")
+    fi
+fi
+
+# 只处理 TodoWrite 工具调用
+if [ "$tool_name" != "TodoWrite" ]; then
     exit 0
 fi
 
 # 提取 todo 统计信息
-completed=$(echo "$input" | jq -r '.todos | map(select(.status == "completed")) | length' 2>/dev/null)
-in_progress=$(echo "$input" | jq -r '.todos | map(select(.status == "in_progress")) | length' 2>/dev/null)
-pending=$(echo "$input" | jq -r '.todos | map(select(.status == "pending")) | length' 2>/dev/null)
+if [ "$HAS_JQ" -eq 1 ]; then
+    # 使用 jq 精确解析
+    completed=$(echo "$input" | jq -r '.tool_input.todos | map(select(.status == "completed")) | length' 2>/dev/null)
+    in_progress=$(echo "$input" | jq -r '.tool_input.todos | map(select(.status == "in_progress")) | length' 2>/dev/null)
+    pending=$(echo "$input" | jq -r '.tool_input.todos | map(select(.status == "pending")) | length' 2>/dev/null)
+    current_task=$(echo "$input" | jq -r '.tool_input.todos | map(select(.status == "in_progress")) | .[0].content // "准备下一个任务"' 2>/dev/null)
+else
+    # 降级方案：使用纯 shell 解析
+    completed=$(count_status "$input" "completed")
+    in_progress=$(count_status "$input" "in_progress")
+    pending=$(count_status "$input" "pending")
+    current_task=$(extract_current_task "$input")
 
-# 如果无法解析，静默退出
-if [ -z "$completed" ] || [ -z "$in_progress" ] || [ -z "$pending" ]; then
-    exit 0
+    # 如果无法提取当前任务，使用默认值
+    if [ -z "$current_task" ]; then
+        current_task="准备下一个任务"
+    fi
 fi
+
+# 数值验证和默认值
+completed=${completed:-0}
+in_progress=${in_progress:-0}
+pending=${pending:-0}
+
+# 确保是数字
+case "$completed" in
+    ''|*[!0-9]*) completed=0 ;;
+esac
+case "$in_progress" in
+    ''|*[!0-9]*) in_progress=0 ;;
+esac
+case "$pending" in
+    ''|*[!0-9]*) pending=0 ;;
+esac
 
 # 计算总数和百分比
 total=$((completed + in_progress + pending))
 
+# 如果没有任务，静默退出
 if [ "$total" -eq 0 ]; then
     exit 0
 fi
@@ -46,7 +146,6 @@ percent=$((completed * 100 / total))
 # 生成进度条 (30 字符宽)
 bar_width=30
 filled=$((bar_width * percent / 100))
-empty=$((bar_width - filled))
 
 bar=""
 i=0
@@ -72,14 +171,12 @@ else
     emoji="🚀"
 fi
 
-# 获取当前进行中的任务名称
-current_task=$(echo "$input" | jq -r '.todos | map(select(.status == "in_progress")) | .[0].content // "无"' 2>/dev/null)
+# 计算剩余任务数
+remaining=$((pending + in_progress))
 
-# 输出简洁进度信息
-cat << EOF
-{
-  "systemMessage": "\n\n📊 ${bar} ${percent}% (${completed}/${total}) ${emoji}\n🔄 ${current_task}\n"
-}
-EOF
+# 输出简洁进度信息（使用去重）
+msg=$(printf '{"systemMessage":"\\n📊 %s %d%% (%d/%d) %s\\n🔄 当前: %s | ⏳ 剩余: %d\\n"}' \
+    "$bar" "$percent" "$completed" "$total" "$emoji" "$current_task" "$remaining")
+safe_printf "$msg"
 
 exit 0

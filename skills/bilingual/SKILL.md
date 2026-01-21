@@ -2,145 +2,135 @@
 name: bilingual
 description: |
   中英双语支持技能 - 使 Agent 能够理解和响应中英文命令。
-  支持的命令别名映射。
+  精简别名设计，降低认知负荷。
 ---
 
 # 中英双语命令支持
 
 本技能提供 oh-my-claude 的中英双语命令映射支持。
 
-## 命令映射表
+## 别名设计原则
+
+为降低用户认知负荷，采用 **精简别名** 策略：
+
+1. **主命令**: 拼音名（如 `/yishan`）
+2. **中文别名**: 1个核心中文名（如 `/愚公`）
+3. **英文别名**: 1个最常用功能词（如 `/persist`）
+
+> 💡 记住规则：**拼音 + 中文 + 功能词** = 最多3个别名
+
+## 命令映射表（精简版）
 
 ### Agent 命令
 
-| 主命令 | 中文别名 | 英文别名 | Agent | 功能 |
-|--------|----------|----------|-------|------|
-| `/yugong` | `/愚公` | `/yishan` `/persist` `/ultrawork` `/ulw` `/移山` | 愚公 | 主编排，持续执行 |
-| `/zhuge` | `/诸葛` `/隆中` | `/longzhong` `/strategy` `/consult` | 诸葛 | 战略顾问，架构设计 |
-| `/luban` | `/鲁班` `/巧工` | `/qiaogong` `/craft` `/frontend` | 鲁班 | 精工巧匠，代码实现 |
-| `/wukong` | `/悟空` `/火眼` | `/huoyan` `/explore` `/scout` | 悟空 | 代码侦察，快速探索 |
-| `/bianque` | `/扁鹊` `/望闻` | `/wangwen` `/debug` `/diagnose` | 扁鹊 | Bug 诊断，问题修复 |
-| `/mozi` | `/墨子` `/安全` | `/security` `/audit` | 墨子 | 安全审计，防御编程 |
-| `/sunzi` | `/孙子` `/性能` `/优化` | `/performance` `/perf` | 孙子 | 性能优化，系统调优 |
-| `/simaqian` | `/司马迁` `/史记` | `/shiji` `/document` `/doc` | 司马迁 | 文档撰写，变更记录 |
-| `/zhenghe` | `/郑和` `/西洋` `/接口` | `/xiyang` `/api` `/integrate` | 郑和 | API 集成，外部服务 |
-| `/zhangheng` | `/张衡` `/地动仪` `/监控` | `/didongyi` `/monitor` `/observe` | 张衡 | 系统监控，可观测性 |
-| `/libing` | `/李冰` `/都江堰` `/运维` | `/dujiangyan` `/devops` `/cicd` | 李冰 | DevOps，基础设施 |
-| `/laozi` | `/老子` `/道德经` `/简洁` `/至简` | `/daodejing` `/simplify` `/clean` | 老子 | 代码简化，Clean Code |
-| `/baozheng` | `/包拯` `/开封` `/测试` | `/kaifeng` `/test` `/tdd` | 包拯 | 测试专家，TDD |
-| `/weizheng` | `/魏征` `/谏` `/审查` | `/jian` `/review` `/cr` | 魏征 | 代码审查，规范检查 |
-| `/cangjie` | `/仓颉` `/造字` `/数据库` | `/zaozi` `/database` `/db` `/sql` | 仓颉 | 数据库设计，SQL 优化 |
-| `/libai` | `/李白` `/需求` `/用户故事` | `/poet` `/requirements` | 李白 | 需求分析，用户故事 |
-| `/gukaizhi` | `/顾恺之` `/界面` `/美学` | `/painter` `/ui` `/ux` | 顾恺之 | UI/UX 设计，界面美学 |
-| `/change` | `/嫦娥` `/云端` `/月宫` | `/moon` `/cloud` `/serverless` | 嫦娥 | 云原生，Serverless |
-| `/team` | `/协作` `/合作` `/团队` | `/teamwork` | 愚公 | 多 Agent 团队协作 |
+| 主命令 | 中文 | 英文 | Agent | 功能 |
+| ------ | ---- | ---- | ----- | ---- |
+| `/yishan` | `/愚公` | `/persist` | 愚公 | 大任务持续执行 |
+| `/zhuge` | `/诸葛` | `/strategy` | 诸葛 | 架构设计 |
+| `/luban` | `/鲁班` | `/craft` | 鲁班 | 代码实现 |
+| `/wukong` | `/悟空` | `/explore` | 悟空 | 代码探索 |
+| `/bianque` | `/扁鹊` | `/debug` | 扁鹊 | Bug 诊断 |
+| `/mozi` | `/墨子` | `/security` | 墨子 | 安全审计 |
+| `/sunzi` | `/孙子` | `/perf` | 孙子 | 性能优化 |
+| `/simaqian` | `/司马迁` | `/doc` | 司马迁 | 文档撰写 |
+| `/zhenghe` | `/郑和` | `/api` | 郑和 | API 集成 |
+| `/zhangheng` | `/张衡` | `/monitor` | 张衡 | 系统监控 |
+| `/libing` | `/李冰` | `/devops` | 李冰 | DevOps |
+| `/laozi` | `/老子` | `/simplify` | 老子 | Clean Code |
+| `/baozheng` | `/包拯` | `/test` | 包拯 | 测试设计 |
+| `/weizheng` | `/魏征` | `/review` | 魏征 | 代码审查 |
+| `/cangjie` | `/仓颉` | `/db` | 仓颉 | 数据库设计 |
+| `/libai` | `/李白` | `/requirements` | 李白 | 需求分析 |
+| `/gukaizhi` | `/顾恺之` | `/ui` | 顾恺之 | UI/UX 设计 |
+| `/change` | `/嫦娥` | `/cloud` | 嫦娥 | 云原生 |
+| `/lilou` | `/离娄` | `/vision` | 离娄 | 多模态分析 |
+| `/liubowen` | `/刘伯温` | `/audit-plan` | 刘伯温 | 计划审查 |
 
 ### 工具命令
 
-| 主命令 | 中文别名 | 英文别名 | 功能 |
-|--------|----------|----------|------|
-| `/progress` | `/进度` `/面板` `/进展` | `/dashboard` `/status` | 可视化进度面板 |
+| 主命令 | 中文 | 英文 | 功能 |
+| ------ | ---- | ---- | ---- |
+| `/progress` | `/进度` | `/dashboard` | 进度面板 |
+| `/team` | `/协作` | `/teamwork` | 团队协作 |
+| `/help` | `/帮助` | `/commands` | 命令帮助 |
 
-> **说明**: `/yugong` 和 `/yishan` 是完全等价的命令，都启动愚公移山模式。
+### 兼容别名（向后兼容）
+
+以下别名保留向后兼容，但不再推荐使用：
+
+```text
+/yugong → 请使用 /yishan
+/ultrawork, /ulw → 请使用 /persist
+/longzhong → 请使用 /strategy
+/qiaogong → 请使用 /craft
+/huoyan → 请使用 /explore
+/wangwen → 请使用 /debug
+```
 
 ## 关键词触发
 
-以下关键词会自动触发相应模式（支持连字符和下划线变体）：
+以下关键词会自动建议使用相应 Agent：
 
-### 愚公移山模式
-- `ultrawork`, `ulw`, `移山`, `yishan`, `persist`, `愚公`, `yugong`
-- 触发持续执行模式，强制完成所有 TODO
+### 任务执行
 
-### 诸葛顾问模式
-- `架构`, `设计`, `策略`, `architecture`, `design`, `strategy`, `诸葛`, `zhuge`, `consult`, `规划`, `planning`
-- 建议召唤诸葛 Agent 进行深度分析
+- `大任务`, `持续`, `完成所有`, `ultrawork` → 建议 `/yishan`
 
-### 鲁班巧匠模式
-- `前端`, `组件`, `UI`, `frontend`, `component`, `craft`, `鲁班`, `luban`, `巧工`, `qiaogong`
-- 建议召唤鲁班 Agent 进行精密实现
+### 设计规划
 
-### 悟空侦察模式
-- `搜索`, `查找`, `探索`, `search`, `find`, `explore`, `悟空`, `wukong`, `火眼`, `huoyan`, `定位`, `locate`
-- 建议召唤悟空 Agent 进行代码探索
+- `架构`, `设计`, `strategy`, `planning` → 建议 `/zhuge`
 
-### 扁鹊诊断模式
-- `fix bug`, `fix error`, `debug`, `调试`, `报错`, `异常`, `exception`, `扁鹊`, `bianque`, `诊断`, `diagnose`
-- 建议召唤扁鹊 Agent 进行诊断
+### 代码实现
 
-### 墨子安全模式
-- `安全`, `漏洞`, `注入`, `security`, `vulnerability`, `injection`, `墨子`, `mozi`, `audit`, `审计`, `XSS`, `CSRF`, `防御`
-- 建议召唤墨子 Agent 进行安全审计
+- `实现`, `组件`, `前端`, `craft` → 建议 `/luban`
 
-### 孙子性能模式
-- `性能`, `优化`, `慢`, `performance`, `optimize`, `slow`, `孙子`, `sunzi`, `perf`, `瓶颈`, `bottleneck`, `缓存`, `cache`
-- 建议召唤孙子 Agent 进行性能优化
+### 问题诊断
 
-### 司马迁文档模式
-- `文档`, `注释`, `记录`, `document`, `comment`, `readme`, `changelog`, `history`, `司马迁`, `simaqian`, `史记`, `shiji`
-- 建议召唤司马迁 Agent 进行文档撰写
+- `bug`, `报错`, `error`, `debug` → 建议 `/bianque`
 
-### 郑和 API 模式
-- `API`, `接口`, `集成`, `对接`, `integrate`, `webhook`, `sdk`, `REST`, `GraphQL`, `gRPC`, `郑和`, `zhenghe`, `西洋`, `第三方`
-- 建议召唤郑和 Agent 进行 API 集成
+### 代码探索
 
-### 张衡监控模式
-- `监控`, `日志`, `告警`, `追踪`, `monitor`, `logging`, `alert`, `trace`, `metrics`, `prometheus`, `grafana`, `张衡`, `zhangheng`, `可观测`
-- 建议召唤张衡 Agent 进行监控配置
+- `找`, `搜索`, `explore`, `locate` → 建议 `/wukong`
 
-### 李冰 DevOps 模式
-- `DevOps`, `CI/CD`, `部署`, `运维`, `docker`, `kubernetes`, `容器`, `terraform`, `基础设施`, `流水线`, `pipeline`, `李冰`, `libing`
-- 建议召唤李冰 Agent 进行 DevOps 配置
+### 质量保障
 
-### 老子简洁模式
-- `简洁`, `简化`, `重构`, `KISS`, `YAGNI`, `DRY`, `clean code`, `代码异味`, `code smell`, `老子`, `laozi`, `道德经`, `至简`, `simplify`
-- 建议召唤老子 Agent 进行代码简化和 Clean Code 审查
+- `安全`, `security`, `漏洞` → 建议 `/mozi`
+- `性能`, `perf`, `慢`, `优化` → 建议 `/sunzi`
+- `测试`, `test`, `TDD` → 建议 `/baozheng`
+- `审查`, `review`, `CR` → 建议 `/weizheng`
 
-### 包拯测试模式
-- `测试`, `单元测试`, `集成测试`, `test`, `unit test`, `integration test`, `TDD`, `jest`, `vitest`, `pytest`, `包拯`, `baozheng`, `开封`, `coverage`
-- 建议召唤包拯 Agent 进行测试设计和覆盖分析
+### 专项领域
 
-### 魏征审查模式
-- `审查`, `code review`, `review`, `CR`, `PR`, `pull request`, `魏征`, `weizheng`, `谏`, `规范检查`
-- 建议召唤魏征 Agent 进行代码审查
-
-### 仓颉数据库模式
-- `数据库`, `database`, `SQL`, `表设计`, `索引`, `index`, `migration`, `MySQL`, `PostgreSQL`, `仓颉`, `cangjie`, `造字`, `数据建模`
-- 建议召唤仓颉 Agent 进行数据库设计和 SQL 优化
-
-### 李白需求模式
-- `需求`, `用户故事`, `PRD`, `功能规划`, `requirements`, `user story`, `feature spec`, `李白`, `libai`, `poet`
-- 建议召唤李白 Agent 进行需求分析和用户故事提炼
-
-### 顾恺之设计模式
-- `界面`, `美学`, `UX`, `用户体验`, `视觉设计`, `交互设计`, `顾恺之`, `gukaizhi`, `painter`, `配色`, `布局`
-- 建议召唤顾恺之 Agent 进行 UI/UX 设计
-
-### 嫦娥云端模式
-- `云原生`, `cloud native`, `serverless`, `无服务器`, `Lambda`, `函数计算`, `嫦娥`, `change`, `moon`, `云端`, `FaaS`
-- 建议召唤嫦娥 Agent 进行云原生架构和 Serverless 部署
+- `文档`, `doc`, `README` → 建议 `/simaqian`
+- `API`, `接口`, `集成` → 建议 `/zhenghe`
+- `数据库`, `SQL`, `db` → 建议 `/cangjie`
+- `监控`, `日志`, `monitor` → 建议 `/zhangheng`
+- `DevOps`, `CI/CD`, `部署` → 建议 `/libing`
+- `云`, `serverless`, `Lambda` → 建议 `/change`
+- `需求`, `用户故事` → 建议 `/libai`
+- `UI`, `UX`, `界面` → 建议 `/gukaizhi`
+- `简洁`, `重构`, `clean code` → 建议 `/laozi`
 
 ## 使用示例
 
 ```bash
-# 以下命令等效
+# 推荐用法（简洁明了）
 /yishan 重构整个认证模块
-/移山 重构整个认证模块
-/ultrawork refactor the entire auth module
+/bianque TypeError: Cannot read property 'name'
+/zhuge 设计微服务架构
 
-# 以下命令等效
-/zhuge 分析这个架构设计
-/诸葛 分析这个架构设计
-/strategy analyze this architecture
-
-# 以下命令等效
-/bianque 这个报错怎么解决
+# 中文用户
+/愚公 实现用户登录功能
 /扁鹊 这个报错怎么解决
-/debug how to fix this error
+
+# 英文用户
+/persist implement user authentication
+/debug fix this error
 ```
 
 ## 响应语言
 
 Agent 会根据用户的输入语言自动选择响应语言：
+
 - 用户使用中文 → Agent 用中文响应
 - 用户使用英文 → Agent 用英文响应
 - 混合输入 → Agent 根据主要语言响应

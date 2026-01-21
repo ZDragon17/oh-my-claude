@@ -10,11 +10,17 @@ on:
 
 jobs:
   test:
-    name: Test
-    runs-on: ubuntu-latest
+    name: Test (${{ matrix.os }}, Node ${{ matrix.node-version }})
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [18, 20]
+        exclude:
+          # 减少 macOS 测试以节省 CI 时间
+          - os: macos-latest
+            node-version: 18
 
     steps:
     - name: Checkout code
@@ -39,11 +45,71 @@ jobs:
       run: npm run test:coverage
 
     - name: Upload coverage to Codecov
-      if: matrix.node-version == '20'
+      if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20'
       uses: codecov/codecov-action@v3
       with:
         file: ./coverage/lcov.info
         fail_ci_if_error: false
+
+  # Windows 特定测试
+  test-windows-hooks:
+    name: Test Windows Hook Compatibility
+    runs-on: windows-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Check Hook compatibility
+      shell: pwsh
+      run: |
+        Write-Host "Checking Hook compatibility on Windows..."
+
+        # 检测 Git Bash 是否可用
+        $bashAvailable = Get-Command bash -ErrorAction SilentlyContinue
+        if ($bashAvailable) {
+          Write-Host "✅ Git Bash is available"
+        } else {
+          Write-Host "⚠️ Git Bash is NOT available - some hooks will be skipped"
+        }
+
+        # 检测关键 PowerShell 脚本
+        $ps1Scripts = Get-ChildItem -Path "hooks" -Filter "*.ps1" -ErrorAction SilentlyContinue
+        Write-Host "Found $($ps1Scripts.Count) PowerShell scripts"
+
+        # 验证 PowerShell 通知脚本
+        if (Test-Path "hooks/notify-windows.ps1") {
+          Write-Host "✅ Windows notification script exists"
+          # 语法检查
+          $null = [System.Management.Automation.Language.Parser]::ParseFile(
+            "$PWD/hooks/notify-windows.ps1",
+            [ref]$null,
+            [ref]$errors
+          )
+          if ($errors.Count -eq 0) {
+            Write-Host "✅ notify-windows.ps1 syntax is valid"
+          } else {
+            Write-Host "❌ notify-windows.ps1 has syntax errors"
+            exit 1
+          }
+        }
+
+        Write-Host "Windows hook compatibility check completed"
+
+    - name: Test CLI on Windows
+      shell: pwsh
+      run: |
+        npm run build
+        node dist/scripts/cli.js --version
+        Write-Host "✅ CLI runs successfully on Windows"
 
   lint:
     name: Lint

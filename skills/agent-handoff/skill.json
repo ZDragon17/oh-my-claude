@@ -1,0 +1,22 @@
+{
+  "name": "agent-handoff",
+  "version": "1.0.0",
+  "description": "Agent 交接技能 - 实现结构化上下文传递机制",
+  "triggers": [
+    "/handoff",
+    "/交接",
+    "/context-pass"
+  ],
+  "auto_activate": true,
+  "config": {
+    "auto_save": true,
+    "save_path": ".claude/context/",
+    "retention_days": 7,
+    "verbose_mode": false,
+    "include_in_delegation": true
+  },
+  "integration": {
+    "yishan": true,
+    "team": true
+  }
+}

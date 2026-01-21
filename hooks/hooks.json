@@ -6,6 +6,7 @@
         "command": "bash hooks/ralph-loop.sh",
         "timeout": 3000,
         "continueOnError": true,
+        "priority": "critical",
         "description": "Ralph Loop - 自引用循环控制（检测完成承诺）"
       },
       {
@@ -13,36 +14,76 @@
         "command": "bash hooks/todo-continuation.sh",
         "timeout": 3000,
         "continueOnError": true,
+        "priority": "critical",
         "description": "TODO 续航检查 - 如果有活跃循环则阻止停止"
       }
     ],
     "UserPromptSubmit": [
       {
         "type": "command",
-        "command": "bash hooks/atlas.sh",
-        "timeout": 3000,
+        "command": "bash hooks/first-use-onboarding.sh",
+        "timeout": 2000,
         "continueOnError": true,
-        "description": "Atlas 核心编排 - 任务分类、委派建议、工作流阶段检测"
+        "priority": "critical",
+        "windows_compatible": true,
+        "description": "首次使用引导 - 新用户自动迷你引导和意图识别"
       },
       {
         "type": "command",
         "command": "bash hooks/keyword-detector.sh",
         "timeout": 3000,
         "continueOnError": true,
+        "priority": "critical",
+        "windows_compatible": true,
         "description": "关键词检测 - 自动触发相关模式（包括 ultrawork/移山）"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/at-agent-summoner.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "critical",
+        "windows_compatible": true,
+        "description": "@Agent 召唤器 - 检测 @悟空 @诸葛 等语法直接召唤 Agent"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/atlas.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "Atlas 核心编排 - 任务分类、委派建议、工作流阶段检测"
       },
       {
         "type": "command",
         "command": "bash hooks/agent-collaboration.sh",
         "timeout": 5000,
         "continueOnError": true,
+        "priority": "high",
         "description": "多 Agent 协作 - 检测和启动协作"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/error-recovery.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "错误恢复 - 自动检测和恢复策略"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/session-recovery.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "会话恢复 - 检测会话中断信号并提供恢复策略"
       },
       {
         "type": "command",
         "command": "bash hooks/task-checkpointing.sh",
         "timeout": 3000,
         "continueOnError": true,
+        "priority": "normal",
         "description": "任务检查点 - 记录任务状态用于恢复"
       },
       {
@@ -50,69 +91,23 @@
         "command": "bash hooks/context-compression.sh",
         "timeout": 3000,
         "continueOnError": true,
+        "priority": "normal",
         "description": "上下文压缩 - 智能信息压缩"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/error-recovery.sh",
-        "timeout": 5000,
-        "continueOnError": true,
-        "description": "错误恢复 - 自动检测和恢复策略"
       },
       {
         "type": "command",
         "command": "bash hooks/preemptive-compaction.sh",
         "timeout": 3000,
         "continueOnError": true,
+        "priority": "normal",
         "description": "抢占式压缩 - 在达到限制前主动压缩"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/lsp-tools.sh",
-        "timeout": 5000,
-        "continueOnError": true,
-        "description": "LSP 工具 - 提供 IDE 级代码分析能力"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/ast-grep.sh",
-        "timeout": 5000,
-        "continueOnError": true,
-        "description": "AST-Grep - 结构化代码搜索"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/code-quality-checker.sh",
-        "timeout": 3000,
-        "continueOnError": true,
-        "description": "代码质量检查 - 注释和风格验证"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/output-truncator.sh",
-        "timeout": 2000,
-        "continueOnError": true,
-        "description": "输出截断器 - 智能截断大型输出"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/directory-agents-injector.sh",
-        "timeout": 3000,
-        "continueOnError": true,
-        "description": "目录代理注入 - 根据目录推荐 Agent"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/directory-readme-injector.sh",
-        "timeout": 3000,
-        "continueOnError": true,
-        "description": "目录 README 注入 - 自动提取项目文档关键信息"
       },
       {
         "type": "command",
         "command": "bash hooks/rules-injector.sh",
         "timeout": 3000,
         "continueOnError": true,
+        "priority": "normal",
         "description": "规则注入 - 加载项目和全局规则"
       },
       {
@@ -120,13 +115,65 @@
         "command": "bash hooks/think-mode.sh",
         "timeout": 3000,
         "continueOnError": true,
+        "priority": "normal",
         "description": "思维模式 - 深度思考和推理增强"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/lsp-tools.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": false,
+        "description": "LSP 工具 - 提供 IDE 级代码分析能力"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/ast-grep.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": false,
+        "description": "AST-Grep - 结构化代码搜索"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/code-quality-checker.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "代码质量检查 - 注释和风格验证"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/output-truncator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "输出截断器 - 智能截断大型输出"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/directory-agents-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "目录代理注入 - 根据目录推荐 Agent"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/directory-readme-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "目录 README 注入 - 自动提取项目文档关键信息"
       },
       {
         "type": "command",
         "command": "bash hooks/auto-slash-command.sh",
         "timeout": 2000,
         "continueOnError": true,
+        "priority": "low",
         "description": "自动斜杠命令 - 检测意图并建议相应 Agent"
       },
       {
@@ -134,20 +181,16 @@
         "command": "bash hooks/auto-update-checker.sh",
         "timeout": 5000,
         "continueOnError": true,
+        "priority": "low",
         "description": "自动更新检查 - 检查新版本"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/session-recovery.sh",
-        "timeout": 3000,
-        "continueOnError": true,
-        "description": "会话恢复 - 检测会话中断信号并提供恢复策略"
       },
       {
         "type": "command",
         "command": "bash hooks/interactive-bash-session.sh",
         "timeout": 2000,
         "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": false,
         "description": "交互式 Bash 会话 - 检测长时间运行进程并建议使用 tmux"
       },
       {
@@ -155,86 +198,117 @@
         "command": "bash hooks/agent-usage-reminder.sh",
         "timeout": 2000,
         "continueOnError": true,
+        "priority": "low",
         "description": "Agent 使用提醒 - 根据任务类型推荐合适的 Agent"
       }
     ],
     "PostToolUse": [
       {
         "type": "command",
-        "command": "bash hooks/output-truncator.sh",
+        "command": "bash hooks/progress-notifier.sh",
         "timeout": 2000,
         "continueOnError": true,
-        "description": "工具输出截断 - 处理大型工具输出"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/delegate-task-retry.sh",
-        "timeout": 5000,
-        "continueOnError": true,
-        "description": "任务委派重试 - 检测失败的委派任务并提供重试建议"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/background-notification.sh",
-        "timeout": 3000,
-        "continueOnError": true,
-        "description": "后台任务通知 - 检测完成的后台任务并发送通知"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/empty-task-response-detector.sh",
-        "timeout": 2000,
-        "continueOnError": true,
-        "description": "空任务响应检测 - 检测委派任务的空响应或无效响应"
+        "priority": "critical",
+        "windows_compatible": true,
+        "description": "进度通知器 - TodoWrite 后自动显示进度条"
       },
       {
         "type": "command",
         "command": "bash hooks/context-window-monitor.sh",
         "timeout": 2000,
         "continueOnError": true,
+        "priority": "critical",
         "description": "上下文窗口监控 - 监控上下文使用率并提供预警"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/tool-output-validator.sh",
-        "timeout": 2000,
-        "continueOnError": true,
-        "description": "工具输出验证 - 检测工具执行错误并提供修复建议"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/thinking-block-validator.sh",
-        "timeout": 2000,
-        "continueOnError": true,
-        "description": "思维块验证 - 检测 extended thinking 相关错误"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/session-notification.sh",
-        "timeout": 3000,
-        "continueOnError": true,
-        "description": "会话通知 - 在重要事件时发送 OS 通知"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/edit-error-recovery.sh",
-        "timeout": 2000,
-        "continueOnError": true,
-        "description": "编辑错误恢复 - 检测 Edit 工具错误并提供恢复建议"
-      },
-      {
-        "type": "command",
-        "command": "bash hooks/background-compaction.sh",
-        "timeout": 2000,
-        "continueOnError": true,
-        "description": "后台任务压缩 - 监控后台任务数量并建议清理"
       },
       {
         "type": "command",
         "command": "bash hooks/anthropic-context-window-limit-recovery.sh",
         "timeout": 2000,
         "continueOnError": true,
+        "priority": "critical",
         "description": "上下文限制恢复 - 检测上下文窗口限制并提供恢复策略"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/failure-transparency.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "失败透明化 - 显示失败计数和回滚通知"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/tool-output-validator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "工具输出验证 - 检测工具执行错误并提供修复建议"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/edit-error-recovery.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "编辑错误恢复 - 检测 Edit 工具错误并提供恢复建议"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/delegate-task-retry.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "任务委派重试 - 检测失败的委派任务并提供重试建议"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/empty-task-response-detector.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "空任务响应检测 - 检测委派任务的空响应或无效响应"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/thinking-block-validator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "思维块验证 - 检测 extended thinking 相关错误"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/output-truncator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "工具输出截断 - 处理大型工具输出"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/session-notification.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "会话通知 - 在重要事件时发送 OS 通知"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/background-notification.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "后台任务通知 - 检测完成的后台任务并发送通知"
+      },
+      {
+        "type": "command",
+        "command": "bash hooks/background-compaction.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "后台任务压缩 - 监控后台任务数量并建议清理"
       }
     ]
   },
@@ -242,7 +316,32 @@
   "hook_config": {
     "parallel_execution": false,
     "log_enabled": true,
-    "log_path": "$HOME/.oh-my-claude/logs/hooks.log"
+    "log_path": "$HOME/.oh-my-claude/logs/hooks.log",
+    "performance_tracking": true,
+    "performance_log_path": "$HOME/.oh-my-claude/logs/hooks-perf.log"
+  },
+  "priority_levels": {
+    "critical": {
+      "order": 1,
+      "description": "关键功能，必须执行，失败会影响核心体验"
+    },
+    "high": {
+      "order": 2,
+      "description": "重要功能，强烈建议执行"
+    },
+    "normal": {
+      "order": 3,
+      "description": "标准功能，正常执行"
+    },
+    "low": {
+      "order": 4,
+      "description": "增强功能，可选执行，可在性能敏感场景禁用"
+    }
+  },
+  "windows_mode": {
+    "enabled": "auto",
+    "skip_incompatible": true,
+    "description": "Windows 模式配置：auto=自动检测, true=强制启用, false=禁用"
   },
   "v2_migration": {
     "note": "v2.0 循环机制变更说明 - 已完成迁移",
