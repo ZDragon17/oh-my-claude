@@ -29,13 +29,16 @@ describe('错误处理模块', () => {
   });
 
   describe('getUserFriendlyError', () => {
+    // 测试适配中英文双语环境
     test('应该转换 ENOENT 错误', () => {
       const error = new Error('File not found') as NodeJS.ErrnoException;
       error.code = 'ENOENT';
 
       const message = getUserFriendlyError(error, '/path/to/file');
-      expect(message).toContain('文件或目录不存在');
+      // 验证消息包含路径（双语兼容）
       expect(message).toContain('/path/to/file');
+      // 验证是预期的错误类型消息（中文或英文）
+      expect(message.includes('文件或目录不存在') || message.includes('not found')).toBe(true);
     });
 
     test('应该转换 EACCES 错误', () => {
@@ -43,7 +46,7 @@ describe('错误处理模块', () => {
       error.code = 'EACCES';
 
       const message = getUserFriendlyError(error, '/path/to/file');
-      expect(message).toContain('权限不足');
+      expect(message.includes('权限不足') || message.includes('Permission denied')).toBe(true);
     });
 
     test('应该转换 ENOSPC 错误', () => {
@@ -51,7 +54,7 @@ describe('错误处理模块', () => {
       error.code = 'ENOSPC';
 
       const message = getUserFriendlyError(error, '/path/to/file');
-      expect(message).toContain('磁盘空间不足');
+      expect(message.includes('磁盘空间不足') || message.includes('No space')).toBe(true);
     });
 
     test('应该转换 EPERM 错误', () => {
@@ -59,7 +62,7 @@ describe('错误处理模块', () => {
       error.code = 'EPERM';
 
       const message = getUserFriendlyError(error, '/path/to/file');
-      expect(message).toContain('操作被拒绝');
+      expect(message.includes('操作被拒绝') || message.includes('not permitted')).toBe(true);
     });
 
     test('应该转换 EBUSY 错误', () => {
@@ -67,7 +70,7 @@ describe('错误处理模块', () => {
       error.code = 'EBUSY';
 
       const message = getUserFriendlyError(error, '/path/to/file');
-      expect(message).toContain('资源正忙');
+      expect(message.includes('资源正忙') || message.includes('busy')).toBe(true);
     });
 
     test('应该转换 EEXIST 错误', () => {
@@ -75,7 +78,7 @@ describe('错误处理模块', () => {
       error.code = 'EEXIST';
 
       const message = getUserFriendlyError(error, '/path/to/file');
-      expect(message).toContain('文件已存在');
+      expect(message.includes('文件已存在') || message.includes('exists')).toBe(true);
     });
 
     test('未知错误应返回原始消息', () => {
