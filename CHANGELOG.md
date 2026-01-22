@@ -18,6 +18,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.17] - 2026-01-22
+
+### 🐛 Fixed / 修复
+
+- **修复 "Unknown slash command" 问题**: 命令目录结构调整
+  - 命令文件现在直接安装到 `~/.claude/commands/` 根目录
+  - 之前安装到 `~/.claude/commands/zcf/` 子目录导致 Claude Code 无法识别
+  - 更新 shell 脚本和 PowerShell 安装脚本
+  - CLI (`npx claude-pangu`) 已是正确行为，本次统一所有安装方式
+
+### 📖 Documentation / 文档
+
+- **更新 Claude Code 安装说明**: Claude Code 已切换为原生安装器
+  - README.md/README_EN.md 添加 `claude install` 前提条件
+  - TROUBLESHOOTING.md 更新安装指引
+- **新增 "Unknown slash command" 故障排查**: 详细步骤解决命令不识别问题
+
+---
+
 ## [2.0.16] - 2026-01-22
 
 ### 📖 Documentation / 文档

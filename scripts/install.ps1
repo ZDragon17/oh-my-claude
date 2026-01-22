@@ -10,7 +10,7 @@ $ErrorActionPreference = "Stop"
 $Repo = "ZDragon17/oh-my-claude"
 $PluginName = "oh-my-claude"
 $InstallDir = Join-Path $env:USERPROFILE ".claude\plugins\$PluginName"
-$CommandsDir = Join-Path $env:USERPROFILE ".claude\commands\zcf"
+$CommandsDir = Join-Path $env:USERPROFILE ".claude\commands"
 $SkillsDir = Join-Path $env:USERPROFILE ".claude\skills"
 
 # 输出函数
@@ -183,7 +183,7 @@ function Install-Plugin {
 
             # Windows 不需要设置执行权限
 
-            # 安装 slash commands 到 ~/.claude/commands/zcf/
+            # 安装 slash commands 到 ~/.claude/commands/
             Write-Info "正在安装 slash commands..."
             if (-not (Test-Path $CommandsDir)) {
                 New-Item -ItemType Directory -Path $CommandsDir -Force | Out-Null

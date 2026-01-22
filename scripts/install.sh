@@ -18,7 +18,7 @@ NC='\033[0m' # No Color
 REPO="ZDragon17/oh-my-claude"
 PLUGIN_NAME="oh-my-claude"
 INSTALL_DIR="$HOME/.claude/plugins/$PLUGIN_NAME"
-COMMANDS_DIR="$HOME/.claude/commands/zcf"
+COMMANDS_DIR="$HOME/.claude/commands"
 SKILLS_DIR="$HOME/.claude/skills"
 
 # 输出函数
@@ -158,7 +158,7 @@ install_plugin() {
         # 设置 hook 脚本执行权限（递归处理子目录如 hooks/lib/）
         find "$INSTALL_DIR/hooks" -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
 
-        # 安装 slash commands 到 ~/.claude/commands/zcf/
+        # 安装 slash commands 到 ~/.claude/commands/
         info "正在安装 slash commands..."
         mkdir -p "$COMMANDS_DIR"
         if [ -d "$TMP_DIR/commands" ]; then

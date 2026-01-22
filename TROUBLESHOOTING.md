@@ -83,25 +83,65 @@ ls ~/.claude/plugins/oh-my-claude
 
 ## 运行时问题
 
-### 1. 命令无响应
+### 1. "Unknown slash command: xxx"
 
-**症状**：输入 `/yishan` 等命令后没有反应
+**症状**：输入 `/yishan` 等命令后提示 `Unknown slash command: yishan`
 
 **可能原因**：
-- 插件未正确注册
-- 命令文件损坏
+- 命令文件未安装到正确位置
+- Claude Code 更新后目录结构变化
+- 缓存或配置不同步
+
+**解决方案**：
+
+```bash
+# 步骤 1: 检查命令文件是否存在
+ls ~/.claude/commands/
+
+# 如果存在 zcf/ 子目录，检查其中的文件
+ls ~/.claude/commands/zcf/
+
+# 步骤 2: 如果文件在 zcf/ 子目录中，创建符号链接或复制到根目录
+# macOS/Linux:
+cp ~/.claude/commands/zcf/*.md ~/.claude/commands/
+
+# 步骤 3: 重启 Claude Code
+# 完全退出并重新启动 Claude Code
+
+# 步骤 4: 验证命令是否可用
+# 在 Claude Code 中输入 /help 查看可用命令列表
+```
+
+**注意**：Claude Code 原生安装器 (`claude install`) 可能改变了命令识别机制。如果问题持续，请尝试：
+
+```bash
+# 完全卸载并重新安装
+npx claude-pangu uninstall
+npx claude-pangu install
+
+# 或手动安装命令到根目录
+cp ~/.claude/plugins/oh-my-claude/commands/*.md ~/.claude/commands/
+```
+
+### 2. 命令无响应
+
+**症状**：输入 `/yishan` 等命令后没有反应（不报错但也不执行）
+
+**可能原因**：
+- 命令文件存在但格式有问题
+- Claude Code 版本不兼容
 
 **解决方案**：
 ```bash
-# 检查插件状态
-claude plugins list
+# 检查命令文件内容
+cat ~/.claude/commands/yishan.md | head -20
 
 # 重新安装插件
-oh-my-claude uninstall
-oh-my-claude install
+npx claude-pangu uninstall
+npx claude-pangu install
 ```
 
-### 2. Agent 行为异常
+### 3. Agent 行为异常
 
 **症状**：Agent 没有按预期工作
 
