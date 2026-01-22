@@ -191,9 +191,19 @@ jobs:
       run: npm run build
 
     - name: Publish to npm
-      run: npm publish --access public
+      id: npm_publish
+      run: |
+        npm publish --access public 2>&1 || {
+          if echo "$?" | grep -q "E403"; then
+            echo "Version already published, skipping..."
+            echo "skipped=true" >> $GITHUB_OUTPUT
+          else
+            exit 1
+          fi
+        }
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      continue-on-error: true
 
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
