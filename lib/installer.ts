@@ -377,11 +377,9 @@ export function performUninstall(pluginDir: string): void {
 
   // 3. 清理 commands 目录中本插件安装的文件
   const commandsDir = getCommandsDir();
-  // 优先使用动态扫描，但如果返回空则使用备用列表
-  let commandFiles = packageDir ? getCommandFilesFromPackage(packageDir) : [];
-  if (commandFiles.length === 0) {
-    commandFiles = getFallbackCommandFiles();
-  }
+  // 始终使用备用列表（包含所有历史版本文件），确保完整清理
+  // 动态扫描可能使用旧版缓存，不包含已重命名的文件
+  const commandFiles = getFallbackCommandFiles();
   let commandsRemoved = 0;
 
   for (const file of commandFiles) {
@@ -409,11 +407,8 @@ export function performUninstall(pluginDir: string): void {
 
   // 4. 清理 skills 目录中本插件安装的目录
   const skillsDir = getSkillsDir();
-  // 优先使用动态扫描，但如果返回空则使用备用列表
-  let skillDirs = packageDir ? getSkillDirsFromPackage(packageDir) : [];
-  if (skillDirs.length === 0) {
-    skillDirs = getFallbackSkillDirs();
-  }
+  // 始终使用备用列表，确保完整清理
+  const skillDirs = getFallbackSkillDirs();
   let skillsRemoved = 0;
 
   for (const dir of skillDirs) {

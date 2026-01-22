@@ -18,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.11] - 2026-01-22
+
+### 🐛 Fixed / 修复
+
+- **始终使用完整清理列表**: 彻底修复旧版命令残留问题
+  - npx 可能缓存旧版本包，动态扫描使用过时的文件列表
+  - 卸载时始终使用硬编码的完整列表，包含所有历史版本文件
+  - 确保 `huitu.md`、`xuanwu.md` 等已重命名文件能被正确清理
+
+---
+
 ## [2.0.10] - 2026-01-22
 
 ### 🐛 Fixed / 修复
