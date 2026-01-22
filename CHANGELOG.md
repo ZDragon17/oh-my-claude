@@ -18,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.21] - 2026-01-22
+
+### 🔧 Fixed / 修复
+
+- **版本号修正**: 修复 v2.0.20 版本号未正确发布到 npm 的问题
+
+---
+
 ## [2.0.20] - 2026-01-22
 
 ### ✨ Added / 新增
