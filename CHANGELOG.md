@@ -18,6 +18,80 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.16] - 2026-01-22
+
+### 📖 Documentation / 文档
+
+- **活跃会话命令限制说明**: 解决用户困惑的关键问题
+  - 明确说明 Claude Code 的技术限制：斜杠命令不支持在活跃技能中嵌套触发
+  - 提供自然语言替代方案表格（`显示进度`、`@扁鹊`、`停止` 等）
+  - 更新 `/quickfix`、`/yishan`、`/progress` 文档添加相关说明
+  - 指导用户在活跃会话中使用自然语言和 `@Agent` 语法
+
+---
+
+## [2.0.15] - 2026-01-22
+
+### ✨ Added / 新增
+
+- **用户体验深度优化**: 基于重度用户视角的全面改进
+  - `/what` - 意图识别推荐，分析用户目标自动推荐最合适的命令
+  - `/quickfix` - 快速修复入口，错误诊断和恢复命令一站式服务
+  - `/recipes` - 场景使用指南，按工作流程（而非 Agent）组织的 cookbook
+
+### 📝 Changed / 变更
+
+- **bilingual skill 扩展**: 新增命令的中英文别名
+  - `/what` → `/想` → `/intent`
+  - `/quickfix` → `/急救` → `/fix`
+  - `/recipes` → `/场景` → `/cookbook`
+
+### 📖 Documentation / 文档
+
+- 新增场景指南，覆盖功能开发、问题修复、界面开发、性能优化等常见工作流
+- 完善错误处理引导，自动推荐恢复命令
+
+---
+
+## [2.0.14] - 2026-01-22
+
+### ✨ Added / 新增
+
+- **易用性增强三件套**: 大幅降低用户学习成本
+  - `/do` - 极简万能入口，等同于 `/yishan`，两个字符完成任何任务
+  - `/suggest` - 智能命令推荐，根据任务描述推荐最合适的命令
+  - `/cheatsheet` - 快速参考卡，一页纸概览所有常用命令
+
+### 📝 Changed / 变更
+
+- **bilingual skill 更新**: 新增中英文别名支持
+  - `/do` → `/做` → `/just`
+  - `/suggest` → `/推荐` → `/recommend`
+  - `/cheatsheet` → `/速查` → `/quickref`
+
+---
+
+## [2.0.13] - 2026-01-22
+
+### 🔍 Enhanced / 增强
+
+- **历史版本检测增强**: 支持仅有 zcf 目录的旧版本（v1.0.8）检测
+  - 新增 `hasLegacyZcf` 检查，避免仅安装旧版时显示"未安装"
+  - 确保各种历史版本都能被正确识别和清理
+
+---
+
+## [2.0.12] - 2026-01-22
+
+### 🐛 Fixed / 修复
+
+- **CI 构建修复**: 移除未使用的变量和函数
+  - 移除 `getCommandFilesFromPackage`、`getSkillDirsFromPackage` 函数
+  - 移除 `packageDir` 变量
+  - 解决 TypeScript TS6133 编译错误
+
+---
+
 ## [2.0.11] - 2026-01-22
 
 ### 🐛 Fixed / 修复

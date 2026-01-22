@@ -190,6 +190,14 @@ function getFallbackCommandFiles(): string[] {
     'refactor.md', 'lilou.md', 'liubowen.md', 'start.md', 'status.md',
     'skip.md', 'rollback.md', 'cancel-yishan.md', 'interrupt.md',
     'retry.md', 'pause.md', 'yishan-resume.md', 'help.md',
+    // v2.0.14 新增易用性命令
+    'do.md',          // 极简万能入口
+    'cheatsheet.md',  // 快速参考卡
+    'suggest.md',     // 智能命令推荐
+    // v2.0.15 新增易用性命令
+    'what.md',        // 意图识别推荐
+    'quickfix.md',    // 快速修复入口
+    'recipes.md',     // 场景使用指南
     // 历史版本命令（已重命名/移除）
     'huitu.md',   // 已重命名为 lilou.md
     'xuanwu.md',  // 已重命名为 liubowen.md

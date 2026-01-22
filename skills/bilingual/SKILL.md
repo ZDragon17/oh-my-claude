@@ -50,6 +50,12 @@ description: |
 
 | 主命令 | 中文 | 英文 | 功能 |
 | ------ | ---- | ---- | ---- |
+| `/do` | `/做` | `/just` | 极简万能入口 |
+| `/what` | `/想` | `/intent` | 意图识别推荐 |
+| `/suggest` | `/推荐` | `/recommend` | 智能命令推荐 |
+| `/quickfix` | `/急救` | `/fix` | 快速修复入口 |
+| `/recipes` | `/场景` | `/cookbook` | 场景使用指南 |
+| `/cheatsheet` | `/速查` | `/quickref` | 快速参考卡 |
 | `/progress` | `/进度` | `/dashboard` | 进度面板 |
 | `/team` | `/协作` | `/teamwork` | 团队协作 |
 | `/help` | `/帮助` | `/commands` | 命令帮助 |

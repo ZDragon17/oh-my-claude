@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Agent Ready Notification Hook
 # 功能：在 Agent 停止等待用户输入时发送 OS 级通知
 # 类似 OpenCode 的 "Agent is ready for input" 通知

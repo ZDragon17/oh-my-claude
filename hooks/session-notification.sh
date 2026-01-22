@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Session Notification Hook
 # 功能：在重要事件发生时发送 OS 级通知
 # 支持 macOS、Linux (notify-send)、Windows (PowerShell)

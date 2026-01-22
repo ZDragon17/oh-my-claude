@@ -144,7 +144,7 @@ def generate_progress_bar(completed, total, width=30):
 
 ## 使用示例
 
-### 中文
+### 斜杠命令（会话开始时）
 
 ```bash
 /progress        # 显示完整进度面板
@@ -153,14 +153,18 @@ def generate_progress_bar(completed, total, width=30):
 /面板 统计       # 统计模式
 ```
 
-### English
+### 自然语言（活跃会话中） ⭐ 推荐
 
-```bash
-/progress        # Show full dashboard
-/dashboard       # Same as above
-/progress brief  # Brief mode
-/status stats    # Stats only
+> ⚠️ **重要**：在 `/yishan` 等活跃会话中，斜杠命令不生效。请使用自然语言：
+
+```text
+显示进度          # 触发进度面板
+show progress    # Same as above
+当前状态          # 查看状态
+progress         # 关键词触发
 ```
+
+oh-my-claude 的 Hook 系统会自动识别这些关键词并展示进度。
 
 ## 与其他功能集成
 
