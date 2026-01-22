@@ -1,14 +1,36 @@
 /**
  * 插件组件安装器
- * 负责 Commands 和 Skills 的安装逻辑
+ * 负责 Commands、Skills 的安装逻辑，以及插件注册
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { COMMANDS_DIR, SKILLS_DIR, CORE_AGENTS } from './constants.js';
+import * as os from 'os';
+import { COMMANDS_DIR, SKILLS_DIR, CORE_AGENTS, PLUGIN_NAME, VERSION, PLUGIN_DIR } from './constants.js';
 import { InstallResult, InstallResultSchema } from './file-operations.js';
-import { success, info, warn } from '../scripts/logger.js';
+import { success, info, warn, error } from '../scripts/logger.js';
 import AgentStateManagerImpl from './agent-state-manager.js';
+
+// ==================== 插件注册表路径 ====================
+
+/** installed_plugins.json 路径 */
+const INSTALLED_PLUGINS_PATH = path.join(os.homedir(), '.claude', 'plugins', 'installed_plugins.json');
+
+// ==================== 类型定义 ====================
+
+interface PluginEntry {
+  scope: string;
+  installPath: string;
+  version: string;
+  installedAt: string;
+  lastUpdated: string;
+  isLocal: boolean;
+}
+
+interface InstalledPluginsFile {
+  version: number;
+  plugins: Record<string, PluginEntry[]>;
+}
 
 // ==================== 路径获取函数 ====================
 
@@ -173,5 +195,108 @@ export function registerCoreAgents(): void {
     } catch (err) {
       warn(`注册 Agent ${agent.name} 失败: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
+  }
+}
+
+// ==================== 插件注册 ====================
+
+/**
+ * 读取 installed_plugins.json
+ */
+function readInstalledPlugins(): InstalledPluginsFile {
+  if (fs.existsSync(INSTALLED_PLUGINS_PATH)) {
+    try {
+      const content = fs.readFileSync(INSTALLED_PLUGINS_PATH, 'utf-8');
+      return JSON.parse(content) as InstalledPluginsFile;
+    } catch {
+      // 文件损坏，创建新的
+    }
+  }
+  return { version: 2, plugins: {} };
+}
+
+/**
+ * 写入 installed_plugins.json
+ */
+function writeInstalledPlugins(data: InstalledPluginsFile): void {
+  const pluginsDir = path.dirname(INSTALLED_PLUGINS_PATH);
+  if (!fs.existsSync(pluginsDir)) {
+    fs.mkdirSync(pluginsDir, { recursive: true });
+  }
+  fs.writeFileSync(INSTALLED_PLUGINS_PATH, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+/**
+ * 注册插件到 Claude Code 的 installed_plugins.json
+ * 这是关键步骤 - 只有注册的插件才会被 Claude Code 加载 hooks
+ */
+export function registerPluginToClaudeCode(): boolean {
+  info('正在注册插件到 Claude Code...');
+
+  try {
+    const installedPlugins = readInstalledPlugins();
+    const pluginKey = `${PLUGIN_NAME}@local`;
+    const now = new Date().toISOString();
+
+    // 创建插件条目
+    const pluginEntry: PluginEntry = {
+      scope: 'user',
+      installPath: PLUGIN_DIR,
+      version: VERSION,
+      installedAt: now,
+      lastUpdated: now,
+      isLocal: true
+    };
+
+    // 检查是否已存在
+    if (installedPlugins.plugins[pluginKey]) {
+      // 更新现有条目
+      installedPlugins.plugins[pluginKey] = [pluginEntry];
+      info(`已更新插件注册: ${pluginKey} v${VERSION}`);
+    } else {
+      // 新增条目
+      installedPlugins.plugins[pluginKey] = [pluginEntry];
+      info(`已注册新插件: ${pluginKey} v${VERSION}`);
+    }
+
+    writeInstalledPlugins(installedPlugins);
+    success('插件已注册到 Claude Code');
+    info(`注册路径: ${INSTALLED_PLUGINS_PATH}`);
+
+    return true;
+  } catch (err) {
+    error(`插件注册失败: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    warn('hooks 功能可能无法正常工作');
+    return false;
+  }
+}
+
+/**
+ * 从 Claude Code 的 installed_plugins.json 移除插件注册
+ */
+export function unregisterPluginFromClaudeCode(): boolean {
+  info('正在从 Claude Code 移除插件注册...');
+
+  try {
+    if (!fs.existsSync(INSTALLED_PLUGINS_PATH)) {
+      info('installed_plugins.json 不存在，跳过移除');
+      return true;
+    }
+
+    const installedPlugins = readInstalledPlugins();
+    const pluginKey = `${PLUGIN_NAME}@local`;
+
+    if (installedPlugins.plugins[pluginKey]) {
+      delete installedPlugins.plugins[pluginKey];
+      writeInstalledPlugins(installedPlugins);
+      success('已从 Claude Code 移除插件注册');
+    } else {
+      info('插件未注册，跳过移除');
+    }
+
+    return true;
+  } catch (err) {
+    error(`移除插件注册失败: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    return false;
   }
 }

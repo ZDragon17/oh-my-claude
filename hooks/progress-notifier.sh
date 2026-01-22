@@ -11,8 +11,22 @@
 # 优化：支持无 jq 时的降级方案
 # ============================================================================
 
+# 调试日志（默认关闭，需要时可通过环境变量启用）
+DEBUG_LOG="${HOME}/.oh-my-claude/logs/progress-notifier-debug.log"
+DEBUG_ENABLED="${OH_MY_CLAUDE_DEBUG:-false}"
+
+debug_log() {
+    if [ "$DEBUG_ENABLED" = "true" ]; then
+        mkdir -p "$(dirname "$DEBUG_LOG")" 2>/dev/null
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" >> "$DEBUG_LOG"
+    fi
+}
+
+debug_log "=== progress-notifier.sh started ==="
+
 # 加载去重库（如果存在）
 SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
+debug_log "SCRIPT_DIR: $SCRIPT_DIR"
 if [ -f "$SCRIPT_DIR/lib/message-dedup.sh" ]; then
     . "$SCRIPT_DIR/lib/message-dedup.sh"
     USE_DEDUP=1
@@ -35,8 +49,12 @@ safe_printf() {
 # 读取 stdin 中的 JSON 数据（带错误保护）
 input=$(cat 2>/dev/null) || input=""
 
+debug_log "Input received, length: ${#input}"
+debug_log "Input content (first 200 chars): $(echo "$input" | head -c 200)"
+
 # 如果输入为空，静默退出
 if [ -z "$input" ]; then
+    debug_log "Empty input, exiting"
     exit 0
 fi
 
@@ -93,9 +111,12 @@ else
 fi
 
 # 只处理 TodoWrite 工具调用
+debug_log "Extracted tool_name: [$tool_name]"
 if [ "$tool_name" != "TodoWrite" ]; then
+    debug_log "Not TodoWrite, exiting"
     exit 0
 fi
+debug_log "Processing TodoWrite event"
 
 # 提取 todo 统计信息
 if [ "$HAS_JQ" -eq 1 ]; then
@@ -188,7 +209,11 @@ line2_escaped=$(escape_json "$progress_line2")
 
 # 输出 JSON（使用 hookSpecificOutput 确保 Claude 能看到并展示给用户）
 # systemMessage 用于直接显示给用户，additionalContext 用于 Claude 上下文
-printf '{"systemMessage":"\\n%s\\n%s\\n","hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"【任务进度】%s | %s"}}\n' \
-    "$line1_escaped" "$line2_escaped" "$line1_escaped" "$line2_escaped"
+output=$(printf '{"systemMessage":"\\n%s\\n%s\\n","hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"【任务进度】%s | %s"}}' \
+    "$line1_escaped" "$line2_escaped" "$line1_escaped" "$line2_escaped")
 
+debug_log "Final output: $output"
+printf '%s\n' "$output"
+
+debug_log "=== progress-notifier.sh finished ==="
 exit 0

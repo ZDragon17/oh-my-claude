@@ -18,6 +18,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.22] - 2026-01-22
+
+### ✨ Added / 新增
+
+- **自动更新功能**: Claude Code 启动时自动检测并更新插件
+  - 自动检测插件是否已安装（npm 全局/插件目录/npx）
+  - 已安装且有新版本：**后台自动更新（非阻塞）**
+  - 更新在后台执行，不影响当前操作（如 `/yishan`）
+  - 下次启动时显示更新结果
+  - 未安装：静默跳过
+  - 默认开启，可通过 `OH_MY_CLAUDE_AUTO_UPDATE=false` 禁用
+  - 检查间隔：24 小时（可通过 `OH_MY_CLAUDE_UPDATE_CHECK_INTERVAL` 配置）
+
+### 🐛 Fixed / 修复
+
+- **Hooks 无法加载的严重问题**: 修复插件未注册到 Claude Code 导致 hooks 不工作的问题
+  - **根本原因**: 安装脚本复制了插件文件到 `~/.claude/plugins/oh-my-claude/`，但未在 Claude Code 的 `installed_plugins.json` 中注册
+  - **影响**: 进度条、任务通知、Agent 就绪通知等所有 hooks 功能失效
+  - **修复**: 安装时自动注册插件到 `installed_plugins.json`，卸载时自动移除注册
+  - **注意**: 已安装用户需要重新运行 `npx claude-pangu install` 来修复此问题
+
+---
+
 ## [2.0.21] - 2026-01-22
 
 ### 🔧 Fixed / 修复

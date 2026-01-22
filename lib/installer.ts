@@ -9,7 +9,7 @@ import { execSync } from 'child_process';
 import { VERSION, PLUGIN_NAME, PLUGIN_DIR } from './constants.js';
 import { copyPluginFiles, setHookPermissions } from './file-operations.js';
 import { executeWithRollback } from './lock-manager.js';
-import { installCommands, installSkills, registerCoreAgents, getCommandsDir, getSkillsDir } from './plugin-installer.js';
+import { installCommands, installSkills, registerCoreAgents, getCommandsDir, getSkillsDir, registerPluginToClaudeCode, unregisterPluginFromClaudeCode } from './plugin-installer.js';
 import { success, info, warn, error, log } from '../scripts/logger.js';
 import { printCommandTitle, printInstallComplete, printUpdateComplete } from './ui/messages.js';
 
@@ -165,6 +165,10 @@ export async function install(): Promise<void> {
   installCommands(packageDir);
   installSkills(packageDir);
   registerCoreAgents();
+
+  // 关键：注册插件到 Claude Code 的 installed_plugins.json
+  // 只有注册后，Claude Code 才会加载插件的 hooks
+  registerPluginToClaudeCode();
 
   const { verifyInstallation } = await import('./verifier.js');
   verifyInstallation();
@@ -336,20 +340,23 @@ function scanAndCleanLegacyZcfDirs(): number {
 export function performUninstall(pluginDir: string): void {
   info('正在卸载插件...');
 
-  // 1. 尝试使用 claude CLI 卸载（可能失败，忽略）
+  // 1. 从 installed_plugins.json 移除插件注册
+  unregisterPluginFromClaudeCode();
+
+  // 2. 尝试使用 claude CLI 卸载（可能失败，忽略）
   try {
     execSync(`claude plugins uninstall ${PLUGIN_NAME}`, { stdio: 'pipe' });
   } catch {
     // 忽略错误 - CLI 可能不存在或插件未通过 CLI 安装
   }
 
-  // 2. 删除插件主目录
+  // 3. 删除插件主目录
   if (fs.existsSync(pluginDir)) {
     fs.rmSync(pluginDir, { recursive: true, force: true });
     info('已删除插件目录');
   }
 
-  // 3. 清理 commands 目录中本插件安装的文件
+  // 4. 清理 commands 目录中本插件安装的文件
   const commandsDir = getCommandsDir();
   // 始终使用备用列表（包含所有历史版本文件），确保完整清理
   // 动态扫描可能使用旧版缓存，不包含已重命名的文件
@@ -379,7 +386,7 @@ export function performUninstall(pluginDir: string): void {
     info(`已删除 ${commandsRemoved} 个命令文件`);
   }
 
-  // 4. 清理 skills 目录中本插件安装的目录
+  // 5. 清理 skills 目录中本插件安装的目录
   const skillsDir = getSkillsDir();
   // 始终使用备用列表，确保完整清理
   const skillDirs = getFallbackSkillDirs();
@@ -401,14 +408,14 @@ export function performUninstall(pluginDir: string): void {
     info(`已删除 ${skillsRemoved} 个 skill 目录`);
   }
 
-  // 5. 全局扫描并清理所有项目中的旧版 zcf 目录
+  // 6. 全局扫描并清理所有项目中的旧版 zcf 目录
   info('正在全局扫描旧版 zcf 目录...');
   const globalZcfCleaned = scanAndCleanLegacyZcfDirs();
   if (globalZcfCleaned > 0) {
     info(`已全局清理 ${globalZcfCleaned} 个旧版 zcf 目录`);
   }
 
-  // 6. 清理本地状态文件
+  // 7. 清理本地状态文件
   const stateFilesInCwd = [
     '.claude/ralph-loop.local.md',
     '.claude/yishan-state.json',
