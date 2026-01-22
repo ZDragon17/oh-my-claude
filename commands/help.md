@@ -109,6 +109,8 @@ model: haiku
 | 大任务              | /yishan                 |
 | 错误/失败/重试      | /retry, /skip, /bianque |
 | 回滚/撤销           | /rollback               |
+| 更新/升级/update    | /update-omc             |
+| 验证/检查/verify    | /verify, /status        |
 
 ## 响应要求
 

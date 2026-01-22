@@ -52,9 +52,19 @@ send_windows_notification() {
     local message="$2"
     local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+    # 将 Git Bash 路径转换为 Windows 路径
+    # /d/projects/... -> D:/projects/...
+    local win_script_dir
+    if command -v cygpath > /dev/null 2>&1; then
+        win_script_dir=$(cygpath -w "$script_dir")
+    else
+        # 手动转换: /c/path -> C:/path
+        win_script_dir=$(echo "$script_dir" | sed 's|^/\([a-zA-Z]\)/|\1:/|')
+    fi
+
     # 使用专用 PowerShell 脚本
     if [ -f "$script_dir/notify-windows.ps1" ]; then
-        powershell.exe -ExecutionPolicy Bypass -File "$script_dir/notify-windows.ps1" -Title "$title" -Message "$message" 2>/dev/null && return
+        powershell.exe -ExecutionPolicy Bypass -File "$win_script_dir/notify-windows.ps1" -Title "$title" -Message "$message" 2>/dev/null && return
     fi
 
     # 回退方案：使用 BalloonTip

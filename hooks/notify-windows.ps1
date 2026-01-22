@@ -49,15 +49,25 @@ function Send-NativeToast {
     param($Title, $Message)
 
     try {
+        # 确保 AppId 已注册 (首次运行时注册)
+        $appId = "oh-my-claude"
+        $regPath = "HKCU:\SOFTWARE\Classes\AppUserModelId\$appId"
+
+        if (-not (Test-Path $regPath)) {
+            New-Item -Path $regPath -Force | Out-Null
+            New-ItemProperty -Path $regPath -Name "DisplayName" -Value "oh-my-claude" -PropertyType String -Force | Out-Null
+            New-ItemProperty -Path $regPath -Name "ShowInSettings" -Value 0 -PropertyType DWord -Force | Out-Null
+        }
+
         [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
         [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] | Out-Null
 
         $template = @"
 <toast>
     <visual>
-        <binding template="ToastText02">
-            <text id="1">$Title</text>
-            <text id="2">$Message</text>
+        <binding template="ToastGeneric">
+            <text>$Title</text>
+            <text>$Message</text>
         </binding>
     </visual>
     <audio src="ms-winsoundevent:Notification.Default"/>
@@ -68,10 +78,17 @@ function Send-NativeToast {
         $xml.LoadXml($template)
 
         $toast = [Windows.UI.Notifications.ToastNotification]::new($xml)
-        $notifier = [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("oh-my-claude")
+        $notifier = [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($appId)
         $notifier.Show($toast)
         return $true
-    } catch {}
+    } catch {
+        # 如果注册失败，尝试使用 PowerShell 的 AppId
+        try {
+            $notifier = [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe")
+            $notifier.Show($toast)
+            return $true
+        } catch {}
+    }
     return $false
 }
 

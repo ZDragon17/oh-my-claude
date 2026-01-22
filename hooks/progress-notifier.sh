@@ -70,30 +70,29 @@ fi
 # 无 jq 时的降级解析函数
 # ============================================================================
 
-# 简单的 JSON 值提取（纯 shell 实现）
+# 简单的 JSON 值提取（纯 shell 实现，Windows 兼容）
 extract_json_value() {
     local json="$1"
     local key="$2"
-    # 尝试匹配 "key": "value" 或 "key": value
-    echo "$json" | sed -n "s/.*\"$key\"[[:space:]]*:[[:space:]]*\"\{0,1\}\([^\",:}]*\)\"\{0,1\}.*/\1/p" | head -1
+    # 使用 grep -E (扩展正则) + sed 组合，更好的跨平台兼容性
+    echo "$json" | grep -oE "\"$key\" *: *\"[^\"]+\"" | head -1 | sed "s/\"$key\" *: *\"//;s/\"$//"
 }
 
 # 统计 JSON 数组中特定状态的数量（纯 shell 实现）
 count_status() {
     local json="$1"
     local status="$2"
-    # 计算 "status": "xxx" 出现的次数
-    echo "$json" | grep -o "\"status\"[[:space:]]*:[[:space:]]*\"$status\"" | wc -l | tr -d ' '
+    # 计算 "status": "xxx" 出现的次数，使用 grep -E
+    echo "$json" | grep -oE "\"status\" *: *\"$status\"" | wc -l | tr -d ' '
 }
 
 # 提取当前进行中的任务内容（纯 shell 实现）
 extract_current_task() {
     local json="$1"
-    # 查找 in_progress 状态附近的 content
-    # 这是一个简化的实现，可能不够精确但足够使用
-    echo "$json" | grep -B2 '"status"[[:space:]]*:[[:space:]]*"in_progress"' | \
-        grep -o '"content"[[:space:]]*:[[:space:]]*"[^"]*"' | \
-        sed 's/.*"content"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' | head -1
+    # 查找 in_progress 状态附近的 content，使用 grep -E
+    echo "$json" | grep -B2 '"status" *: *"in_progress"' | \
+        grep -oE '"content" *: *"[^"]+"' | \
+        sed 's/"content" *: *"//;s/"$//' | head -1
 }
 
 # ============================================================================
