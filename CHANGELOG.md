@@ -18,6 +18,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.18] - 2026-01-22
+
+### 🐛 Fixed / 修复
+
+- **修复 Hooks 无法加载问题**: 关键修复！
+  - **plugin.json 添加 hooks 字段**: 声明 hooks 配置文件路径 (`./hooks/hooks.json`)
+  - **hooks.json 路径修复**: 使用 `${CLAUDE_PLUGIN_ROOT}` 变量替代相对路径
+  - **progress-notifier.sh 改进**: 使用 `hookSpecificOutput.additionalContext` 确保进度信息显示
+  - **shebang 修复**: 统一使用 `#!/usr/bin/env bash` 确保跨平台兼容
+
+**根本原因**: plugin.json 缺少 `hooks` 字段导致 Claude Code 无法加载插件的 hooks 配置
+
+---
+
 ## [2.0.17] - 2026-01-22
 
 ### 🐛 Fixed / 修复

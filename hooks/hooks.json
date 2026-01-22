@@ -3,7 +3,7 @@
     "Stop": [
       {
         "type": "command",
-        "command": "bash hooks/ralph-loop.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/ralph-loop.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "critical",
@@ -11,7 +11,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/todo-continuation.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/todo-continuation.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "critical",
@@ -19,7 +19,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/agent-ready-notification.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/agent-ready-notification.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -30,7 +30,7 @@
     "UserPromptSubmit": [
       {
         "type": "command",
-        "command": "bash hooks/first-use-onboarding.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/first-use-onboarding.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -39,7 +39,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/keyword-detector.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/keyword-detector.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "critical",
@@ -48,7 +48,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/at-agent-summoner.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/at-agent-summoner.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -57,7 +57,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/atlas.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/atlas.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "high",
@@ -65,7 +65,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/agent-collaboration.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/agent-collaboration.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "high",
@@ -73,7 +73,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/error-recovery.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/error-recovery.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "high",
@@ -81,7 +81,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/session-recovery.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-recovery.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "high",
@@ -89,7 +89,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/task-checkpointing.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/task-checkpointing.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -97,7 +97,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/context-compression.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/context-compression.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -105,7 +105,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/preemptive-compaction.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/preemptive-compaction.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -113,7 +113,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/rules-injector.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/rules-injector.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -121,7 +121,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/think-mode.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/think-mode.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -129,7 +129,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/lsp-tools.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/lsp-tools.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "low",
@@ -138,7 +138,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/ast-grep.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/ast-grep.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "low",
@@ -147,7 +147,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/code-quality-checker.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/code-quality-checker.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -155,7 +155,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/output-truncator.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/output-truncator.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -163,7 +163,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/directory-agents-injector.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/directory-agents-injector.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -171,7 +171,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/directory-readme-injector.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/directory-readme-injector.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -179,7 +179,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/auto-slash-command.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/auto-slash-command.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -187,7 +187,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/auto-update-checker.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/auto-update-checker.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "low",
@@ -195,7 +195,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/interactive-bash-session.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/interactive-bash-session.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -204,7 +204,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/agent-usage-reminder.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/agent-usage-reminder.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -214,7 +214,7 @@
     "PostToolUse": [
       {
         "type": "command",
-        "command": "bash hooks/progress-notifier.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/progress-notifier.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -223,7 +223,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/context-window-monitor.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/context-window-monitor.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -231,7 +231,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/anthropic-context-window-limit-recovery.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/anthropic-context-window-limit-recovery.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -239,7 +239,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/failure-transparency.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/failure-transparency.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "high",
@@ -248,7 +248,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/tool-output-validator.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/tool-output-validator.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "high",
@@ -256,7 +256,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/edit-error-recovery.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/edit-error-recovery.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "high",
@@ -264,7 +264,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/delegate-task-retry.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/delegate-task-retry.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "high",
@@ -272,7 +272,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/empty-task-response-detector.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/empty-task-response-detector.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "normal",
@@ -280,7 +280,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/thinking-block-validator.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/thinking-block-validator.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "normal",
@@ -288,7 +288,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/output-truncator.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/output-truncator.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "normal",
@@ -296,7 +296,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/session-notification.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-notification.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -305,7 +305,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/background-notification.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/background-notification.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -313,7 +313,7 @@
       },
       {
         "type": "command",
-        "command": "bash hooks/background-compaction.sh",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/background-compaction.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",

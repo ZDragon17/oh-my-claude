@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # ============================================================================
 # 进度通知器 - Progress Notifier (PostToolUse Hook)
 # ============================================================================
@@ -174,9 +174,21 @@ fi
 # 计算剩余任务数
 remaining=$((pending + in_progress))
 
-# 输出简洁进度信息（使用去重）
-msg=$(printf '{"systemMessage":"\\n📊 %s %d%% (%d/%d) %s\\n🔄 当前: %s | ⏳ 剩余: %d\\n"}' \
-    "$bar" "$percent" "$completed" "$total" "$emoji" "$current_task" "$remaining")
-safe_printf "$msg"
+# 构建进度信息文本（用于显示）
+progress_line1=$(printf '📊 %s %d%% (%d/%d) %s' "$bar" "$percent" "$completed" "$total" "$emoji")
+progress_line2=$(printf '🔄 当前: %s | ⏳ 剩余: %d' "$current_task" "$remaining")
+
+# 转义 JSON 特殊字符
+escape_json() {
+    printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g'
+}
+
+line1_escaped=$(escape_json "$progress_line1")
+line2_escaped=$(escape_json "$progress_line2")
+
+# 输出 JSON（使用 hookSpecificOutput 确保 Claude 能看到并展示给用户）
+# systemMessage 用于直接显示给用户，additionalContext 用于 Claude 上下文
+printf '{"systemMessage":"\\n%s\\n%s\\n","hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"【任务进度】%s | %s"}}\n' \
+    "$line1_escaped" "$line2_escaped" "$line1_escaped" "$line2_escaped"
 
 exit 0
