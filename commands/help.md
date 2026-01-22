@@ -116,3 +116,81 @@ model: haiku
 2. **给出具体命令** - 用户可以直接复制使用
 3. **推荐工作流** - 复杂场景给出命令组合建议
 4. **保持友好** - 使用 emoji 增加可读性
+
+---
+
+## 项目上下文感知
+
+在显示帮助前，自动检测项目类型并提供针对性建议：
+
+### 检测规则
+
+| 检测文件 | 项目类型 | 推荐命令 |
+|----------|----------|----------|
+| package.json + react | React 前端 | /gukaizhi, /luban, /baozheng |
+| package.json + vue | Vue 前端 | /gukaizhi, /luban |
+| package.json + next | Next.js | /luban, /sunzi, /libing |
+| requirements.txt | Python | /luban, /baozheng |
+| pom.xml / build.gradle | Java | /luban, /zhuge |
+| go.mod | Go | /luban, /sunzi |
+| Cargo.toml | Rust | /luban, /mozi |
+| .git | 有版本控制 | /git |
+| Dockerfile | 容器化 | /libing, /change |
+| \*.test.\* / \*_test.\* | 有测试 | /baozheng |
+
+### 上下文感知输出
+
+当检测到项目类型时，在快速参考卡中添加：
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                 🏔️ oh-my-claude 快速参考                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  📁 检测到项目类型: React + TypeScript                       │
+│  ───────────────────────────────────────────────────────   │
+│  🎯 推荐命令:                                                │
+│  /gukaizhi  UI组件开发     /luban    React逻辑实现          │
+│  /baozheng  Jest测试       /sunzi    性能优化               │
+│                                                             │
+│  📋 常用命令                                                 │
+│  [... 其余内容不变 ...]                                      │
+```
+
+### 智能场景推荐
+
+根据项目状态提供场景化建议：
+
+```text
+💡 基于你的项目，可能需要:
+
+  📦 package.json 存在但无 lock 文件
+     → 建议先运行 npm install
+
+  🧪 有测试文件但覆盖率未知
+     → /baozheng 分析测试覆盖率
+
+  📝 README.md 较简单
+     → /simaqian 完善项目文档
+
+  🔒 发现敏感信息风险
+     → /mozi 进行安全审计
+```
+
+---
+
+## 新用户检测
+
+首次使用时显示额外引导：
+
+```text
+👋 看起来你是新用户！
+
+🚀 快速入门:
+  /tutorial   → 5分钟交互式教程
+  /do [任务]  → 直接开始，系统自动帮你
+
+📚 深入了解:
+  /agents     → 查看所有专家
+  /recipes    → 查看场景指南
+```

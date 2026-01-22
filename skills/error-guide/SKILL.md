@@ -197,3 +197,79 @@ description: |
    • 启用 strict 模式提前发现类型问题
    • 添加类型测试确保接口稳定
 ```
+
+---
+
+## 人性化错误信息翻译
+
+将技术性错误信息翻译为用户友好的描述：
+
+### 常见错误翻译表
+
+| 技术性错误 | 用户友好描述 |
+|-----------|--------------|
+| `ENOENT: no such file or directory` | 📁 找不到文件，请检查路径是否正确 |
+| `EACCES: permission denied` | 🔒 没有权限访问此文件，尝试以管理员身份运行 |
+| `EADDRINUSE: address already in use` | 🔌 端口已被占用，换一个端口或关闭占用的程序 |
+| `TypeError: Cannot read property 'x' of undefined` | ⚠️ 变量未定义就被使用了，需要检查数据来源 |
+| `SyntaxError: Unexpected token` | ✏️ 代码有语法错误，检查括号、引号等是否匹配 |
+| `ReferenceError: x is not defined` | 📛 使用了未声明的变量，检查拼写或是否忘记导入 |
+| `RangeError: Maximum call stack size exceeded` | 🔄 代码陷入了无限循环，检查递归或循环条件 |
+| `ETIMEDOUT` | ⏰ 网络请求超时，检查网络连接或增加超时时间 |
+| `ECONNREFUSED` | 🚫 无法连接到服务器，确认服务是否启动 |
+
+### 输出格式
+
+当检测到这些错误时，自动翻译并提供建议：
+
+```text
+❌ 发生错误
+
+📋 问题: 找不到文件 '/src/config.ts'
+   (原始: ENOENT: no such file or directory)
+
+💡 可能原因:
+   1. 文件路径拼写错误
+   2. 文件已被删除或移动
+   3. 相对路径基于错误的目录
+
+🔧 推荐操作:
+   /wukong 找 config.ts
+   或检查目录结构: ls -la src/
+```
+
+---
+
+## 错误严重程度分级
+
+### 🔴 严重 (需立即处理)
+- 构建失败
+- 测试全部失败
+- 核心功能报错
+
+### 🟠 警告 (建议处理)
+- 部分测试失败
+- Lint 错误
+- 类型警告
+
+### 🟡 提示 (可选处理)
+- TODO 注释
+- 未使用的变量
+- 文档缺失
+
+### 视觉展示
+
+```text
+🔴 严重 (1)
+   └─ 构建失败: TypeScript 编译错误
+
+🟠 警告 (3)
+   ├─ 测试失败: 2 个用例
+   └─ Lint: 1 个错误
+
+🟡 提示 (5)
+   ├─ TODO: 3 处
+   └─ 未使用变量: 2 个
+
+💡 建议先处理严重问题: /bianque 诊断构建错误
+```

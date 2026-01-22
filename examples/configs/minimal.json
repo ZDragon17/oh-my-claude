@@ -1,12 +1,16 @@
 {
-  "version": "1.7.3",
+  "description": "最小化配置 - 适合新手入门",
+  "version": "2.0.16",
   "debug": false,
   "logLevel": "info",
   "agents": {
-    "maxConcurrentTasks": 3
+    "defaultTimeout": 30000,
+    "maxConcurrent": 3
   },
   "ui": {
-    "theme": "auto"
+    "theme": "auto",
+    "language": "zh-CN",
+    "progressBarWidth": 30
   },
   "performance": {
     "enableCache": true
