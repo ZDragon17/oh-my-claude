@@ -483,10 +483,24 @@ export async function uninstall(): Promise<void> {
   printCommandTitle('oh-my-claude 卸载程序');
 
   const pluginDir = getPluginDir();
+  const commandsDir = getCommandsDir();
+  const skillsDir = getSkillsDir();
 
-  if (!fs.existsSync(pluginDir)) {
-    warn('插件未安装');
+  // 检查是否有任何残留（插件目录、commands 或 skills）
+  const hasPluginDir = fs.existsSync(pluginDir);
+  const hasCommands = fs.existsSync(commandsDir) &&
+    getFallbackCommandFiles().some(f => fs.existsSync(path.join(commandsDir, f)));
+  const hasSkills = fs.existsSync(skillsDir) &&
+    getFallbackSkillDirs().some(d => fs.existsSync(path.join(skillsDir, d)));
+
+  if (!hasPluginDir && !hasCommands && !hasSkills) {
+    warn('插件未安装（无残留文件）');
     process.exit(0);
+  }
+
+  // 即使插件目录不存在，也可能有残留的 commands/skills 需要清理
+  if (!hasPluginDir) {
+    info('检测到残留的命令/技能文件，将进行清理');
   }
 
   const skipConfirm = process.argv.includes('-y') || process.argv.includes('--yes');
@@ -496,7 +510,15 @@ export async function uninstall(): Promise<void> {
   }
 
   warn('即将卸载插件，所有配置将被删除');
-  info(`插件位置: ${pluginDir}`);
+  if (hasPluginDir) {
+    info(`插件位置: ${pluginDir}`);
+  }
+  if (hasCommands) {
+    info(`Commands 位置: ${commandsDir}`);
+  }
+  if (hasSkills) {
+    info(`Skills 位置: ${skillsDir}`);
+  }
   log('');
 
   const readline = await import('readline');
