@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # Hook 性能监控
 # 追踪各 Hook 的执行时间，识别性能瓶颈
 # 触发时机: PostToolUse (周期性检查)
 
-set -euo pipefail
+set -eu
 
 # 性能日志目录
 PERF_LOG_DIR="${HOME}/.oh-my-claude/performance"

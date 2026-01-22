@@ -1,12 +1,14 @@
 ---
 name: status
-description: 快速查看当前任务状态 - 愚公移山进度、活跃 Agent、最近操作
+description: 快速查看当前任务状态 - 愚公移山进度、活跃 Agent、插件健康状态
 aliases:
   - /状态
   - /state
 allowed-tools:
   - Read
   - TodoRead
+  - Bash
+  - Glob
 model: haiku
 ---
 
@@ -14,14 +16,41 @@ model: haiku
 
 # 任务状态查看器
 
-快速展示当前工作状态，让用户随时掌握全局。
+快速展示当前工作状态和插件健康，让用户随时掌握全局。
 
 ## 职责
 
 1. 显示当前 TODO 进度
 2. 显示活跃的 Agent
 3. 显示最近的操作
-4. 提供快捷操作入口
+4. **显示插件健康状态**
+5. 提供快捷操作入口
+
+## 执行步骤
+
+### 步骤 1: 检查插件健康状态
+
+执行快速健康检查：
+
+```bash
+# 检查关键文件是否存在
+ls ~/.claude/plugins/oh-my-claude/hooks/hooks.json 2>/dev/null && echo "hooks:ok" || echo "hooks:missing"
+ls ~/.claude/commands/yishan.md 2>/dev/null && echo "commands:ok" || echo "commands:missing"
+```
+
+### 步骤 2: 读取 TODO 状态
+
+使用 TodoRead 获取当前任务列表。
+
+### 步骤 3: 检查活跃模式
+
+```bash
+# 检查愚公移山是否活跃
+ls .claude/yishan-loop.local.md 2>/dev/null && echo "yishan:active" || echo "yishan:inactive"
+
+# 检查 Ralph Loop 是否活跃
+ls .claude/ralph-loop.local.md 2>/dev/null && echo "ralph:active" || echo "ralph:inactive"
+```
 
 ## 输出格式
 
@@ -115,9 +144,44 @@ model: haiku
 🔄 当前: 实现用户登录功能
 ```
 
+## 插件健康状态
+
+在状态输出中添加插件健康检查：
+
+```text
+📊 oh-my-claude 状态面板
+═══════════════════════════════════════════════════
+
+🔧 插件状态:
+   版本: v2.0.19
+   ✅ 命令加载: 55 个
+   ✅ Hook 激活: 44 个
+   ✅ Agent 就绪: 20 个
+   ✅ Skill 可用: 10 个
+
+🏔️ 愚公移山模式: 活跃/非活跃
+   [... 其余内容 ...]
+```
+
+### 健康问题提示
+
+如果检测到问题，显示修复建议：
+
+```text
+🔧 插件状态:
+   版本: v2.0.19
+   ⚠️ 命令加载: 45/55 (缺少 10 个)
+   ✅ Hook 激活: 44 个
+   ❌ Agent 就绪: 0 个 (目录缺失)
+
+⚡ 快速修复:
+   /verify --fix  或  npx claude-pangu@latest install
+```
+
 ## 响应要求
 
 1. **即时响应** - 不要执行任何耗时操作
 2. **信息准确** - 反映真实的 TODO 状态
 3. **格式清晰** - 使用表格和图标增强可读性
-4. **提供下一步** - 总是给出可操作的建议
+4. **显示插件健康** - 让用户知道插件是否正常工作
+5. **提供下一步** - 总是给出可操作的建议

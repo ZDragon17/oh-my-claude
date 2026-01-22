@@ -18,6 +18,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.20] - 2026-01-22
+
+### ✨ Added / 新增
+
+- **核心命令速查文档**: 新增 `docs/ESSENTIAL_COMMANDS.md`，帮助新用户快速入门
+  - 5 个核心命令覆盖 90% 使用场景：`/do`, `/help`, `/status`, `/retry`, `/stuck`
+  - 按功能分类的完整命令表
+  - @语法召唤专家指南
+
+- **`/status` 命令增强**: 新增插件健康状态检查
+  - 显示命令、Hook、Agent、Skill 加载状态
+  - 检测安装问题并提供修复建议
+
+### 🔧 Fixed / 修复
+
+- **POSIX 兼容性**: 将 Hook 脚本从 `bash` 改为 `sh`，移除 `pipefail` 选项
+  - 提升 Windows Git Bash 和其他 POSIX shell 的兼容性
+
+- **Hook 配置补全**: 将 `hook-performance-monitor.sh cleanup` 注册到 `hooks.json`
+
+---
+
 ## [2.0.19] - 2026-01-22
 
 ### ✨ Added / 新增
@@ -69,14 +91,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 📖 Documentation / 文档
 
 - 新增 `docs/COMMAND_ALIASES.md` - 命令别名完整说明文档
+- 新增 `docs/ESSENTIAL_COMMANDS.md` - 核心命令速查（5 个命令完成 90% 工作）
 - 包含所有 55 个命令的别名对照表
 - 别名选择建议和冲突说明
+
+### 🔧 Fixed / 修复
+
+- **Windows 兼容性修复**: 将 `progress-notifier.sh` 和 `hook-performance-monitor.sh` 的 shebang 从 `bash` 改为 `sh`
+- **hooks.json 同步**: 添加 `hook-performance-monitor.sh` 到配置文件
+- **插件健康检查**: `/status` 命令现在显示插件健康状态，帮助用户确认功能正常
 
 ### 📊 Statistics / 统计
 
 - 命令总数: 55 个（新增 4 个）
 - Agent 总数: 20 个
-- Hook 总数: 44 个（新增 1 个）
+- Hook 总数: 45 个（新增 2 个）
 - Skill 总数: 10 个（新增 1 个）
 
 ---

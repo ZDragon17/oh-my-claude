@@ -318,6 +318,15 @@
         "continueOnError": true,
         "priority": "low",
         "description": "后台任务压缩 - 监控后台任务数量并建议清理"
+      },
+      {
+        "type": "command",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/hook-performance-monitor.sh cleanup",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "Hook 性能监控 - 定期清理旧日志"
       }
     ]
   },
