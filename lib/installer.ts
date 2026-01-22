@@ -457,8 +457,10 @@ export async function uninstall(): Promise<void> {
     getFallbackCommandFiles().some(f => fs.existsSync(path.join(commandsDir, f)));
   const hasSkills = fs.existsSync(skillsDir) &&
     getFallbackSkillDirs().some(d => fs.existsSync(path.join(skillsDir, d)));
+  // 检查旧版 zcf 子目录（v1.0.8 及之前版本）
+  const hasLegacyZcf = fs.existsSync(path.join(commandsDir, 'zcf'));
 
-  if (!hasPluginDir && !hasCommands && !hasSkills) {
+  if (!hasPluginDir && !hasCommands && !hasSkills && !hasLegacyZcf) {
     warn('插件未安装（无残留文件）');
     process.exit(0);
   }
@@ -483,6 +485,9 @@ export async function uninstall(): Promise<void> {
   }
   if (hasSkills) {
     info(`Skills 位置: ${skillsDir}`);
+  }
+  if (hasLegacyZcf) {
+    info(`旧版 zcf 目录: ${path.join(commandsDir, 'zcf')}`);
   }
   log('');
 
