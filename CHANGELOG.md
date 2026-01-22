@@ -18,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.8] - 2026-01-22
+
+### 🧹 Fixed / 修复
+
+- **历史版本命令清理**: 卸载时清理已重命名的旧版命令文件
+  - 清理 `huitu.md`（已重命名为 `lilou.md`）
+  - 清理 `xuanwu.md`（已重命名为 `liubowen.md`）
+  - 确保所有历史版本遗留文件都被正确清理
+
+---
+
 ## [2.0.7] - 2026-01-21
 
 ### 🔍 Enhanced / 增强

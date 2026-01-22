@@ -202,9 +202,11 @@ function getSkillDirsFromPackage(packageDir: string): string[] {
 
 /**
  * 备用：硬编码的命令文件列表（当无法访问包目录时使用）
+ * 包含当前版本和历史版本的所有命令文件
  */
 function getFallbackCommandFiles(): string[] {
   return [
+    // 当前版本命令
     'baozheng.md', 'bianque.md', 'cangjie.md', 'change.md', 'gukaizhi.md',
     'laozi.md', 'libai.md', 'libing.md', 'luban.md', 'mozi.md',
     'progress.md', 'simaqian.md', 'sunzi.md', 'weizheng.md', 'wukong.md',
@@ -213,7 +215,10 @@ function getFallbackCommandFiles(): string[] {
     'ralph-loop.md', 'cancel-ralph.md', 'init-deep.md', 'start-work.md',
     'refactor.md', 'lilou.md', 'liubowen.md', 'start.md', 'status.md',
     'skip.md', 'rollback.md', 'cancel-yishan.md', 'interrupt.md',
-    'retry.md', 'pause.md', 'yishan-resume.md', 'help.md'
+    'retry.md', 'pause.md', 'yishan-resume.md', 'help.md',
+    // 历史版本命令（已重命名/移除）
+    'huitu.md',   // 已重命名为 lilou.md
+    'xuanwu.md',  // 已重命名为 liubowen.md
   ];
 }
 
