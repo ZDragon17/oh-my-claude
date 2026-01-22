@@ -564,6 +564,11 @@ The legendary creator of Chinese characters, who served as a historian during th
 - [x] v1.5.0 - P2 enhancement features (JSONC config, Monitor Hooks)
 - [x] v1.6.0 - **Feature alignment complete** 🎯 (~95% aligned with oh-my-opencode)
 - [x] v1.7.0 - **100% Feature Alignment** 🚀 (MCP auto-install, Session tools, new Agents)
+- [x] v2.0.0 - **Major Update** ✨ (npm package renamed to claude-pangu, CLI installation simplified)
+- [x] v2.0.1~v2.0.13 - Bug fixes and stability improvements
+- [x] v2.0.14 - **Usability Enhancement** ✨ (New `/do`, `/suggest`, `/cheatsheet` commands)
+- [x] v2.0.15 - **Deep UX Optimization** 🎯 (New `/what`, `/quickfix`, `/recipes` commands)
+- [x] v2.0.16 - **Session Command Docs** 📖 (Slash command limitation docs, natural language alternatives, Linux compatibility)
 
 ## 🤝 Contributing
 
