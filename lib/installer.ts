@@ -228,6 +228,122 @@ function getFallbackSkillDirs(): string[] {
 }
 
 /**
+ * 全局扫描并清理所有项目中的旧版 .claude/commands/zcf 目录
+ * 扫描常见的项目目录位置
+ */
+function scanAndCleanLegacyZcfDirs(): number {
+  const homeDir = process.env.HOME || process.env.USERPROFILE || '';
+  if (!homeDir) {
+    return 0;
+  }
+
+  // 常见的项目目录位置
+  const projectRoots: string[] = [
+    homeDir,
+    path.join(homeDir, 'projects'),
+    path.join(homeDir, 'Projects'),
+    path.join(homeDir, 'dev'),
+    path.join(homeDir, 'Dev'),
+    path.join(homeDir, 'workspace'),
+    path.join(homeDir, 'Workspace'),
+    path.join(homeDir, 'code'),
+    path.join(homeDir, 'Code'),
+    path.join(homeDir, 'src'),
+    path.join(homeDir, 'repos'),
+    path.join(homeDir, 'git'),
+    path.join(homeDir, 'GitHub'),
+    path.join(homeDir, 'Documents', 'projects'),
+    path.join(homeDir, 'Documents', 'Projects'),
+    path.join(homeDir, 'Documents', 'dev'),
+    path.join(homeDir, 'Documents', 'GitHub'),
+    // Windows 特有路径
+    path.join(homeDir, 'source', 'repos'),
+    // Linux/macOS 常见路径
+    '/var/www',
+    '/opt/projects',
+  ];
+
+  // Windows 盘符根目录下的常见项目目录
+  if (process.platform === 'win32') {
+    const drives = ['C:', 'D:', 'E:', 'F:'];
+    for (const drive of drives) {
+      projectRoots.push(
+        path.join(drive, 'projects'),
+        path.join(drive, 'Projects'),
+        path.join(drive, 'dev'),
+        path.join(drive, 'workspace'),
+        path.join(drive, 'code')
+      );
+    }
+  }
+
+  const foundZcfDirs: string[] = [];
+  const visited = new Set<string>();
+
+  // 递归扫描目录，查找 .claude/commands/zcf
+  const scanDir = (dir: string, depth: number): void => {
+    // 限制扫描深度，避免性能问题
+    if (depth > 4) return;
+
+    // 避免重复扫描
+    const normalizedDir = path.normalize(dir).toLowerCase();
+    if (visited.has(normalizedDir)) return;
+    visited.add(normalizedDir);
+
+    try {
+      // 检查当前目录是否有 .claude/commands/zcf
+      const zcfPath = path.join(dir, '.claude', 'commands', 'zcf');
+      if (fs.existsSync(zcfPath) && fs.statSync(zcfPath).isDirectory()) {
+        foundZcfDirs.push(zcfPath);
+      }
+
+      // 继续扫描子目录
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+
+        // 跳过隐藏目录和 node_modules 等
+        const name = entry.name;
+        if (name.startsWith('.') && name !== '.claude') continue;
+        if (name === 'node_modules') continue;
+        if (name === '__pycache__') continue;
+        if (name === 'vendor') continue;
+        if (name === 'dist') continue;
+        if (name === 'build') continue;
+        if (name === 'target') continue;
+        if (name === '.git') continue;
+
+        const subDir = path.join(dir, name);
+        scanDir(subDir, depth + 1);
+      }
+    } catch {
+      // 忽略权限错误等
+    }
+  };
+
+  // 扫描所有项目根目录
+  for (const root of projectRoots) {
+    if (fs.existsSync(root)) {
+      scanDir(root, 0);
+    }
+  }
+
+  // 清理找到的所有 zcf 目录
+  let cleaned = 0;
+  for (const zcfDir of foundZcfDirs) {
+    try {
+      fs.rmSync(zcfDir, { recursive: true, force: true });
+      cleaned++;
+      info(`已清理: ${zcfDir}`);
+    } catch {
+      warn(`清理失败: ${zcfDir}`);
+    }
+  }
+
+  return cleaned;
+}
+
+/**
  * 执行卸载操作 - 完整清理所有安装的文件
  */
 export function performUninstall(pluginDir: string): void {
@@ -307,11 +423,11 @@ export function performUninstall(pluginDir: string): void {
     info(`已删除 ${skillsRemoved} 个 skill 目录`);
   }
 
-  // 5. 清理项目本地的旧版 zcf 目录（v1.0.8 及之前版本在项目目录安装）
-  const projectZcfDir = path.join(process.cwd(), '.claude', 'commands', 'zcf');
-  if (fs.existsSync(projectZcfDir)) {
-    fs.rmSync(projectZcfDir, { recursive: true, force: true });
-    info('已清理项目本地旧版 zcf 子目录');
+  // 5. 全局扫描并清理所有项目中的旧版 zcf 目录
+  info('正在全局扫描旧版 zcf 目录...');
+  const globalZcfCleaned = scanAndCleanLegacyZcfDirs();
+  if (globalZcfCleaned > 0) {
+    info(`已全局清理 ${globalZcfCleaned} 个旧版 zcf 目录`);
   }
 
   // 6. 清理本地状态文件
@@ -348,7 +464,7 @@ export function performUninstall(pluginDir: string): void {
   info(`  • 插件目录: ${pluginDir}`);
   info(`  • 命令文件: ${commandsRemoved} 个`);
   info(`  • Skill 目录: ${skillsRemoved} 个`);
-  info(`  • 项目本地 zcf: 已清理`);
+  info(`  • 全局旧版 zcf: ${globalZcfCleaned} 个目录`);
   info(`  • 状态文件: 已清理`);
   log('');
   info('如需重新安装，请运行: npx claude-pangu install');

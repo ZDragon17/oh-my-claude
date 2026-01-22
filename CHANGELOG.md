@@ -18,6 +18,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.7] - 2026-01-21
+
+### 🔍 Enhanced / 增强
+
+- **全局 zcf 扫描清理**: 卸载时自动扫描并清理所有项目中的旧版 zcf 目录
+  - 扫描用户主目录下的常见项目目录（projects、dev、workspace、code 等）
+  - 支持 Windows 多盘符扫描（C:、D:、E:、F:）
+  - 支持 macOS/Linux 常见路径（/var/www、/opt/projects 等）
+  - 递归扫描深度限制（4 层），避免性能问题
+  - 智能跳过 node_modules、.git 等目录
+  - 完全自动化，无需手动指定路径
+
+---
+
 ## [2.0.6] - 2026-01-21
 
 ### 🧹 Fixed / 修复
