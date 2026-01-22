@@ -18,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.10] - 2026-01-22
+
+### 🐛 Fixed / 修复
+
+- **备用清理列表生效**: 修复动态扫描返回空时未使用备用列表的问题
+  - 当 npx 缓存目录不包含 commands/skills 时，动态扫描返回空数组
+  - 现在会正确 fallback 到硬编码的备用列表
+  - 确保卸载时能正确删除所有命令和技能文件
+
+---
+
 ## [2.0.9] - 2026-01-22
 
 ### 🐛 Fixed / 修复
