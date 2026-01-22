@@ -175,32 +175,6 @@ export async function install(): Promise<void> {
 // ==================== 卸载流程 ====================
 
 /**
- * 从插件包中获取实际的命令文件列表
- * 动态扫描，避免硬编码
- */
-function getCommandFilesFromPackage(packageDir: string): string[] {
-  const commandsSrc = path.join(packageDir, 'commands');
-  if (!fs.existsSync(commandsSrc)) {
-    return [];
-  }
-  return fs.readdirSync(commandsSrc).filter(f => f.endsWith('.md'));
-}
-
-/**
- * 从插件包中获取实际的 skill 目录列表
- * 动态扫描，避免硬编码
- */
-function getSkillDirsFromPackage(packageDir: string): string[] {
-  const skillsSrc = path.join(packageDir, 'skills');
-  if (!fs.existsSync(skillsSrc)) {
-    return [];
-  }
-  return fs.readdirSync(skillsSrc, { withFileTypes: true })
-    .filter(d => d.isDirectory())
-    .map(d => d.name);
-}
-
-/**
  * 备用：硬编码的命令文件列表（当无法访问包目录时使用）
  * 包含当前版本和历史版本的所有命令文件
  */
@@ -353,14 +327,6 @@ function scanAndCleanLegacyZcfDirs(): number {
  */
 export function performUninstall(pluginDir: string): void {
   info('正在卸载插件...');
-
-  // 获取包目录（尝试动态扫描，失败则用备用列表）
-  let packageDir: string | null = null;
-  try {
-    packageDir = getPackageDir();
-  } catch {
-    // 忽略
-  }
 
   // 1. 尝试使用 claude CLI 卸载（可能失败，忽略）
   try {
