@@ -26,7 +26,9 @@
 claude --version
 
 # 如果未安装，请先安装 Claude Code
-# 访问: https://claude.ai/code
+# Claude Code 现已切换为原生安装器：
+claude install
+# 或访问: https://docs.anthropic.com/en/docs/claude-code/getting-started
 ```
 
 ### 2. npm 安装权限错误

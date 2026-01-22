@@ -133,6 +133,13 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 
 ## 📦 安装
 
+> ⚠️ **前提条件**: 需要先安装 Claude Code。Claude Code 现已切换为原生安装器：
+> ```bash
+> # 安装 Claude Code（如果尚未安装）
+> claude install
+> # 或访问 https://docs.anthropic.com/en/docs/claude-code/getting-started
+> ```
+
 提供多种安装方式，选择最适合你的：
 
 ### 方式一：npm / npx（推荐）

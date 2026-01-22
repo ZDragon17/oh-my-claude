@@ -130,6 +130,13 @@ Auto-configured on installation, no manual setup required:
 
 ## 📦 Installation
 
+> ⚠️ **Prerequisites**: You need to install Claude Code first. Claude Code now uses a native installer:
+> ```bash
+> # Install Claude Code (if not already installed)
+> claude install
+> # Or visit https://docs.anthropic.com/en/docs/claude-code/getting-started
+> ```
+
 Multiple installation methods available - choose what works best for you:
 
 ### Option 1: npm / npx (Recommended)
