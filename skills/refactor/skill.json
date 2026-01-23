@@ -1,0 +1,135 @@
+{
+  "name": "refactor",
+  "version": "1.0.0",
+  "description": "智能重构技能 - 安全、系统化的代码重构，带智能建议",
+  "keywords": ["refactor", "rename", "extract", "move", "simplify", "suggest"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/refactor": ["/rf", "/restructure", "/重构"]
+  },
+
+  "subcommands": {
+    "rename": "重命名符号",
+    "extract": "提取函数/类/模块",
+    "move": "移动代码",
+    "simplify": "简化复杂代码",
+    "suggest": "智能分析并推荐重构机会"
+  },
+
+  "refactorTypes": {
+    "rename": {
+      "icon": "🏷️",
+      "name": "重命名",
+      "description": "改善命名，提高可读性",
+      "steps": ["找到所有出现位置", "找到依赖", "执行重命名", "验证"]
+    },
+    "extract": {
+      "icon": "📦",
+      "name": "提取",
+      "description": "提取函数、类、模块",
+      "steps": ["识别代码块", "确定参数和返回值", "创建新单元", "替换原代码", "验证"]
+    },
+    "move": {
+      "icon": "📁",
+      "name": "移动",
+      "description": "改善代码组织",
+      "steps": ["分析依赖", "在新位置创建", "更新导入", "删除旧代码", "验证"]
+    },
+    "simplify": {
+      "icon": "🧹",
+      "name": "简化",
+      "description": "减少复杂度",
+      "steps": ["分析复杂度", "消除重复", "简化条件", "减少嵌套", "验证"]
+    },
+    "suggest": {
+      "icon": "🔍",
+      "name": "智能建议",
+      "description": "自动分析并推荐重构机会",
+      "steps": ["扫描代码", "检测问题", "生成建议", "排序优先级"]
+    }
+  },
+
+  "analysisDimensions": {
+    "length": {
+      "icon": "📏",
+      "name": "长度",
+      "thresholds": {
+        "functionLines": 50,
+        "fileLines": 300
+      },
+      "suggestion": "提取函数/拆分模块"
+    },
+    "duplication": {
+      "icon": "🔄",
+      "name": "重复",
+      "thresholds": {
+        "minDuplicateLines": 10
+      },
+      "suggestion": "提取公共函数"
+    },
+    "complexity": {
+      "icon": "🌀",
+      "name": "复杂度",
+      "thresholds": {
+        "cyclomaticComplexity": 10,
+        "nestingDepth": 3
+      },
+      "suggestion": "简化逻辑"
+    },
+    "naming": {
+      "icon": "🏷️",
+      "name": "命名",
+      "patterns": ["单字母变量", "无意义名称", "不符合约定"],
+      "suggestion": "重命名"
+    },
+    "coupling": {
+      "icon": "📦",
+      "name": "耦合",
+      "patterns": ["过多依赖", "循环导入", "紧耦合"],
+      "suggestion": "解耦/重组"
+    },
+    "testability": {
+      "icon": "🧪",
+      "name": "可测试性",
+      "patterns": ["硬编码依赖", "全局状态", "副作用"],
+      "suggestion": "依赖注入"
+    }
+  },
+
+  "severityLevels": {
+    "critical": {
+      "icon": "❌",
+      "label": "严重",
+      "description": "必须修复的问题"
+    },
+    "warning": {
+      "icon": "⚠️",
+      "label": "警告",
+      "description": "建议修复的问题"
+    },
+    "suggestion": {
+      "icon": "💡",
+      "label": "建议",
+      "description": "可选优化"
+    }
+  },
+
+  "goldenRules": [
+    "先理解，后重构",
+    "小步前进，每次只做一个小改动",
+    "持续验证，每步都运行测试",
+    "保持功能，重构不改变行为",
+    "Bug 修复时不要重构，重构时不要修复 Bug"
+  ],
+
+  "verificationChecklist": [
+    "lsp_diagnostics 无新错误",
+    "所有测试通过",
+    "行为没有改变",
+    "代码质量提升",
+    "没有引入新的依赖问题"
+  ]
+}

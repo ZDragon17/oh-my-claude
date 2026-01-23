@@ -1,0 +1,95 @@
+{
+  "name": "debug",
+  "version": "1.0.0",
+  "description": "交互式调试技能 - 智能诊断错误、分析堆栈、提供修复建议",
+  "keywords": ["debug", "diagnose", "error", "trace", "调试", "诊断"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/debug": ["/调试", "/diagnose", "/诊断"]
+  },
+
+  "subcommands": {
+    "error": "诊断指定错误信息",
+    "trace": "分析堆栈跟踪",
+    "file": "诊断指定文件",
+    "interactive": "进入交互式调试模式",
+    "fix": "应用修复方案"
+  },
+
+  "errorPatterns": {
+    "javascript": {
+      "TypeError": {
+        "pattern": "TypeError:",
+        "causes": ["空值访问", "类型不匹配", "方法不存在"],
+        "quickFix": "检查变量是否为 undefined/null"
+      },
+      "ReferenceError": {
+        "pattern": "ReferenceError:",
+        "causes": ["变量未定义", "作用域问题"],
+        "quickFix": "检查变量声明和导入"
+      },
+      "SyntaxError": {
+        "pattern": "SyntaxError:",
+        "causes": ["语法错误", "括号不匹配", "缺少分号"],
+        "quickFix": "检查语法，运行 linter"
+      },
+      "ModuleNotFound": {
+        "pattern": "Module not found|Cannot find module",
+        "causes": ["路径错误", "依赖未安装"],
+        "quickFix": "检查路径或运行 npm install"
+      }
+    },
+    "python": {
+      "AttributeError": {
+        "pattern": "AttributeError:",
+        "causes": ["空值访问", "属性不存在"],
+        "quickFix": "添加 hasattr 或 getattr 检查"
+      },
+      "ImportError": {
+        "pattern": "ImportError:|ModuleNotFoundError:",
+        "causes": ["模块未安装", "路径错误"],
+        "quickFix": "pip install 或检查 PYTHONPATH"
+      },
+      "KeyError": {
+        "pattern": "KeyError:",
+        "causes": ["字典键不存在"],
+        "quickFix": "使用 .get() 方法"
+      }
+    },
+    "database": {
+      "ConnectionError": {
+        "pattern": "Connection refused|ECONNREFUSED",
+        "causes": ["数据库未启动", "连接配置错误"],
+        "quickFix": "检查数据库服务状态"
+      },
+      "QueryError": {
+        "pattern": "syntax error|Query failed",
+        "causes": ["SQL 语法错误", "表/列不存在"],
+        "quickFix": "检查 SQL 语法和表结构"
+      }
+    }
+  },
+
+  "diagnosticSteps": [
+    "收集错误信息",
+    "识别错误类型",
+    "定位问题源",
+    "分析根因",
+    "生成修复建议"
+  ],
+
+  "interactiveCommands": {
+    "error": "诊断错误",
+    "trace": "分析堆栈",
+    "watch": "变量监控建议",
+    "breakpoint": "断点建议",
+    "fix": "应用修复",
+    "history": "诊断历史",
+    "exit": "退出"
+  },
+
+  "knowledgeBasePath": "$HOME/.oh-my-claude/errors/"
+}

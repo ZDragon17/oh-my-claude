@@ -1,0 +1,101 @@
+{
+  "name": "ide",
+  "version": "1.0.0",
+  "description": "IDE 深度集成技能 - VSCode、JetBrains、Vim/Neovim 集成配置",
+  "keywords": ["ide", "vscode", "jetbrains", "vim", "neovim", "integration"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+  "experimental": true,
+
+  "supportedIDEs": {
+    "vscode": {
+      "name": "Visual Studio Code",
+      "icon": "💙",
+      "features": [
+        "侧边栏 Agent 状态面板",
+        "代码内联建议",
+        "快捷键触发命令",
+        "终端集成"
+      ],
+      "configPath": ".vscode/oh-my-claude.json"
+    },
+    "jetbrains": {
+      "name": "JetBrains IDEs",
+      "icon": "🔶",
+      "features": [
+        "工具窗口 Agent 面板",
+        "代码意图动作",
+        "运行配置集成",
+        "终端工具窗口"
+      ],
+      "configPath": ".idea/oh-my-claude.xml"
+    },
+    "vim": {
+      "name": "Vim/Neovim",
+      "icon": "💚",
+      "features": [
+        "快捷键映射",
+        "命令模式集成",
+        "状态栏显示",
+        "浮动窗口"
+      ],
+      "configPath": ".vim/oh-my-claude.vim"
+    }
+  },
+
+  "vscodeExtension": {
+    "name": "oh-my-claude",
+    "displayName": "Oh My Claude",
+    "publisher": "zdragon17",
+    "commands": [
+      { "command": "omc.showAgents", "title": "显示 Agent 面板" },
+      { "command": "omc.runCommand", "title": "运行命令" },
+      { "command": "omc.askAgent", "title": "询问 Agent" },
+      { "command": "omc.showProgress", "title": "显示进度" }
+    ],
+    "keybindings": [
+      { "key": "ctrl+shift+a", "command": "omc.showAgents" },
+      { "key": "ctrl+shift+c", "command": "omc.runCommand" },
+      { "key": "ctrl+shift+p", "command": "omc.showProgress" }
+    ],
+    "views": {
+      "omc-sidebar": {
+        "id": "omc-agents",
+        "name": "Agents",
+        "icon": "resources/agent.svg"
+      }
+    }
+  },
+
+  "jetbrainsPlugin": {
+    "name": "oh-my-claude",
+    "displayName": "Oh My Claude",
+    "toolWindows": [
+      { "id": "OMC Agents", "anchor": "right" },
+      { "id": "OMC Progress", "anchor": "bottom" }
+    ],
+    "intentions": [
+      { "name": "Ask Agent", "category": "Oh My Claude" },
+      { "name": "Debug with Bianque", "category": "Oh My Claude" },
+      { "name": "Refactor with Laozi", "category": "Oh My Claude" }
+    ]
+  },
+
+  "vimPlugin": {
+    "name": "oh-my-claude.vim",
+    "mappings": {
+      "<leader>oa": ":OMCAgents<CR>",
+      "<leader>oc": ":OMCCommand<CR>",
+      "<leader>op": ":OMCProgress<CR>",
+      "<leader>od": ":OMCDebug<CR>"
+    },
+    "commands": [
+      "OMCAgents",
+      "OMCCommand",
+      "OMCProgress",
+      "OMCDebug",
+      "OMCExplore"
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "name": "review",
+  "version": "1.0.0",
+  "description": "代码审查技能 - 多 Agent 协作进行全面代码审查",
+  "keywords": ["review", "code-review", "security", "performance", "lint"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/review": ["/审查", "/cr", "/code-review"]
+  },
+
+  "subcommands": {
+    "staged": "审查 git 暂存区",
+    "pr": "审查 Pull Request",
+    "files": "审查指定文件",
+    "commit": "审查指定 commit"
+  },
+
+  "reviewDimensions": {
+    "code-quality": {
+      "agent": "weizheng",
+      "icon": "📜",
+      "name": "魏征",
+      "focus": ["命名规范", "代码风格", "函数长度", "嵌套深度", "代码重复"]
+    },
+    "security": {
+      "agent": "mozi",
+      "icon": "🛡️",
+      "name": "墨子",
+      "focus": ["SQL注入", "XSS", "敏感信息", "硬编码密钥", "权限检查"]
+    },
+    "performance": {
+      "agent": "sunzi",
+      "icon": "⚔️",
+      "name": "孙子",
+      "focus": ["N+1查询", "循环内I/O", "内存泄漏", "不必要渲染", "缓存"]
+    },
+    "testing": {
+      "agent": "baozheng",
+      "icon": "⚖️",
+      "name": "包拯",
+      "focus": ["测试缺失", "边界情况", "错误处理", "Mock使用", "断言质量"]
+    }
+  },
+
+  "severityLevels": {
+    "critical": {
+      "icon": "❌",
+      "label": "严重",
+      "blocksCommit": true,
+      "description": "安全漏洞、数据丢失风险"
+    },
+    "warning": {
+      "icon": "⚠️",
+      "label": "警告",
+      "blocksCommit": false,
+      "description": "性能问题、代码规范违反"
+    },
+    "suggestion": {
+      "icon": "💡",
+      "label": "建议",
+      "blocksCommit": false,
+      "description": "可改进之处"
+    }
+  },
+
+  "conclusionIcons": {
+    "pass": "✅",
+    "needsWork": "⚠️",
+    "reject": "❌"
+  },
+
+  "thresholds": {
+    "maxFunctionLines": 50,
+    "maxNestingDepth": 3,
+    "maxFileLines": 300,
+    "minTestCoverage": 80
+  }
+}

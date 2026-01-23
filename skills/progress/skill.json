@@ -1,13 +1,21 @@
 {
   "name": "progress",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "可视化进度面板 - Visual progress dashboard for oh-my-claude",
-  "keywords": ["progress", "dashboard", "visualization", "todo", "status"],
+  "keywords": ["progress", "dashboard", "visualization", "todo", "status", "kanban", "board"],
   "author": "ZDragon17",
   "license": "MIT",
   "repository": "https://github.com/ZDragon17/oh-my-claude",
   "commandAliases": {
-    "/progress": ["/进度", "/dashboard", "/面板", "/status", "/进展"]
+    "/progress": ["/进度", "/dashboard", "/面板", "/status", "/进展", "/kanban", "/board", "/看板"]
+  },
+  "displayModes": {
+    "full": "完整进度面板",
+    "brief": "简洁单行",
+    "stats": "统计信息",
+    "kanban": "看板卡片视图",
+    "timeline": "时间线模式",
+    "collaboration": "协作视图"
   },
   "progressStyles": {
     "full": "█",
@@ -28,7 +36,23 @@
     "wukong": "🔍",
     "bianque": "🩺",
     "mozi": "🛡️",
-    "sunzi": "⚔️"
+    "sunzi": "⚔️",
+    "baozheng": "⚖️",
+    "weizheng": "📜",
+    "simaqian": "📝",
+    "cangjie": "📊",
+    "laozi": "☯️",
+    "gukaizhi": "🎨"
+  },
+  "kanbanConfig": {
+    "columns": ["pending", "in_progress", "completed"],
+    "columnLabels": {
+      "pending": "📋 待处理",
+      "in_progress": "🔄 进行中",
+      "completed": "✅ 已完成"
+    },
+    "cardWidth": 14,
+    "maxCardsPerColumn": 6
   },
   "milestoneEmojis": {
     "0": "🚀",

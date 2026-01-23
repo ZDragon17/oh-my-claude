@@ -1,0 +1,95 @@
+{
+  "name": "error",
+  "version": "1.0.0",
+  "description": "错误知识库技能 - 保存、搜索和复用错误解决方案",
+  "keywords": ["error", "knowledge-base", "debug", "solution", "troubleshoot"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/error": ["/err", "/错误", "/error-kb"]
+  },
+
+  "subcommands": {
+    "list": "列出最近的错误记录",
+    "save": "保存当前错误及解决方案",
+    "search": "搜索相关错误",
+    "show": "查看错误详情",
+    "delete": "删除错误记录",
+    "stats": "错误统计分析"
+  },
+
+  "storagePath": "~/.oh-my-claude/errors/",
+
+  "errorTypes": {
+    "TypeError": {
+      "icon": "🔴",
+      "description": "类型错误",
+      "commonCauses": ["空值访问", "类型不匹配", "方法不存在"]
+    },
+    "ReferenceError": {
+      "icon": "🟠",
+      "description": "引用错误",
+      "commonCauses": ["变量未定义", "作用域问题", "导入缺失"]
+    },
+    "SyntaxError": {
+      "icon": "🟡",
+      "description": "语法错误",
+      "commonCauses": ["拼写错误", "括号不匹配", "格式问题"]
+    },
+    "NetworkError": {
+      "icon": "🔵",
+      "description": "网络错误",
+      "commonCauses": ["连接失败", "超时", "CORS"]
+    },
+    "DatabaseError": {
+      "icon": "🟣",
+      "description": "数据库错误",
+      "commonCauses": ["连接问题", "查询错误", "约束冲突"]
+    },
+    "RuntimeError": {
+      "icon": "⚫",
+      "description": "运行时错误",
+      "commonCauses": ["内存溢出", "栈溢出", "死循环"]
+    }
+  },
+
+  "recordFormat": {
+    "required": ["id", "name", "error", "type", "solution"],
+    "optional": ["language", "framework", "tags", "root_cause", "prevention", "related"]
+  },
+
+  "indexStructure": {
+    "records": "错误记录列表",
+    "tags": "标签索引",
+    "types": "类型索引",
+    "recent": "最近访问"
+  },
+
+  "searchConfig": {
+    "fields": ["error", "name", "tags", "solution", "root_cause"],
+    "weights": {
+      "error": 1.0,
+      "name": 0.8,
+      "tags": 0.7,
+      "solution": 0.5,
+      "root_cause": 0.5
+    },
+    "minRelevance": 0.3
+  },
+
+  "statsConfig": {
+    "topCount": 5,
+    "recentDays": 30,
+    "chartWidth": 16
+  },
+
+  "integrations": {
+    "debug": {
+      "enabled": true,
+      "autoSearch": true,
+      "minRelevance": 0.7
+    }
+  }
+}

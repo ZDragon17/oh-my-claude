@@ -4,7 +4,22 @@ description: |
   重构命令 - 安全、系统化的代码重构模板。
   支持重命名、提取、移动等重构操作，带并行分析和验证。
   别名：/rf, /restructure
+aliases:
+  - /rf
+  - /restructure
+  - /重构
+allowed-tools:
+  - Read
+  - Glob
+  - Grep
+  - Task
+  - Edit
+  - TodoWrite
+  - mcp__jetbrains__*
+model: sonnet
 ---
+
+<command-name>/refactor</command-name>
 
 # 🔧 重构模式
 
@@ -192,6 +207,68 @@ background_task(
 
 # 简化
 /refactor simplify src/components/Dashboard.tsx
+
+# 智能建议
+/refactor suggest src/services/
+/refactor suggest --file src/components/Dashboard.tsx
+```
+
+---
+
+## 智能重构建议 (`/refactor suggest`)
+
+自动分析代码并推荐重构机会：
+
+### 分析维度
+
+| 维度 | 检测内容 | 建议操作 |
+|------|----------|----------|
+| 📏 **长度** | 函数 > 50 行，文件 > 300 行 | 提取函数/拆分模块 |
+| 🔄 **重复** | 相似代码块 > 10 行 | 提取公共函数 |
+| 🌀 **复杂度** | 圈复杂度 > 10，嵌套 > 3 | 简化逻辑 |
+| 🏷️ **命名** | 不符合规范、含义模糊 | 重命名 |
+| 📦 **耦合** | 过多依赖、循环导入 | 解耦/重组 |
+| 🧪 **可测试性** | 难以单元测试 | 依赖注入 |
+
+### 建议报告格式
+
+```text
+🔍 重构机会分析报告
+═══════════════════════════════════════════════════════════════
+
+📁 src/services/UserService.ts
+   ├─ ⚠️ [长度] processUser() 函数 78 行 → 建议提取子函数
+   ├─ ⚠️ [重复] 与 OrderService.ts 有 15 行相似代码
+   └─ 💡 [命名] `data` 变量名不够语义化
+
+📁 src/components/Dashboard.tsx
+   ├─ ❌ [复杂度] 圈复杂度 15，建议拆分
+   └─ ⚠️ [嵌套] 条件嵌套 4 层，建议提前返回
+
+📊 汇总
+   • 严重: 1  • 警告: 3  • 建议: 1
+   • 推荐优先修复: Dashboard.tsx 的复杂度问题
+
+💡 快速操作:
+   /refactor simplify src/components/Dashboard.tsx
+   /refactor extract processUserData from UserService.processUser
+═══════════════════════════════════════════════════════════════
+```
+
+### 使用方式
+
+```bash
+# 分析目录
+/refactor suggest src/services/
+
+# 分析单文件
+/refactor suggest --file src/components/Dashboard.tsx
+
+# 分析整个项目
+/refactor suggest --all
+
+# 只看严重问题
+/refactor suggest --severity critical
 ```
 
 ## 用户的请求

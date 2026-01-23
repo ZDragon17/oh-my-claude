@@ -1,0 +1,69 @@
+{
+  "name": "snippet",
+  "version": "1.0.0",
+  "description": "代码片段库技能 - 保存、管理和使用常用代码片段",
+  "keywords": ["snippet", "code", "template", "片段", "模板"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/snippet": ["/片段", "/code", "/template"]
+  },
+
+  "subcommands": {
+    "save": "保存代码片段",
+    "list": "列出所有片段",
+    "use": "使用指定片段",
+    "search": "搜索片段",
+    "delete": "删除片段",
+    "edit": "编辑片段",
+    "export": "导出片段",
+    "import": "导入片段"
+  },
+
+  "storagePath": "$HOME/.oh-my-claude/snippets/",
+  "indexFile": "index.json",
+
+  "snippetFormat": {
+    "frontmatter": ["name", "description", "language", "tags", "author", "created", "updated"],
+    "sections": ["description", "variables", "code", "usage"]
+  },
+
+  "variablePattern": "{{([^}]+)}}",
+
+  "supportedLanguages": [
+    "typescript",
+    "javascript",
+    "python",
+    "go",
+    "rust",
+    "java",
+    "csharp",
+    "php",
+    "ruby",
+    "yaml",
+    "json",
+    "markdown",
+    "sql",
+    "shell"
+  ],
+
+  "builtinSnippets": {
+    "react": ["react-query-hook", "react-form", "error-boundary", "react-context"],
+    "nextjs": ["api-route", "server-action", "middleware"],
+    "express": ["auth-middleware", "error-handler", "rate-limiter"],
+    "prisma": ["prisma-crud", "prisma-relations"],
+    "python": ["fastapi-router", "python-decorator", "async-context"],
+    "go": ["gin-handler", "go-middleware"],
+    "devops": ["docker-compose", "dockerfile", "github-action"]
+  },
+
+  "categories": {
+    "frontend": ["react", "vue", "angular", "svelte"],
+    "backend": ["express", "fastapi", "gin", "spring"],
+    "database": ["prisma", "typeorm", "sqlalchemy"],
+    "devops": ["docker", "kubernetes", "ci-cd"],
+    "testing": ["jest", "pytest", "go-test"]
+  }
+}

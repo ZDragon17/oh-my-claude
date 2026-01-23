@@ -1,0 +1,113 @@
+{
+  "name": "timeline",
+  "version": "1.0.0",
+  "description": "代码时间旅行技能 - 查看文件修改历史，带 AI 分析",
+  "keywords": ["timeline", "history", "git", "log", "revert", "diff"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/timeline": ["/历史", "/history", "/时光机"]
+  },
+
+  "subcommands": {
+    "show": "查看指定提交的详情",
+    "compare": "比较两个版本",
+    "analyze": "AI 分析修改模式",
+    "revert": "回滚到指定版本"
+  },
+
+  "gitCommands": {
+    "log": "git log --oneline --follow --date=short --pretty=format:'%h|%ad|%an|%s' -- {path}",
+    "show": "git show --stat {hash}",
+    "diff": "git diff {hash1} {hash2}",
+    "revert": "git revert {hash}"
+  },
+
+  "analysisTypes": {
+    "pattern": {
+      "name": "修改模式分析",
+      "icon": "📊",
+      "metrics": ["频率", "类型分布", "风险区域"]
+    },
+    "contributor": {
+      "name": "贡献者分析",
+      "icon": "👥",
+      "metrics": ["提交数", "代码质量", "主要贡献"]
+    },
+    "impact": {
+      "name": "影响分析",
+      "icon": "🔍",
+      "metrics": ["依赖关系", "风险评估", "测试覆盖"]
+    }
+  },
+
+  "commitTypes": {
+    "feat": {
+      "icon": "✨",
+      "name": "新功能",
+      "color": "green"
+    },
+    "fix": {
+      "icon": "🐛",
+      "name": "修复",
+      "color": "red"
+    },
+    "refactor": {
+      "icon": "♻️",
+      "name": "重构",
+      "color": "blue"
+    },
+    "test": {
+      "icon": "🧪",
+      "name": "测试",
+      "color": "yellow"
+    },
+    "docs": {
+      "icon": "📚",
+      "name": "文档",
+      "color": "gray"
+    },
+    "style": {
+      "icon": "💄",
+      "name": "样式",
+      "color": "purple"
+    },
+    "perf": {
+      "icon": "⚡",
+      "name": "性能",
+      "color": "orange"
+    },
+    "chore": {
+      "icon": "🔧",
+      "name": "杂项",
+      "color": "gray"
+    }
+  },
+
+  "riskLevels": {
+    "low": {
+      "icon": "🟢",
+      "name": "低风险",
+      "description": "小改动，影响范围小"
+    },
+    "medium": {
+      "icon": "🟡",
+      "name": "中等风险",
+      "description": "涉及核心逻辑，需要测试"
+    },
+    "high": {
+      "icon": "🔴",
+      "name": "高风险",
+      "description": "重大变更，需要审查"
+    }
+  },
+
+  "displayConfig": {
+    "maxCommits": 20,
+    "showAgentIcon": true,
+    "showIssueLinks": true,
+    "dateFormat": "YYYY-MM-DD HH:mm"
+  }
+}

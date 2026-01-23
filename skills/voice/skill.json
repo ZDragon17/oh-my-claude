@@ -1,0 +1,92 @@
+{
+  "name": "voice",
+  "version": "1.0.0",
+  "description": "语音交互技能 - 支持语音输入和语音反馈",
+  "keywords": ["voice", "speech", "audio", "stt", "tts"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+  "experimental": true,
+
+  "commandAliases": {
+    "/voice": ["/语音", "/speak", "/audio"]
+  },
+
+  "subcommands": {
+    "on": "开启语音模式",
+    "off": "关闭语音模式",
+    "status": "显示语音状态",
+    "config": "配置语音参数",
+    "test": "测试语音功能"
+  },
+
+  "platformSupport": {
+    "macos": {
+      "stt": "system",
+      "tts": "say",
+      "supported": true
+    },
+    "windows": {
+      "stt": "SAPI",
+      "tts": "SAPI",
+      "supported": true
+    },
+    "linux": {
+      "stt": "sox",
+      "tts": "espeak",
+      "supported": "partial"
+    }
+  },
+
+  "defaultConfig": {
+    "enabled": false,
+    "input": {
+      "engine": "system",
+      "language": "zh-CN",
+      "wakeWord": "小助手",
+      "confirmBeforeExecute": true
+    },
+    "output": {
+      "engine": "system",
+      "voice": "default",
+      "speed": 1.0,
+      "volume": 1.0,
+      "readResponses": true
+    },
+    "shortcuts": {
+      "toggle": "Ctrl+Shift+V",
+      "pushToTalk": "Space"
+    }
+  },
+
+  "voiceCommands": {
+    "agents": {
+      "悟空": "/wukong",
+      "鲁班": "/luban",
+      "扁鹊": "/bianque",
+      "诸葛": "/zhuge",
+      "老子": "/laozi",
+      "墨子": "/mozi",
+      "魏征": "/weizheng",
+      "包拯": "/baozheng"
+    },
+    "actions": {
+      "暂停": "/pause",
+      "继续": "/resume",
+      "取消": "/cancel",
+      "帮助": "/help",
+      "状态": "/status"
+    }
+  },
+
+  "ttsVoices": {
+    "macos": {
+      "zh-CN": ["Ting-Ting", "Sin-Ji"],
+      "en-US": ["Samantha", "Alex"]
+    },
+    "windows": {
+      "zh-CN": ["Microsoft Huihui", "Microsoft Yaoyao"],
+      "en-US": ["Microsoft David", "Microsoft Zira"]
+    }
+  }
+}

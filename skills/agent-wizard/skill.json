@@ -1,0 +1,143 @@
+{
+  "name": "agent-wizard",
+  "version": "1.0.0",
+  "description": "Agent 创建向导技能 - 交互式创建和管理自定义 Agent",
+  "keywords": ["agent", "create", "wizard", "custom", "template"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/agent": ["/agent-manage", "/自定义agent"]
+  },
+
+  "subcommands": {
+    "list": "列出所有可用 Agent",
+    "create": "交互式创建新 Agent",
+    "edit": "编辑现有 Agent",
+    "delete": "删除 Agent",
+    "show": "查看 Agent 详情",
+    "export": "导出 Agent",
+    "import": "导入 Agent"
+  },
+
+  "wizardSteps": [
+    {
+      "step": 1,
+      "name": "basic",
+      "title": "基本信息",
+      "fields": ["name", "displayName", "icon"]
+    },
+    {
+      "step": 2,
+      "name": "expertise",
+      "title": "专长领域",
+      "fields": ["expertise", "customExpertise"]
+    },
+    {
+      "step": 3,
+      "name": "personality",
+      "title": "人格设定",
+      "fields": ["personality", "style"]
+    },
+    {
+      "step": 4,
+      "name": "tools",
+      "title": "工具权限",
+      "fields": ["allowedTools"]
+    },
+    {
+      "step": 5,
+      "name": "keywords",
+      "title": "触发关键词",
+      "fields": ["keywords"]
+    },
+    {
+      "step": 6,
+      "name": "confirm",
+      "title": "确认创建",
+      "fields": []
+    }
+  ],
+
+  "expertiseOptions": [
+    { "id": "explore", "icon": "🔍", "name": "代码探索" },
+    { "id": "implement", "icon": "🔧", "name": "代码实现" },
+    { "id": "debug", "icon": "🩺", "name": "调试诊断" },
+    { "id": "optimize", "icon": "⚡", "name": "性能优化" },
+    { "id": "clean", "icon": "🧹", "name": "代码清理" },
+    { "id": "security", "icon": "🛡️", "name": "安全审计" },
+    { "id": "document", "icon": "📚", "name": "文档编写" },
+    { "id": "test", "icon": "🧪", "name": "测试编写" },
+    { "id": "review", "icon": "📜", "name": "代码审查" },
+    { "id": "design", "icon": "🎨", "name": "UI/UX 设计" }
+  ],
+
+  "toolOptions": [
+    { "id": "Read", "description": "读取文件", "category": "readonly" },
+    { "id": "Grep", "description": "搜索代码", "category": "readonly" },
+    { "id": "Glob", "description": "查找文件", "category": "readonly" },
+    { "id": "Bash", "description": "执行命令", "category": "execute" },
+    { "id": "Write", "description": "写入文件", "category": "write" },
+    { "id": "Edit", "description": "编辑文件", "category": "write" },
+    { "id": "Task", "description": "调用子 Agent", "category": "advanced" },
+    { "id": "WebSearch", "description": "网络搜索", "category": "network" }
+  ],
+
+  "templates": {
+    "debugger": {
+      "name": "调试专家",
+      "expertise": ["debug", "explore"],
+      "tools": ["Read", "Grep", "Glob", "Bash"],
+      "personality": "善于追踪问题根源，条理清晰地分析错误"
+    },
+    "optimizer": {
+      "name": "优化专家",
+      "expertise": ["optimize", "clean"],
+      "tools": ["Read", "Grep", "Glob", "Bash"],
+      "personality": "追求性能极致，善于发现瓶颈"
+    },
+    "reviewer": {
+      "name": "审查专家",
+      "expertise": ["review", "security"],
+      "tools": ["Read", "Grep", "Glob"],
+      "personality": "严格但公正，关注代码质量和安全"
+    },
+    "documenter": {
+      "name": "文档专家",
+      "expertise": ["document"],
+      "tools": ["Read", "Grep", "Glob", "Write"],
+      "personality": "善于总结和解释，文档清晰易懂"
+    },
+    "tester": {
+      "name": "测试专家",
+      "expertise": ["test"],
+      "tools": ["Read", "Grep", "Glob", "Write", "Bash"],
+      "personality": "追求全面覆盖，善于发现边界情况"
+    }
+  },
+
+  "builtinAgents": [
+    { "name": "wukong", "displayName": "悟空", "icon": "🔍", "expertise": "代码探索" },
+    { "name": "luban", "displayName": "鲁班", "icon": "🔧", "expertise": "代码实现" },
+    { "name": "bianque", "displayName": "扁鹊", "icon": "🩺", "expertise": "调试诊断" },
+    { "name": "zhuge", "displayName": "诸葛", "icon": "📜", "expertise": "架构设计" },
+    { "name": "laozi", "displayName": "老子", "icon": "🧹", "expertise": "代码简化" },
+    { "name": "mozi", "displayName": "墨子", "icon": "🛡️", "expertise": "安全审计" },
+    { "name": "weizheng", "displayName": "魏征", "icon": "📜", "expertise": "代码审查" },
+    { "name": "baozheng", "displayName": "包拯", "icon": "⚖️", "expertise": "测试专家" },
+    { "name": "simaqian", "displayName": "司马迁", "icon": "📚", "expertise": "文档编写" },
+    { "name": "gukaizhi", "displayName": "顾恺之", "icon": "🎨", "expertise": "UI设计" },
+    { "name": "cangjie", "displayName": "仓颉", "icon": "🗄️", "expertise": "数据库设计" },
+    { "name": "zhenghe", "displayName": "郑和", "icon": "🌐", "expertise": "API设计" },
+    { "name": "libing", "displayName": "李冰", "icon": "⚙️", "expertise": "DevOps" },
+    { "name": "zhangheng", "displayName": "张衡", "icon": "📊", "expertise": "监控运维" },
+    { "name": "lilou", "displayName": "离娄", "icon": "🔌", "expertise": "多模态分析" },
+    { "name": "liubowen", "displayName": "刘伯温", "icon": "🎯", "expertise": "计划审查" }
+  ],
+
+  "outputPaths": {
+    "agents": ".oh-my-claude/agents/",
+    "commands": "commands/"
+  }
+}

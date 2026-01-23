@@ -1,0 +1,54 @@
+{
+  "name": "stats",
+  "version": "1.0.0",
+  "description": "统计分析技能 - Agent 性能、Hook 执行、会话统计",
+  "keywords": ["stats", "statistics", "analytics", "performance", "agent"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/stats": ["/统计", "/statistics", "/analytics", "/分析"]
+  },
+
+  "subcommands": {
+    "overview": "综合概览",
+    "agents": "Agent 使用统计",
+    "hooks": "Hook 执行统计",
+    "session": "当前会话统计",
+    "history": "历史趋势"
+  },
+
+  "dataSources": {
+    "hookPerformance": "$HOME/.oh-my-claude/logs/hooks-perf.log",
+    "sessions": "$HOME/.oh-my-claude/sessions/",
+    "agentUsage": "$HOME/.oh-my-claude/stats/agent-usage.json"
+  },
+
+  "agentIcons": {
+    "wukong": { "icon": "🔍", "name": "悟空", "type": "Explore" },
+    "zhuge": { "icon": "🎯", "name": "诸葛", "type": "Plan" },
+    "luban": { "icon": "🔧", "name": "鲁班", "type": "general-purpose" },
+    "bianque": { "icon": "🩺", "name": "扁鹊", "type": "debugger" },
+    "mozi": { "icon": "🛡️", "name": "墨子", "type": "security-auditor" },
+    "sunzi": { "icon": "⚔️", "name": "孙子", "type": "performance-engineer" },
+    "baozheng": { "icon": "⚖️", "name": "包拯", "type": "test-engineer" },
+    "weizheng": { "icon": "📜", "name": "魏征", "type": "code-reviewer" },
+    "simaqian": { "icon": "📝", "name": "司马迁", "type": "technical-writer" },
+    "cangjie": { "icon": "📊", "name": "仓颉", "type": "database-architect" }
+  },
+
+  "trendIcons": {
+    "up": "↗️",
+    "down": "↘️",
+    "stable": "→",
+    "new": "🆕",
+    "hot": "🔥"
+  },
+
+  "thresholds": {
+    "lowSuccessRate": 85,
+    "highTokenUsage": 10000,
+    "slowHook": 200
+  }
+}

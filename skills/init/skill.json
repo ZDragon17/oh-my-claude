@@ -1,0 +1,144 @@
+{
+  "name": "init",
+  "version": "1.0.0",
+  "description": "项目模板初始化技能 - 快速配置项目的 oh-my-claude 环境",
+  "keywords": ["init", "template", "project", "setup", "配置", "初始化"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/init": ["/初始化", "/template", "/模板"]
+  },
+
+  "templates": {
+    "frontend": {
+      "react-typescript": {
+        "name": "React + TypeScript",
+        "framework": "React",
+        "language": "TypeScript",
+        "recommended": true,
+        "detect": ["react", "typescript"]
+      },
+      "react-javascript": {
+        "name": "React + JavaScript",
+        "framework": "React",
+        "language": "JavaScript",
+        "detect": ["react"]
+      },
+      "vue3-typescript": {
+        "name": "Vue 3 + TypeScript",
+        "framework": "Vue",
+        "language": "TypeScript",
+        "detect": ["vue", "typescript"]
+      },
+      "vue3-vite": {
+        "name": "Vue 3 + Vite",
+        "framework": "Vue",
+        "language": "TypeScript",
+        "detect": ["vue", "vite"]
+      },
+      "nextjs": {
+        "name": "Next.js",
+        "framework": "Next.js",
+        "language": "TypeScript",
+        "detect": ["next"]
+      },
+      "svelte": {
+        "name": "Svelte/SvelteKit",
+        "framework": "Svelte",
+        "language": "TypeScript",
+        "detect": ["svelte"]
+      }
+    },
+    "backend": {
+      "node-express": {
+        "name": "Express.js + TypeScript",
+        "framework": "Express",
+        "language": "TypeScript",
+        "detect": ["express"]
+      },
+      "node-nestjs": {
+        "name": "NestJS",
+        "framework": "NestJS",
+        "language": "TypeScript",
+        "detect": ["@nestjs/core"]
+      },
+      "python-fastapi": {
+        "name": "FastAPI",
+        "framework": "FastAPI",
+        "language": "Python",
+        "recommended": true,
+        "detect": ["fastapi"]
+      },
+      "python-django": {
+        "name": "Django + DRF",
+        "framework": "Django",
+        "language": "Python",
+        "detect": ["django"]
+      },
+      "golang-gin": {
+        "name": "Gin Framework",
+        "framework": "Gin",
+        "language": "Go",
+        "detect": ["gin-gonic/gin"]
+      },
+      "rust-axum": {
+        "name": "Axum + Tokio",
+        "framework": "Axum",
+        "language": "Rust",
+        "detect": ["axum"]
+      },
+      "java-spring": {
+        "name": "Spring Boot",
+        "framework": "Spring",
+        "language": "Java",
+        "detect": ["spring-boot"]
+      }
+    },
+    "fullstack": {
+      "t3-stack": {
+        "name": "T3 Stack",
+        "framework": "T3",
+        "language": "TypeScript",
+        "detect": ["@trpc/server", "prisma"]
+      },
+      "mern": {
+        "name": "MERN Stack",
+        "framework": "MERN",
+        "language": "JavaScript",
+        "detect": ["mongodb", "express", "react"]
+      },
+      "lamp": {
+        "name": "Laravel + MySQL",
+        "framework": "Laravel",
+        "language": "PHP",
+        "detect": ["laravel"]
+      }
+    }
+  },
+
+  "configStructure": {
+    "directories": [
+      ".oh-my-claude/",
+      ".oh-my-claude/agents/",
+      ".oh-my-claude/rules/",
+      ".oh-my-claude/templates/"
+    ],
+    "files": [
+      ".oh-my-claude/config.json",
+      ".oh-my-claude/agents/project-expert.md",
+      ".oh-my-claude/rules/coding-style.md",
+      ".oh-my-claude/rules/architecture.md"
+    ]
+  },
+
+  "detectionFiles": {
+    "javascript": "package.json",
+    "python": ["requirements.txt", "pyproject.toml", "setup.py"],
+    "go": "go.mod",
+    "rust": "Cargo.toml",
+    "java": ["pom.xml", "build.gradle"],
+    "php": "composer.json"
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "name": "pair",
+  "version": "1.0.0",
+  "description": "AI 结对编程技能 - 智能结对编程模式",
+  "keywords": ["pair", "pairing", "copilot", "assistant", "realtime"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+  "experimental": true,
+
+  "commandAliases": {
+    "/pair": ["/结对", "/pairing", "/copilot"]
+  },
+
+  "subcommands": {
+    "start": "开始结对编程",
+    "stop": "结束结对编程",
+    "status": "查看结对状态",
+    "config": "配置结对参数",
+    "suggest": "主动请求建议"
+  },
+
+  "modes": {
+    "passive": {
+      "name": "被动模式",
+      "description": "只在必要时介入",
+      "triggers": ["明显错误", "重复代码", "长时间卡住", "明确求助"]
+    },
+    "active": {
+      "name": "主动模式",
+      "description": "频繁提供建议",
+      "triggers": ["每次保存", "新建函数", "写测试", "提交前"]
+    },
+    "quiet": {
+      "name": "安静模式",
+      "description": "只在请求时响应",
+      "triggers": ["明确请求"]
+    }
+  },
+
+  "suggestionTypes": {
+    "completion": {
+      "icon": "📝",
+      "name": "代码补全",
+      "description": "智能代码补全建议"
+    },
+    "optimization": {
+      "icon": "🔧",
+      "name": "代码优化",
+      "description": "代码质量优化建议"
+    },
+    "testing": {
+      "icon": "🧪",
+      "name": "测试建议",
+      "description": "测试用例建议"
+    },
+    "documentation": {
+      "icon": "📚",
+      "name": "文档建议",
+      "description": "注释和文档建议"
+    },
+    "error": {
+      "icon": "⚠️",
+      "name": "错误检测",
+      "description": "潜在错误检测"
+    },
+    "performance": {
+      "icon": "⚡",
+      "name": "性能提示",
+      "description": "性能优化建议"
+    }
+  },
+
+  "difficultyDetection": {
+    "sameLineEdits": {
+      "threshold": 5,
+      "description": "同一行修改次数"
+    },
+    "frequentUndo": {
+      "threshold": 10,
+      "timeWindow": 60,
+      "description": "频繁撤销操作"
+    },
+    "noProgress": {
+      "timeout": 300,
+      "description": "长时间无进展（秒）"
+    },
+    "frequentSearch": {
+      "threshold": 5,
+      "timeWindow": 120,
+      "description": "频繁搜索"
+    }
+  },
+
+  "quickCommands": {
+    "帮我看看": "analyze",
+    "有问题": "diagnose",
+    "怎么写": "suggest",
+    "优化一下": "optimize",
+    "测试用例": "test",
+    "解释一下": "explain",
+    "暂停": "pause",
+    "停止": "stop"
+  },
+
+  "defaultConfig": {
+    "mode": "passive",
+    "autoStart": false,
+    "sensitivity": {
+      "errorDetection": "high",
+      "styleCheck": "medium",
+      "performanceTips": "low"
+    },
+    "notifications": {
+      "sound": false,
+      "popup": true,
+      "inline": true
+    },
+    "triggers": {
+      "stuckTimeout": 300,
+      "repeatThreshold": 5
+    }
+  },
+
+  "statusBar": {
+    "format": "👥 结对中 | 📍 {file} | 💡 {suggestions} 建议 | ⏱️ {duration}",
+    "position": "right"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "share",
+  "version": "1.0.0",
+  "description": "团队协作技能 - 分享配置、Agent 和片段",
+  "keywords": ["share", "export", "import", "team", "分享", "团队"],
+  "author": "ZDragon17",
+  "license": "MIT",
+
+  "commandAliases": {
+    "/share": ["/分享", "/export", "/共享"]
+  },
+
+  "subcommands": {
+    "config": "导出项目配置",
+    "agent": "分享 Agent 定义",
+    "snippet": "分享代码片段",
+    "all": "导出所有配置",
+    "import": "导入配置"
+  },
+
+  "exportables": {
+    "config": ".oh-my-claude/config.json",
+    "profile": ".oh-my-claude/project-profile.md",
+    "rules": ".oh-my-claude/rules/",
+    "agents": ".oh-my-claude/agents/",
+    "snippets": "~/.oh-my-claude/snippets/"
+  },
+
+  "conflictStrategies": ["overwrite", "skip", "merge", "cancel"]
+}
