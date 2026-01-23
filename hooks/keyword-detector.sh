@@ -93,7 +93,12 @@ fi
 # 第五优先级：测试类（质量保障）
 # ============================================================================
 
-if echo "$prompt_lower" | grep -qE '(测试|单元测试|集成测试|test|unit[-_]?test|integration[-_]?test|tdd|jest|vitest|pytest|包拯|baozheng|开封|coverage|覆盖率|e2e|端到端)'; then
+# 优化：移除单独的"测试"/"test"，避免误触发
+# "测试一下这个功能"不应触发测试模式
+# 只有明确的测试开发需求才触发
+if echo "$prompt_lower" | grep -qE '(单元测试|集成测试|unit[-_]?test|integration[-_]?test|tdd|jest|vitest|pytest|包拯|baozheng|开封|coverage|覆盖率|e2e|端到端|测试用例|test[-_]?case|测试覆盖|写测试|添加测试|补测试)' || \
+   echo "$prompt_lower" | grep -qE '(写|添加|补充|增加|创建).{0,5}测试' || \
+   echo "$prompt_lower" | grep -qE '测试.{0,5}(用例|覆盖|框架|策略)'; then
     cat << 'EOF'
 {
   "systemMessage": "\n\n⚖️ **包拯测试提示**\n\n检测到测试相关需求，建议：\n- 使用 /baozheng 命令进入测试模式\n- 包拯擅长：单元测试、集成测试、TDD、测试覆盖率分析\n"
@@ -119,7 +124,14 @@ fi
 # 第七优先级：性能类（慢就是问题）
 # ============================================================================
 
-if echo "$prompt_lower" | grep -qE '(性能|优化|慢|performance|optimize|slow|孙子|sunzi|perf|瓶颈|bottleneck|缓存|cache|内存|memory|cpu|加速)'; then
+# 优化：移除单独的"优化"/"optimize"，避免误触发
+# "优化样式"、"优化布局"不应触发性能模式
+# 只有明确的性能相关词才触发
+if echo "$prompt_lower" | grep -qE '(性能|慢|slow|孙子|sunzi|perf|瓶颈|bottleneck|内存|memory|cpu|加速|响应时间|latency|qps|tps|并发|concurrent)' || \
+   echo "$prompt_lower" | grep -qE '优化.{0,5}(性能|速度|响应|延迟|内存|cpu|加载|渲染)' || \
+   echo "$prompt_lower" | grep -qE '(性能|速度|响应|延迟|加载|渲染).{0,5}优化' || \
+   echo "$prompt_lower" | grep -qE 'optimi[sz]e.{0,10}(performance|speed|memory|cpu|loading)' || \
+   echo "$prompt_lower" | grep -qE '(performance|speed|memory|cpu|loading).{0,10}optimi[sz]'; then
     cat << 'EOF'
 {
   "systemMessage": "\n\n⚔️ **孙子性能提示**\n\n检测到性能相关问题，建议：\n- 使用 /sunzi 命令进入性能优化模式\n- 孙子擅长：性能分析、瓶颈定位、优化策略\n"
@@ -132,7 +144,11 @@ fi
 # 第八优先级：API/集成类
 # ============================================================================
 
-if echo "$prompt_lower" | grep -qE '(api|接口|集成|对接|integrate|webhook|sdk|rest|graphql|grpc|郑和|zhenghe|西洋|第三方|openapi|swagger)'; then
+# 优化：移除单独的"接口"，避免误触发
+# "接口报错了"应该触发扁鹊，不是郑和
+# 只有明确的 API 开发/集成需求才触发
+if echo "$prompt_lower" | grep -qE '(api|集成|对接|integrate|webhook|sdk|rest[-_]?api|graphql|grpc|郑和|zhenghe|西洋|第三方|openapi|swagger|调用.{0,5}接口|接口.{0,5}(设计|开发|封装|对接))' || \
+   echo "$prompt_lower" | grep -qE '(设计|开发|封装|对接|调用).{0,5}(api|接口)'; then
     cat << 'EOF'
 {
   "systemMessage": "\n\n⛵ **郑和 API 提示**\n\n检测到 API/集成相关需求，建议：\n- 使用 /zhenghe 命令进入 API 模式\n- 郑和擅长：API 集成、SDK 封装、外部服务对接\n"
@@ -249,7 +265,11 @@ fi
 # 第十七优先级：文档类
 # ============================================================================
 
-if echo "$prompt_lower" | grep -qE '(文档|注释|记录|document|comment|readme|changelog|history|司马迁|simaqian|史记|shiji|wiki)'; then
+# 优化：移除单独的"记录"，避免误触发
+# "记录一下状态"不应触发文档模式
+# 只有明确的文档撰写需求才触发
+if echo "$prompt_lower" | grep -qE '(文档|注释|readme|changelog|司马迁|simaqian|史记|shiji|wiki|写.{0,3}(文档|注释)|添加.{0,3}注释|(api|接口).{0,3}文档|技术文档|使用文档)' || \
+   echo "$prompt_lower" | grep -qE '(撰写|编写|更新|完善).{0,5}文档'; then
     cat << 'EOF'
 {
   "systemMessage": "\n\n📜 **司马迁文档提示**\n\n检测到文档相关需求，建议：\n- 使用 /simaqian 命令进入文档模式\n- 司马迁擅长：技术文档撰写、变更记录、代码注释\n"

@@ -51,6 +51,6 @@ if [ -f "$RALPH_STATE_FILE" ]; then
 fi
 
 # 返回 JSON 阻止退出并注入继续指令
-printf '{"decision":"block","systemMessage":"\\n\\n🔄 **Ralph Loop 第 %d 次迭代**\\n\\n[自检] 任务是否完成？\\n\\n## 继续条件\\n- 检查 TODO 列表，如有未完成项则继续工作\\n- 验证所有要求都已满足\\n\\n## 完成条件\\n当所有任务完成后：\\n1. 输出: <promise>%s</promise>\\n2. 使用 /cancel-ralph 结束循环\\n\\n**如果任务未完成，继续工作。不要停止。**\\n"}\n' "$NEXT_ITERATION" "$COMPLETION_PROMISE"
+printf '{"decision":"block","systemMessage":"\\n\\n🔄 **Ralph Loop 第 %d 次迭代**\\n\\n## 强制自检流程\\n\\n**必须执行以下步骤：**\\n\\n1. 调用 `mcp_todoread` 工具查看当前 TODO 列表\\n2. 检查是否有 `pending` 或 `in_progress` 状态的任务\\n3. 如果有未完成任务 → 继续工作，不要停止\\n4. 如果所有任务都是 `completed` → 执行结束流程\\n\\n## 结束方式\\n\\n当所有 TODO 完成后：\\n1. 向用户报告任务完成\\n2. 执行: `rm -f .claude/ralph-loop.local.md` 删除循环状态文件\\n3. 循环将自动结束\\n\\n**⚠️ 不要跳过 todoread 检查！**\\n"}\n' "$NEXT_ITERATION"
 
 exit 0

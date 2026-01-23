@@ -8,18 +8,38 @@
 # 1. 根据任务类型推荐合适的 Agent
 # 2. 提供 Agent 使用示例
 # 3. 避免过度提醒（有冷却期）
+#
+# 注意：
+# - 此 Hook 优先级为 low，在 keyword-detector.sh 之后执行
+# - 如果 keyword-detector 已经输出了推荐，此 Hook 不再重复
+# - 主要用于补充 keyword-detector 未覆盖的场景
 # ============================================================================
 
 # 配置
 STATE_DIR=".claude"
 REMINDER_STATE_FILE="$STATE_DIR/agent-reminder-state.json"
-COOLDOWN_SECONDS=300  # 5 分钟冷却期
+COOLDOWN_SECONDS=600  # 10 分钟冷却期（增加，避免打扰）
 
 # 获取用户输入
 user_input="${CLAUDE_USER_PROMPT:-}"
 
 # 如果输入为空，直接退出
 if [ -z "$user_input" ]; then
+    exit 0
+fi
+
+# 检查是否已经被 keyword-detector 覆盖（这些关键词 keyword-detector 已经处理）
+# 如果匹配这些关键词，keyword-detector 已经给出了更详细的提示，此处跳过
+if echo "$user_input" | grep -qiE '(愚公|移山|ultrawork|ulw|persist|yishan|yugong)'; then
+    exit 0
+fi
+if echo "$user_input" | grep -qiE '(扁鹊|bianque|debug|fix.*bug|报错|异常)'; then
+    exit 0
+fi
+if echo "$user_input" | grep -qiE '(墨子|mozi|security|安全|漏洞)'; then
+    exit 0
+fi
+if echo "$user_input" | grep -qiE '(孙子|sunzi|perf|性能|优化.*速度)'; then
     exit 0
 fi
 
