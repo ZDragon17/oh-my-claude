@@ -37,6 +37,25 @@ fi
 prompt_lower=$(echo "$prompt" | tr '[:upper:]' '[:lower:]' 2>/dev/null) || prompt_lower="$prompt"
 
 # ============================================================================
+# 第零优先级：停止/取消请求（用户明确要停止时）
+# ============================================================================
+
+# 检测用户想要停止当前任务
+# 注意：只在有活跃循环时才提供停止指引，否则不干扰
+if echo "$prompt_lower" | grep -qE '^(停止|取消|stop|cancel|不要了|算了|别做了|停下来|暂停|中断)$' || \
+   echo "$prompt_lower" | grep -qE '(停止.{0,5}(任务|执行|循环|工作)|取消.{0,5}(任务|执行|yishan|愚公)|stop.{0,5}(task|work|loop)|cancel.{0,5}(task|yishan))'; then
+    # 检查是否有活跃的愚公循环
+    if [ -f ".claude/yishan-loop.local.md" ] || [ -f ".claude/ralph-loop.local.md" ]; then
+        cat << 'EOF'
+{
+  "systemMessage": "\n\n🛑 **检测到停止请求**\n\n当前有活跃的愚公移山任务。\n\n**停止方式**:\n1. 执行: `rm -f .claude/yishan-loop.local.md`\n2. 然后说"任务已取消"\n\n**或者**:\n- 如果任务快完成了，可以继续等待\n- 使用 `/pause` 暂停并保存进度\n\n⚠️ 停止后当前进度会保留，可以稍后用 `/yishan-resume` 恢复。\n"
+}
+EOF
+        exit 0
+    fi
+fi
+
+# ============================================================================
 # 第一优先级：愚公移山模式（最高优先级，需要持续执行）
 # ============================================================================
 
@@ -200,7 +219,10 @@ fi
 # 第十二优先级：代码审查类
 # ============================================================================
 
-if echo "$prompt_lower" | grep -qE '(审查|code[-_]?review|review|cr|pr|pull[-_]?request|魏征|weizheng|谏|规范检查|代码评审)'; then
+# 注意：pr 需要作为独立词或在 pull request 上下文中，避免匹配 progress 等词
+if echo "$prompt_lower" | grep -qE '(审查|code[-_]?review|review|cr|pull[-_]?request|魏征|weizheng|谏|规范检查|代码评审)' || \
+   echo "$prompt_lower" | grep -qE '\bpr\b' || \
+   echo "$prompt_lower" | grep -qE '(提交|合并).{0,5}pr'; then
     cat << 'EOF'
 {
   "systemMessage": "\n\n🪞 **魏征审查提示**\n\n检测到代码审查相关需求，建议：\n- 使用 /weizheng 命令进入审查模式\n- 魏征擅长：代码审查、规范检查、最佳实践指导\n"
@@ -328,6 +350,23 @@ if echo "$prompt_lower" | grep -qE '(图片|图像|pdf|截图|扫描|image|pictu
     cat << 'EOF'
 {
   "systemMessage": "\n\n🖼️ **离娄多模态提示**\n\n检测到图像/PDF 分析需求，建议：\n- 使用 /lilou 命令进入多模态洞察模式\n- 离娄擅长：图像识别、PDF 解析、视觉内容理解\n"
+}
+EOF
+    exit 0
+fi
+
+# ============================================================================
+# 进度查询类：用户想看进度时
+# ============================================================================
+
+# 检测用户想要查看进度
+# 支持：进度、状态、显示进度、当前状态、show progress 等
+if echo "$prompt_lower" | grep -qE '^[[:space:]]*(进度|状态|show progress|current status|当前进度|当前状态)[[:space:]]*$' || \
+   echo "$prompt_lower" | grep -qE '(显示.{0,3}进度|查看.{0,3}(进度|状态)|show.{0,5}(progress|status)|what.*progress|现在.{0,3}(进度|状态)|任务.{0,3}(进度|状态))'; then
+    # 提示系统显示进度
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n📊 **进度查询**\n\n请使用 `mcp_todoread` 工具查看当前 TODO 列表，并以如下格式展示：\n\n```\n📊 进度: ████████░░░░░░░░ X% (已完成/总数)\n\n✅ 已完成:\n   • [已完成的任务]\n\n🔄 进行中:\n   • [当前任务] ← 当前\n\n⏳ 待完成:\n   • [剩余任务]\n```\n"
 }
 EOF
     exit 0
