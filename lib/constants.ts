@@ -37,18 +37,26 @@ function findPackageRoot(startDir: string): string | null {
  * 使用多种方法尝试定位
  */
 function getPackageRoot(): string {
-  // 方法 1: CommonJS __dirname (Jest 测试环境)
+  // 方法 1: CommonJS __dirname (Jest 测试环境和开发环境)
   if (typeof __dirname !== 'undefined' && __dirname) {
     const found = findPackageRoot(__dirname);
     if (found) return found;
   }
   
   // 方法 2: 从入口脚本路径查找 (npx/node 执行环境)
-  // process.argv[1] 是执行的脚本路径，如 /path/to/node_modules/claude-pangu/dist/scripts/cli.js
+  // 注意：npx 环境下 process.argv[1] 可能是符号链接，需要解析真实路径
   if (process.argv[1]) {
-    const scriptDir = path.dirname(process.argv[1]);
-    const found = findPackageRoot(scriptDir);
-    if (found) return found;
+    try {
+      const realPath = fs.realpathSync(process.argv[1]);
+      const scriptDir = path.dirname(realPath);
+      const found = findPackageRoot(scriptDir);
+      if (found) return found;
+    } catch {
+      // 如果 realpathSync 失败，尝试原始路径
+      const scriptDir = path.dirname(process.argv[1]);
+      const found = findPackageRoot(scriptDir);
+      if (found) return found;
+    }
   }
   
   // 方法 3: 从 process.cwd() 查找（开发环境）

@@ -18,14 +18,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.10] - 2026-01-23
+
+### 🐛 Fixed / 修复
+
+- **ESM/CommonJS 兼容性修复**: 修复 v2.1.9 仍存在的 npx 安装问题
+  - 问题：`import.meta` 在 CommonJS 环境（如 Jest）下是语法错误，无法通过 try-catch 捕获
+  - 修复：完全移除 `import.meta` 相关代码，改用纯 CommonJS 兼容方案
+  - 方案：优先使用 `__dirname`，其次使用 `fs.realpathSync(process.argv[1])` 解析符号链接
+  - 影响：2.1.0 - 2.1.9 版本的 npx 安装可能失败，commands 和 skills 未被复制
+
+---
+
 ## [2.1.9] - 2026-01-23
 
 ### 🐛 Fixed / 修复
 
-- **npx 安装失败修复**: 修复 `npx claude-pangu install` 命令无法正常执行的严重问题
+- **npx 安装失败修复**: 修复 `npx claude-pangu install` 命令无法正常执行的问题
   - 原因：`isMainModule` 检查过于严格，在 npx 符号链接环境下判断失败
   - 修复：增强主模块检测逻辑，支持 npx、全局安装、符号链接等多种场景
-  - 影响：2.1.0 - 2.1.8 版本的 npx 安装可能失败
 
 ---
 
