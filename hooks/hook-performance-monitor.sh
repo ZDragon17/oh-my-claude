@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # Hook 性能监控
 # 追踪各 Hook 的执行时间，识别性能瓶颈
 # 触发时机: PostToolUse (周期性检查)

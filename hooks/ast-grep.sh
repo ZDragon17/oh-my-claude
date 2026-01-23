@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ast-grep.sh - AST-Grep 结构化代码搜索工具
 # 基于 AST (抽象语法树) 的代码搜索和重构

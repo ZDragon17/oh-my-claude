@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Edit Error Recovery Hook
 # 功能：检测编辑工具错误并提供恢复建议
 # 处理常见的 Edit 工具失败场景

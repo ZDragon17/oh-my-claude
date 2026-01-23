@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # task-checkpointing.sh - 任务断点续传管理器
 # 解决 Claude 上下文限制，实现长任务的智能断点和恢复

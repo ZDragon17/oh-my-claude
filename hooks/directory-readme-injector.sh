@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Directory README Injector Hook
 # 功能：检测当前目录的 README.md 并将关键信息注入上下文
 # 帮助 Agent 快速理解项目结构和约定

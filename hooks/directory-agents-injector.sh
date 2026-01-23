@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # directory-agents-injector.sh - 目录特定代理注入器
 # 根据当前工作目录自动注入相关的 Agent 配置

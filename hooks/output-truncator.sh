@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # output-truncator.sh - 输出管理和截断器
 # 智能截断大型输出，防止令牌溢出

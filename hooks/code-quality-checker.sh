@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # code-quality-checker.sh - 代码质量检查器
 # 包含 comment-checker 和 thinking-block-validator 功能

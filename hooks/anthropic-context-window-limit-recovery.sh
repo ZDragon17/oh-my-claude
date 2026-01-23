@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Anthropic Context Window Limit Recovery Hook
 # 功能：检测上下文窗口限制错误并提供恢复策略
 # 帮助在达到上下文限制时优雅地恢复工作

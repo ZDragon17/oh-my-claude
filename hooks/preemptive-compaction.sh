@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # preemptive-compaction.sh - 抢占式上下文压缩
 # 在达到令牌限制之前主动压缩上下文，避免硬性截断

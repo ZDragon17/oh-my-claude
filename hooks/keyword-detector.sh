@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # 关键词检测器 - UserPromptSubmit Hook
 # 检测用户输入中的关键词并注入相应的上下文
 #

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # agent-collaboration.sh - 多 Agent 协作协议处理器
 # 处理 @agent 调用语法，支持多 Agent 间的无缝协作

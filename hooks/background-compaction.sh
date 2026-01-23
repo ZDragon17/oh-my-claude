@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Background Compaction Hook
 # 功能：检测后台任务数量并建议清理完成的任务
 # 防止后台任务堆积导致资源浪费

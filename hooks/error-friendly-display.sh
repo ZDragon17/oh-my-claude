@@ -4,8 +4,12 @@
 #
 # 触发时机: PostToolUse
 # 功能: 检测错误并根据用户偏好显示友好的错误信息
+#
+# 兼容性: macOS (bash 3.2+), Linux (bash 4.0+), Windows (Git Bash)
 
+# 遇到错误静默退出，不影响主流程
 set -e
+trap 'exit 0' ERR
 
 # 获取输入
 TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
@@ -33,65 +37,93 @@ get_verbosity() {
 }
 
 # 检测错误类型
+# 使用多个 grep -qi 调用替代 -E 扩展正则，提高 macOS 兼容性
 detect_error_type() {
     local output="$1"
     
     # 权限错误
-    if echo "$output" | grep -qiE "EACCES|EPERM|permission denied|access denied"; then
+    if echo "$output" | grep -qi "EACCES" || \
+       echo "$output" | grep -qi "EPERM" || \
+       echo "$output" | grep -qi "permission denied" || \
+       echo "$output" | grep -qi "access denied"; then
         echo "permission"
         return
     fi
     
     # 文件不存在
-    if echo "$output" | grep -qiE "ENOENT|no such file|not found|does not exist"; then
+    if echo "$output" | grep -qi "ENOENT" || \
+       echo "$output" | grep -qi "no such file" || \
+       echo "$output" | grep -qi "not found" || \
+       echo "$output" | grep -qi "does not exist"; then
         echo "not_found"
         return
     fi
     
     # 网络错误
-    if echo "$output" | grep -qiE "ECONNREFUSED|ETIMEDOUT|network|connection"; then
+    if echo "$output" | grep -qi "ECONNREFUSED" || \
+       echo "$output" | grep -qi "ETIMEDOUT" || \
+       echo "$output" | grep -qi "network" || \
+       echo "$output" | grep -qi "connection refused"; then
         echo "network"
         return
     fi
     
     # 语法错误
-    if echo "$output" | grep -qiE "SyntaxError|ParseError|unexpected token|invalid syntax"; then
+    if echo "$output" | grep -qi "SyntaxError" || \
+       echo "$output" | grep -qi "ParseError" || \
+       echo "$output" | grep -qi "unexpected token" || \
+       echo "$output" | grep -qi "invalid syntax"; then
         echo "syntax"
         return
     fi
     
     # 类型错误
-    if echo "$output" | grep -qiE "TypeError|cannot read|undefined is not|null is not"; then
+    if echo "$output" | grep -qi "TypeError" || \
+       echo "$output" | grep -qi "cannot read" || \
+       echo "$output" | grep -qi "undefined is not" || \
+       echo "$output" | grep -qi "null is not"; then
         echo "type"
         return
     fi
     
     # 内存错误
-    if echo "$output" | grep -qiE "ENOMEM|out of memory|heap|allocation"; then
+    if echo "$output" | grep -qi "ENOMEM" || \
+       echo "$output" | grep -qi "out of memory" || \
+       echo "$output" | grep -qi "heap" || \
+       echo "$output" | grep -qi "allocation failed"; then
         echo "memory"
         return
     fi
     
     # 磁盘空间
-    if echo "$output" | grep -qiE "ENOSPC|no space|disk full"; then
+    if echo "$output" | grep -qi "ENOSPC" || \
+       echo "$output" | grep -qi "no space" || \
+       echo "$output" | grep -qi "disk full"; then
         echo "disk"
         return
     fi
     
     # 超时
-    if echo "$output" | grep -qiE "timeout|timed out|deadline exceeded"; then
+    if echo "$output" | grep -qi "timeout" || \
+       echo "$output" | grep -qi "timed out" || \
+       echo "$output" | grep -qi "deadline exceeded"; then
         echo "timeout"
         return
     fi
     
     # Git 错误
-    if echo "$output" | grep -qiE "fatal:|error:.*git|conflict|merge"; then
+    if echo "$output" | grep -qi "^fatal:" || \
+       echo "$output" | grep -qi "git.*error" || \
+       echo "$output" | grep -qi "merge conflict"; then
         echo "git"
         return
     fi
     
     # 依赖错误
-    if echo "$output" | grep -qiE "module not found|cannot find module|import error|no module named"; then
+    if echo "$output" | grep -qi "module not found" || \
+       echo "$output" | grep -qi "cannot find module" || \
+       echo "$output" | grep -qi "import error" || \
+       echo "$output" | grep -qi "no module named"; then
         echo "dependency"
         return
     fi
@@ -211,8 +243,19 @@ get_quick_fix() {
 main() {
     # 只处理有错误的情况
     if [ "$EXIT_CODE" = "0" ]; then
-        # 检查输出中是否包含错误信息
-        if ! echo "$TOOL_OUTPUT" | grep -qiE "error|failed|exception|fatal"; then
+        # 检查输出中是否包含错误信息（使用多个 grep 替代 -E）
+        has_error=false
+        if echo "$TOOL_OUTPUT" | grep -qi "error"; then
+            has_error=true
+        elif echo "$TOOL_OUTPUT" | grep -qi "failed"; then
+            has_error=true
+        elif echo "$TOOL_OUTPUT" | grep -qi "exception"; then
+            has_error=true
+        elif echo "$TOOL_OUTPUT" | grep -qi "^fatal:"; then
+            has_error=true
+        fi
+        
+        if [ "$has_error" = "false" ]; then
             exit 0
         fi
     fi

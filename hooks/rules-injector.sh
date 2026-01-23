@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # rules-injector.sh - 规则注入系统
 # 根据项目和目录自动注入自定义规则

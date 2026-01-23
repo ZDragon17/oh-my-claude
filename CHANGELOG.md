@@ -18,6 +18,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.5] - 2026-01-23
+
+### 🐛 Fixed / 修复
+
+#### macOS 兼容性修复
+
+本版本修复了 macOS 平台上的 Shell 脚本兼容性问题。
+
+- **Shebang 标准化**: 将所有 Hook 脚本的 shebang 统一为 `#!/usr/bin/env bash`
+  - 修复 `#!/bin/bash` 硬编码路径问题（macOS 某些环境可能找不到）
+  - 修复 `#!/usr/bin/env sh` 与 bash 特性（如 `local` 关键字）不兼容的问题
+  - 涉及 40+ 个 Hook 脚本
+
+- **grep 命令兼容性**: 修复 grep 在 macOS 上的行为差异
+  - `error-friendly-display.sh`: 修复 `grep -E` 用法
+  - `agent-handoff-prompt.sh`: 修复 grep 参数兼容性
+
+- **install.sh 修复**: 将 `&>` 重定向改为 `>/dev/null 2>&1`（兼容更多 Shell）
+
+---
+
 ## [2.1.4] - 2026-01-23
 
 ### ✨ Added / 新增

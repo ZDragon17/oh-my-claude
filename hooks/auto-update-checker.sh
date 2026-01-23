@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # auto-update-checker.sh - 自动更新检查器
 # 检查 oh-my-claude 是否有新版本可用

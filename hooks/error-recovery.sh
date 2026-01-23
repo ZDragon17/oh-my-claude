@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # error-recovery.sh - 任务恢复和错误重试机制
 # 实现智能错误检测、重试策略和任务恢复

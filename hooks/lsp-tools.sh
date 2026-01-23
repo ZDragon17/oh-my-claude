@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # lsp-tools.sh - LSP (Language Server Protocol) 工具集成
 # 提供类型信息、符号定义、引用查找等 IDE 级别的代码分析能力

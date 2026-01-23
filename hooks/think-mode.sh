@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # think-mode.sh - 思维模式 Hook
 # 启用深度思考和推理模式，增强复杂问题分析

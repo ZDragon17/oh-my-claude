@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # context-compression.sh - 智能上下文压缩管理器
 # 解决 Claude 上下文限制，实现智能信息压缩和关键保留

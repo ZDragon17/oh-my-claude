@@ -4,27 +4,11 @@
 #
 # 触发时机: PostToolUse (Task 工具完成后)
 # 功能: 根据完成的 Agent 类型，智能推荐下一步操作
+#
+# 兼容性: macOS (bash 3.2+), Linux (bash 4.0+), Windows (Git Bash)
 
-# 错误处理设置
-set -o pipefail
-
-# 超时保护 (最大执行时间 1.5 秒)
-TIMEOUT_SECONDS=1.5
-
-# 超时处理函数
-timeout_handler() {
-    # 静默退出，不影响用户体验
-    exit 0
-}
-
-# 设置超时 trap (如果支持)
-if command -v timeout >/dev/null 2>&1; then
-    # 使用 timeout 命令包装主逻辑
-    TIMEOUT_AVAILABLE=true
-else
-    # 没有 timeout 命令，使用简单的执行
-    TIMEOUT_AVAILABLE=false
-fi
+# 错误捕获：任何错误都静默退出，不影响用户体验
+trap 'exit 0' ERR EXIT
 
 # 获取工具输出（带默认值保护）
 TOOL_OUTPUT="${CLAUDE_TOOL_OUTPUT:-}"
@@ -37,7 +21,8 @@ if [ -z "$TOOL_OUTPUT" ]; then
 fi
 
 # 安全检查：如果工具输出过长（超过 50KB），跳过处理以避免性能问题
-OUTPUT_LENGTH=${#TOOL_OUTPUT}
+# 使用 wc -c 替代 ${#var}，更兼容老版本
+OUTPUT_LENGTH=$(printf '%s' "$TOOL_OUTPUT" | wc -c | tr -d ' ')
 if [ "$OUTPUT_LENGTH" -gt 51200 ]; then
     exit 0
 fi
@@ -379,39 +364,70 @@ EOF
 }
 
 # 检测最后使用的 Agent（从输出中推断）
+# 使用多个 grep 调用替代 \| 语法，提高 macOS 兼容性
 detect_agent() {
     local output="$1"
     
-    # 检测常见的 Agent 标识
-    if echo "$output" | grep -qi "扁鹊\|bianque\|诊断\|望闻问切"; then
+    # 检测常见的 Agent 标识（每个 Agent 使用独立的条件判断）
+    if echo "$output" | grep -qi "扁鹊" || \
+       echo "$output" | grep -qi "bianque" || \
+       echo "$output" | grep -qi "望闻问切"; then
         echo "bianque"
-    elif echo "$output" | grep -qi "悟空\|wukong\|探索\|火眼金睛"; then
+    elif echo "$output" | grep -qi "悟空" || \
+         echo "$output" | grep -qi "wukong" || \
+         echo "$output" | grep -qi "火眼金睛"; then
         echo "wukong"
-    elif echo "$output" | grep -qi "诸葛\|zhuge\|架构\|战略"; then
+    elif echo "$output" | grep -qi "诸葛" || \
+         echo "$output" | grep -qi "zhuge" || \
+         echo "$output" | grep -qi "架构设计"; then
         echo "zhuge"
-    elif echo "$output" | grep -qi "鲁班\|luban\|实现\|巧匠"; then
+    elif echo "$output" | grep -qi "鲁班" || \
+         echo "$output" | grep -qi "luban" || \
+         echo "$output" | grep -qi "精工巧匠"; then
         echo "luban"
-    elif echo "$output" | grep -qi "包拯\|baozheng\|测试\|TDD"; then
+    elif echo "$output" | grep -qi "包拯" || \
+         echo "$output" | grep -qi "baozheng" || \
+         echo "$output" | grep -qi "测试专家"; then
         echo "baozheng"
-    elif echo "$output" | grep -qi "魏征\|weizheng\|审查\|review"; then
+    elif echo "$output" | grep -qi "魏征" || \
+         echo "$output" | grep -qi "weizheng" || \
+         echo "$output" | grep -qi "代码审查"; then
         echo "weizheng"
-    elif echo "$output" | grep -qi "墨子\|mozi\|安全\|漏洞"; then
+    elif echo "$output" | grep -qi "墨子" || \
+         echo "$output" | grep -qi "mozi" || \
+         echo "$output" | grep -qi "安全审计"; then
         echo "mozi"
-    elif echo "$output" | grep -qi "孙子\|sunzi\|性能\|优化"; then
+    elif echo "$output" | grep -qi "孙子" || \
+         echo "$output" | grep -qi "sunzi" || \
+         echo "$output" | grep -qi "性能优化"; then
         echo "sunzi"
-    elif echo "$output" | grep -qi "李白\|libai\|需求\|用户故事"; then
+    elif echo "$output" | grep -qi "李白" || \
+         echo "$output" | grep -qi "libai" || \
+         echo "$output" | grep -qi "需求分析"; then
         echo "libai"
-    elif echo "$output" | grep -qi "司马迁\|simaqian\|文档\|记录"; then
+    elif echo "$output" | grep -qi "司马迁" || \
+         echo "$output" | grep -qi "simaqian" || \
+         echo "$output" | grep -qi "文档撰写"; then
         echo "simaqian"
-    elif echo "$output" | grep -qi "仓颉\|cangjie\|数据库\|SQL"; then
+    elif echo "$output" | grep -qi "仓颉" || \
+         echo "$output" | grep -qi "cangjie" || \
+         echo "$output" | grep -qi "数据库设计"; then
         echo "cangjie"
-    elif echo "$output" | grep -qi "顾恺之\|gukaizhi\|UI\|界面"; then
+    elif echo "$output" | grep -qi "顾恺之" || \
+         echo "$output" | grep -qi "gukaizhi" || \
+         echo "$output" | grep -qi "界面美学"; then
         echo "gukaizhi"
-    elif echo "$output" | grep -qi "李冰\|libing\|DevOps\|部署"; then
+    elif echo "$output" | grep -qi "李冰" || \
+         echo "$output" | grep -qi "libing" || \
+         echo "$output" | grep -qi "DevOps"; then
         echo "libing"
-    elif echo "$output" | grep -qi "嫦娥\|change\|云\|serverless"; then
+    elif echo "$output" | grep -qi "嫦娥" || \
+         echo "$output" | grep -qi "change" || \
+         echo "$output" | grep -qi "云服务"; then
         echo "change"
-    elif echo "$output" | grep -qi "老子\|laozi\|简化\|至简"; then
+    elif echo "$output" | grep -qi "老子" || \
+         echo "$output" | grep -qi "laozi" || \
+         echo "$output" | grep -qi "大道至简"; then
         echo "laozi"
     else
         echo "unknown"
@@ -435,8 +451,8 @@ main() {
     fi
 }
 
-# 错误捕获：如果发生错误，静默退出
-trap 'exit 0' ERR
+# 移除 EXIT trap 以允许正常输出
+trap - EXIT
 
 # 执行主函数
 main

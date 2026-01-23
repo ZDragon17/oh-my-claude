@@ -1,8 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # oh-my-claude 一键安装脚本
 # 用法: curl -fsSL https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.sh | bash
 # 或者: wget -qO- https://raw.githubusercontent.com/ZDragon17/oh-my-claude/main/scripts/install.sh | bash
+#
+# 兼容性: macOS (bash 3.2+), Linux (bash 4.0+), Windows (Git Bash)
 
 set -e
 
@@ -41,13 +43,13 @@ show_banner() {
 check_dependencies() {
     info "检查依赖..."
 
-    # 检查 git
-    if ! command -v git &> /dev/null; then
+    # 检查 git (使用 >/dev/null 2>&1 替代 &> 以兼容 bash 3.2)
+    if ! command -v git >/dev/null 2>&1; then
         error "需要 git，请先安装: https://git-scm.com/"
     fi
 
     # 检查 Claude Code
-    if ! command -v claude &> /dev/null; then
+    if ! command -v claude >/dev/null 2>&1; then
         warn "未检测到 Claude Code CLI"
         warn "请先安装 Claude Code: https://claude.ai/code"
         warn "安装后重新运行此脚本"
