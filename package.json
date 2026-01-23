@@ -1,6 +1,6 @@
 {
   "name": "claude-pangu",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture (原名 oh-my-claude)",
   "keywords": [
     "claude-code",
@@ -57,7 +57,9 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --reporters=default --reporters=jest-junit",
     "ci": "npm run type-check && npm run lint && npm run test:coverage",
-    "prepare": "npm run build"
+    "sync-version": "node scripts/sync-version.cjs",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run sync-version"
   },
   "devDependencies": {
     "@types/jest": "^29.5.8",

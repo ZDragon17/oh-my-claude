@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.3] - 2026-01-23
+
+### 🔧 Fixed / 修复
+
+- **修复版本检测 bug**: `.claude-plugin/plugin.json` 版本号未同步导致更新命令显示错误的已安装版本
+  - 添加 `prepublishOnly` 钩子自动同步版本号到 plugin.json
+  - 新增 `scripts/sync-version.cjs` 版本同步脚本
+
+---
+
 ## [2.1.2] - 2026-01-23
 
 ### 📝 Changed / 变更
