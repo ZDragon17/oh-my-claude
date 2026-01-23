@@ -18,6 +18,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.24] - 2026-01-23
+
+### ✨ Added / 新增
+
+- **会话持久化 `/session`**: 跨会话保存和恢复工作进度
+  - `save [name]` - 保存当前会话状态（TODO、上下文摘要、关键决策）
+  - `list` - 列出所有可恢复的会话
+  - `resume [id]` - 恢复指定会话
+  - `info [id]` - 查看会话详情
+  - `delete [id]` - 删除会话
+  - 别名: `/会话`, `/ses`
+
+- **上下文管理 `/context`**: 监控和优化上下文使用
+  - `status` - 显示上下文使用率和组成分析
+  - `compact` - 压缩对话历史释放空间
+  - `clean` - 清理缓存和临时数据
+  - `export` - 导出重要信息到文件
+  - 多级预警: 70% 提示 → 85% 警告 → 95% 紧急
+  - 别名: `/上下文`, `/ctx`
+
+- **并行 Agent 执行 `/parallel`**: 同时运行多个 Agent
+  - 支持 `@agent` 语法指定多个 Agent
+  - 推荐组合: 探索组、质量组、优化组
+  - 自动汇总各 Agent 执行结果
+  - 别名: `/并行`, `/concurrent`, `/prl`
+
+- **智能上下文预警 Hook**: `context-smart-alert.sh`
+  - 可视化进度条显示使用率
+  - 与 `/context` 命令集成
+
+### ⚙️ Changed / 变更
+
+- **启用并行执行**: `hooks.json` 中 `parallel_execution` 设为 `true`
+- **最大并行数**: 新增 `max_parallel_agents: 3` 配置
+
+---
+
+## [2.0.23] - 2026-01-23
+
+### 🐛 Fixed / 修复
+
+- **Windows 通知兼容**: 修复 Windows 平台上的通知功能
+- **进度条 Windows 兼容**: 修复进度条在 Windows 上的显示问题
+
+---
+
 ## [2.0.22] - 2026-01-22
 
 ### ✨ Added / 新增
