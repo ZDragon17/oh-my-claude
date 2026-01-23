@@ -246,6 +246,24 @@ cat ~/.claude/plugins/oh-my-claude/package.json 2>/dev/null | grep '"version"'
 
 ---
 
+## 深度诊断
+
+如果验证发现问题但修复无效，或需要更详细的系统分析：
+
+```bash
+# 运行深度诊断
+/diagnose
+```
+
+`/diagnose` 命令提供更全面的检查，包括：
+- 环境配置检查
+- 依赖完整性验证
+- Hook 性能分析
+- MCP 服务器状态
+- 权限和路径问题诊断
+
+---
+
 ## 别名
 
 - `/verify` - 主命令

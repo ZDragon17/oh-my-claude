@@ -336,6 +336,24 @@
         "priority": "low",
         "windows_compatible": true,
         "description": "Hook 性能监控 - 定期清理旧日志"
+      },
+      {
+        "type": "command",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/agent-handoff-prompt.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "Agent 交接提示 - Agent 任务完成后智能推荐下一步操作"
+      },
+      {
+        "type": "command",
+        "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/error-friendly-display.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "友好错误显示 - 检测错误并提供分层的用户友好信息"
       }
     ]
   },

@@ -18,6 +18,94 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.4] - 2026-01-23
+
+### ✨ Added / 新增
+
+#### 用户体验优化 - 第三轮
+
+本版本专注于提升用户体验，新增多个实用功能和系统优化。
+
+##### P0 功能 - 核心增强
+
+- **工作流模板系统 `/workflow`**: 预定义的开发工作流模板
+  - 内置 6 种工作流：feature（功能开发）、bugfix（问题修复）、refactor（重构）、security（安全审计）、review（代码审查）、deploy（部署发布）
+  - 支持自定义工作流：`/workflow save <name>`
+  - 多阶段执行和进度追踪
+  - 别名：`/工作流`、`/wf`
+
+- **Agent 自动交接提示 Hook**: 智能下一步建议
+  - Agent 完成任务后自动推荐下一步操作
+  - 根据任务类型推荐合适的后续 Agent
+  - 新增 `hooks/agent-handoff-prompt.sh`
+
+##### P1 功能 - 效率增强
+
+- **进度面板增强 `/progress`**: 新增多种可视化模式
+  - 时间线模式：显示任务执行历史
+  - 协作视图：显示各 Agent 工作状态
+  - 质量仪表盘：显示代码质量指标
+  - 工作流进度：显示当前工作流阶段
+  - 上下文状态：显示上下文使用率
+
+- **用户偏好设置 `/preferences`**: 个性化配置系统
+  - 设置默认 Agent、语言偏好、输出详细度
+  - 自动学习用户使用模式
+  - 支持导入导出配置
+  - 新增 `skills/preferences/SKILL.md`
+  - 别名：`/偏好`、`/prefs`、`/settings`
+
+- **友好错误显示系统**: 三级错误信息展示
+  - 简洁模式：一句话问题描述 + 快速修复按钮
+  - 标准模式：问题描述 + 可能原因 + 推荐操作
+  - 详细模式：完整错误信息 + 堆栈 + 上下文
+  - 新增 `skills/error-friendly/SKILL.md`
+  - 新增 `hooks/error-friendly-display.sh` PostToolUse Hook
+
+##### P2 功能 - 辅助工具
+
+- **插件自诊断 `/diagnose`**: 全面健康检查
+  - 核心组件诊断：插件目录、配置文件完整性
+  - Agent 可用性诊断：检查所有 Agent 是否可加载
+  - Hook 状态诊断：配置有效性、执行权限
+  - 命令同步诊断：检查命令是否正确安装
+  - 技能模块诊断：Skill 加载状态
+  - MCP 服务器诊断：MCP 配置状态
+  - 更新状态诊断：检查是否有新版本
+  - 支持 `--quick`（快速诊断）、`--fix`（自动修复）、`--json`（JSON 输出）
+  - 别名：`/诊断`、`/health-check`、`/doctor`
+
+- **交互式教程增强 `/tutorial`**: 完善新手引导
+  - 新增渐进式学习设计理念
+  - 新增教程 5（团队协作）和教程 6（自定义 Agent）
+  - 新增教程进度追踪功能
+  - 新增快速入口：`/tutorial quick`（5 分钟速成）
+  - 新增命令速查：`/tutorial commands`
+  - 新增专家介绍：`/tutorial agents`
+  - 支持互动反馈指令
+  - 别名：`/教程`、`/学习`、`/guide`
+
+### 📋 新增文件
+
+| 文件 | 功能 |
+|------|------|
+| `commands/workflow.md` | 工作流模板命令 |
+| `commands/preferences.md` | 用户偏好设置命令 |
+| `commands/diagnose.md` | 插件自诊断命令 |
+| `skills/workflow/SKILL.md` | 工作流模板技能 |
+| `skills/workflow/workflows.json` | 内置工作流定义（6 种工作流配置） |
+| `skills/preferences/SKILL.md` | 用户偏好技能 |
+| `skills/error-friendly/SKILL.md` | 友好错误显示技能 |
+| `hooks/agent-handoff-prompt.sh` | Agent 交接提示 Hook |
+
+### 📝 Modified / 修改
+
+- **commands/progress.md**: 添加时间线、协作视图、质量仪表盘等新模式
+- **commands/tutorial.md**: 添加 YAML frontmatter、新教程内容、进度追踪
+- **hooks/hooks.json**: 添加 agent-handoff-prompt.sh Hook 注册
+
+---
+
 ## [2.1.3] - 2026-01-23
 
 ### 🔧 Fixed / 修复

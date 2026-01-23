@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "description": "oh-my-claude 内置工作流定义",
+  "workflows": {
+    "feature": {
+      "name": "feature",
+      "displayName": "新功能开发",
+      "icon": "🚀",
+      "description": "从需求到上线的完整功能开发流程",
+      "estimatedTime": "30分钟",
+      "stages": [
+        {
+          "id": "requirement",
+          "name": "需求分析",
+          "agent": "libai",
+          "promptTemplate": "分析以下需求，提取用户故事和验收标准：\n\n{task}\n\n请输出：\n1. 用户故事列表 (Given-When-Then 格式)\n2. 验收标准\n3. 优先级建议",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["user_stories", "acceptance_criteria"]
+        },
+        {
+          "id": "design",
+          "name": "架构设计",
+          "agent": "zhuge",
+          "promptTemplate": "基于以下需求分析结果，设计技术方案：\n\n{previous_output}\n\n请输出：\n1. 技术方案\n2. 风险评估\n3. 实现路径",
+          "optional": true,
+          "condition": "complexity >= 'medium'",
+          "timeout": 600,
+          "outputs": ["technical_approach", "risk_assessment"]
+        },
+        {
+          "id": "implementation",
+          "name": "代码实现",
+          "agent": "yishan",
+          "promptTemplate": "根据技术方案，实现以下功能：\n\n{task}\n\n技术方案：\n{previous_output}\n\n请确保代码质量，包含适当的注释和错误处理。",
+          "optional": false,
+          "timeout": 1800,
+          "outputs": ["code_files", "implementation_notes"]
+        },
+        {
+          "id": "testing",
+          "name": "测试验证",
+          "agent": "baozheng",
+          "promptTemplate": "为以下实现编写测试用例并验证：\n\n{previous_output}\n\n请输出：\n1. 单元测试\n2. 测试覆盖率报告\n3. 发现的问题（如有）",
+          "optional": false,
+          "timeout": 600,
+          "outputs": ["test_files", "coverage_report"]
+        },
+        {
+          "id": "review",
+          "name": "代码审查",
+          "agent": "weizheng",
+          "promptTemplate": "审查以下代码实现：\n\n{implementation_output}\n\n请检查：\n1. 代码规范\n2. 最佳实践\n3. 潜在问题\n4. 改进建议",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["review_report", "suggestions"]
+        }
+      ],
+      "options": {
+        "allowSkip": true,
+        "autoRetry": true,
+        "maxRetries": 2,
+        "generateReport": true,
+        "saveCheckpoints": true
+      }
+    },
+    "bugfix": {
+      "name": "bugfix",
+      "displayName": "Bug 修复",
+      "icon": "🐛",
+      "description": "从问题诊断到验证修复的完整流程",
+      "estimatedTime": "15分钟",
+      "stages": [
+        {
+          "id": "diagnosis",
+          "name": "问题诊断",
+          "agent": "bianque",
+          "promptTemplate": "诊断以下问题：\n\n{task}\n\n请使用望闻问切方法：\n1. 望：观察错误信息\n2. 闻：分析上下文\n3. 问：识别关键信息\n4. 切：定位根因",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["diagnosis", "root_cause"]
+        },
+        {
+          "id": "locate",
+          "name": "代码定位",
+          "agent": "wukong",
+          "promptTemplate": "根据诊断结果定位问题代码：\n\n诊断：{previous_output}\n\n请追踪调用链，找到问题发生的具体位置。",
+          "optional": true,
+          "condition": "needs_code_exploration",
+          "timeout": 300,
+          "outputs": ["problem_location", "call_chain"]
+        },
+        {
+          "id": "fix",
+          "name": "修复实现",
+          "agent": "luban",
+          "promptTemplate": "修复以下问题：\n\n问题位置：{previous_output}\n根因：{root_cause}\n\n请遵循最小改动原则，保持代码稳定。",
+          "optional": false,
+          "timeout": 600,
+          "outputs": ["fix_code", "change_description"]
+        },
+        {
+          "id": "verify",
+          "name": "测试验证",
+          "agent": "baozheng",
+          "promptTemplate": "验证修复是否有效：\n\n修复内容：{previous_output}\n原问题：{task}\n\n请添加回归测试防止复发。",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["verification_result", "regression_tests"]
+        }
+      ],
+      "options": {
+        "allowSkip": false,
+        "autoRetry": true,
+        "maxRetries": 3,
+        "generateReport": true,
+        "saveCheckpoints": true
+      }
+    },
+    "refactor": {
+      "name": "refactor",
+      "displayName": "代码重构",
+      "icon": "♻️",
+      "description": "安全、系统化的代码重构流程",
+      "estimatedTime": "25分钟",
+      "stages": [
+        {
+          "id": "explore",
+          "name": "代码探索",
+          "agent": "wukong",
+          "promptTemplate": "分析以下代码，理解其结构和依赖：\n\n{task}\n\n请输出：\n1. 代码结构分析\n2. 依赖关系图\n3. 影响范围评估",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["code_analysis", "dependencies", "impact_scope"]
+        },
+        {
+          "id": "simplify",
+          "name": "简化分析",
+          "agent": "laozi",
+          "promptTemplate": "基于代码分析，识别可简化的部分：\n\n{previous_output}\n\n请遵循 KISS、DRY、YAGNI 原则提出建议。",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["simplification_suggestions", "principles_applied"]
+        },
+        {
+          "id": "implement",
+          "name": "重构实施",
+          "agent": "luban",
+          "promptTemplate": "执行以下重构：\n\n简化建议：{previous_output}\n\n请分步实施，每步保持功能等价。",
+          "optional": false,
+          "timeout": 900,
+          "outputs": ["refactored_code", "change_log"]
+        },
+        {
+          "id": "review",
+          "name": "代码审查",
+          "agent": "weizheng",
+          "promptTemplate": "审查重构结果：\n\n重构前：{original_code}\n重构后：{previous_output}\n\n请确认代码质量提升。",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["review_result", "quality_improvement"]
+        },
+        {
+          "id": "test",
+          "name": "测试验证",
+          "agent": "baozheng",
+          "promptTemplate": "运行测试验证重构：\n\n变更内容：{change_log}\n\n确保无功能回归。",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["test_results", "regression_check"]
+        }
+      ],
+      "options": {
+        "allowSkip": false,
+        "autoRetry": true,
+        "maxRetries": 2,
+        "generateReport": true,
+        "saveCheckpoints": true,
+        "requireTestPass": true
+      }
+    },
+    "security": {
+      "name": "security",
+      "displayName": "安全审计",
+      "icon": "🔒",
+      "description": "全面的代码安全检查流程",
+      "estimatedTime": "20分钟",
+      "stages": [
+        {
+          "id": "scan",
+          "name": "代码扫描",
+          "agent": "wukong",
+          "promptTemplate": "扫描以下代码目录，识别潜在安全风险点：\n\n{task}\n\n重点关注：输入处理、认证授权、数据存储、API 调用",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["risk_points", "scan_summary"]
+        },
+        {
+          "id": "audit",
+          "name": "安全审计",
+          "agent": "mozi",
+          "promptTemplate": "深度审计以下风险点：\n\n{previous_output}\n\n请检查：\n1. SQL 注入\n2. XSS\n3. CSRF\n4. 认证漏洞\n5. 敏感数据泄露",
+          "optional": false,
+          "timeout": 600,
+          "outputs": ["vulnerabilities", "severity_ratings"]
+        },
+        {
+          "id": "recommend",
+          "name": "修复建议",
+          "agent": "mozi",
+          "promptTemplate": "为以下漏洞提供修复方案：\n\n{previous_output}\n\n按风险等级排序，提供具体修复代码示例。",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["fix_recommendations", "priority_order"]
+        },
+        {
+          "id": "fix",
+          "name": "实施修复",
+          "agent": "luban",
+          "promptTemplate": "实施以下安全修复：\n\n{previous_output}\n\n遵循最小权限原则和安全最佳实践。",
+          "optional": true,
+          "condition": "user_confirms_fix",
+          "timeout": 600,
+          "outputs": ["fixed_code", "security_improvements"]
+        }
+      ],
+      "options": {
+        "allowSkip": false,
+        "autoRetry": false,
+        "generateReport": true,
+        "saveCheckpoints": true,
+        "requireUserConfirmation": true
+      }
+    },
+    "review": {
+      "name": "review",
+      "displayName": "代码审查",
+      "icon": "📚",
+      "description": "全面的代码质量审查",
+      "estimatedTime": "15分钟",
+      "stages": [
+        {
+          "id": "parallel_review",
+          "name": "并行审查",
+          "parallel": true,
+          "tasks": [
+            {
+              "id": "code_style",
+              "name": "代码规范检查",
+              "agent": "weizheng",
+              "promptTemplate": "检查代码规范：\n\n{task}\n\n检查项：命名规范、代码结构、注释质量",
+              "outputs": ["style_issues"]
+            },
+            {
+              "id": "security_check",
+              "name": "安全漏洞检查",
+              "agent": "mozi",
+              "promptTemplate": "快速安全检查：\n\n{task}\n\n检查常见安全问题",
+              "outputs": ["security_issues"]
+            },
+            {
+              "id": "performance_check",
+              "name": "性能问题检查",
+              "agent": "sunzi",
+              "promptTemplate": "性能分析：\n\n{task}\n\n识别性能瓶颈和优化机会",
+              "outputs": ["performance_issues"]
+            },
+            {
+              "id": "test_coverage",
+              "name": "测试覆盖检查",
+              "agent": "baozheng",
+              "promptTemplate": "测试覆盖率分析：\n\n{task}\n\n评估测试完整性",
+              "outputs": ["coverage_issues"]
+            }
+          ],
+          "timeout": 600,
+          "outputs": ["all_review_results"]
+        },
+        {
+          "id": "summary",
+          "name": "汇总报告",
+          "agent": "simaqian",
+          "promptTemplate": "汇总以下审查结果，生成统一报告：\n\n{previous_output}\n\n按优先级排序，提供改进建议。",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["review_report", "action_items"]
+        }
+      ],
+      "options": {
+        "allowSkip": false,
+        "generateReport": true,
+        "saveCheckpoints": false
+      }
+    },
+    "deploy": {
+      "name": "deploy",
+      "displayName": "部署流程",
+      "icon": "🚀",
+      "description": "从代码到部署的完整流程",
+      "estimatedTime": "30分钟",
+      "stages": [
+        {
+          "id": "pre_check",
+          "name": "代码检查",
+          "agent": "weizheng",
+          "promptTemplate": "部署前代码审查：\n\n{task}\n\n确保代码符合发布标准。",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["pre_check_result"]
+        },
+        {
+          "id": "test",
+          "name": "测试验证",
+          "agent": "baozheng",
+          "promptTemplate": "运行完整测试套件：\n\n环境：{task}\n\n确保所有测试通过。",
+          "optional": false,
+          "timeout": 600,
+          "outputs": ["test_results", "coverage"]
+        },
+        {
+          "id": "build",
+          "name": "构建打包",
+          "agent": "libing",
+          "promptTemplate": "执行构建流程：\n\n环境：{task}\n\n生成部署产物。",
+          "optional": false,
+          "timeout": 600,
+          "outputs": ["build_artifacts", "build_log"]
+        },
+        {
+          "id": "deploy",
+          "name": "部署执行",
+          "agent": "libing",
+          "promptTemplate": "执行部署：\n\n目标环境：{task}\n构建产物：{previous_output}\n\n监控部署状态。",
+          "optional": false,
+          "timeout": 900,
+          "outputs": ["deployment_status", "deployment_url"]
+        },
+        {
+          "id": "verify",
+          "name": "验证检查",
+          "agent": "zhangheng",
+          "promptTemplate": "验证部署结果：\n\n部署信息：{previous_output}\n\n检查系统状态、健康指标、日志异常。",
+          "optional": false,
+          "timeout": 300,
+          "outputs": ["health_status", "monitoring_report"]
+        }
+      ],
+      "options": {
+        "allowSkip": false,
+        "autoRetry": false,
+        "generateReport": true,
+        "saveCheckpoints": true,
+        "requireUserConfirmation": true,
+        "rollbackOnFailure": true
+      }
+    }
+  }
+}
