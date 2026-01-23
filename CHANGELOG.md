@@ -18,6 +18,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.2] - 2026-01-23
+
+### 📝 Changed / 变更
+
+- **简化用户体验**: `/do` 作为唯一需要记住的命令入口
+  - README 快速开始部分重构，突出 `/do` 万能入口
+  - `/help` 默认显示精简版（5 个核心命令），`--all` 显示完整版
+  - `/cheatsheet` 默认显示 5 秒速查，`--full` 显示完整参考
+  - `/start` 新用户引导聚焦 `/do` 命令
+
+### 🔧 Fixed / 修复
+
+- **修复 cheatsheet.md**: 移除不兼容的 HTML `<details>` 标签，改用纯 Markdown 格式
+- **Markdown 格式规范**: 代码块添加语言标识，表格格式统一
+
+---
+
 ## [2.1.1] - 2026-01-23
 
 ### 🔧 Fixed / 修复
