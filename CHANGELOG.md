@@ -18,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.9] - 2026-01-23
+
+### 🐛 Fixed / 修复
+
+- **npx 安装失败修复**: 修复 `npx claude-pangu install` 命令无法正常执行的严重问题
+  - 原因：`isMainModule` 检查过于严格，在 npx 符号链接环境下判断失败
+  - 修复：增强主模块检测逻辑，支持 npx、全局安装、符号链接等多种场景
+  - 影响：2.1.0 - 2.1.8 版本的 npx 安装可能失败
+
+---
+
 ## [2.1.8] - 2026-01-23
 
 ### ✨ Enhanced / 增强

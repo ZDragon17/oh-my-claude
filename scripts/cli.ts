@@ -73,7 +73,22 @@ if (configManager.get('advanced').enableTracing) {
 
 // ==================== 主入口 ====================
 
-const isMainModule = process.argv[1] === __filename || process.argv[1]?.endsWith('cli.js');
+// 检查是否为主模块（支持 npx、直接运行、符号链接等场景）
+const isMainModule = (() => {
+  const scriptPath = process.argv[1];
+  if (!scriptPath) return false;
+  
+  // 直接匹配
+  if (scriptPath === __filename) return true;
+  
+  // 文件名匹配（处理 npx 符号链接场景）
+  if (scriptPath.endsWith('cli.js')) return true;
+  
+  // bin 名称匹配（处理 npm 全局安装场景）
+  if (scriptPath.endsWith('claude-pangu') || scriptPath.endsWith('oh-my-claude')) return true;
+  
+  return false;
+})();
 
 if (isMainModule) {
   (async () => {
