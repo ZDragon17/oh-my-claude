@@ -1,0 +1,120 @@
+{
+  "name": "parallel",
+  "version": "1.0.0",
+  "description": "并行 Agent 执行 - 同时启动多个 Agent 处理独立任务",
+  "keywords": ["parallel", "concurrent", "multi-agent", "并行", "并发", "多任务"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/parallel": ["/并行", "/concurrent", "/prl"]
+  },
+
+  "agentMapping": {
+    "wukong": {
+      "name": "悟空",
+      "icon": "🔍",
+      "subagentType": "Explore",
+      "specialty": "代码探索"
+    },
+    "zhuge": {
+      "name": "诸葛",
+      "icon": "🎯",
+      "subagentType": "Plan",
+      "specialty": "架构设计"
+    },
+    "luban": {
+      "name": "鲁班",
+      "icon": "🔧",
+      "subagentType": "general-purpose",
+      "specialty": "代码实现"
+    },
+    "bianque": {
+      "name": "扁鹊",
+      "icon": "🩺",
+      "subagentType": "debugger",
+      "specialty": "Bug诊断"
+    },
+    "mozi": {
+      "name": "墨子",
+      "icon": "🛡️",
+      "subagentType": "security-auditor",
+      "specialty": "安全审计"
+    },
+    "sunzi": {
+      "name": "孙子",
+      "icon": "⚔️",
+      "subagentType": "performance-engineer",
+      "specialty": "性能优化"
+    },
+    "baozheng": {
+      "name": "包拯",
+      "icon": "⚖️",
+      "subagentType": "test-engineer",
+      "specialty": "测试设计"
+    },
+    "weizheng": {
+      "name": "魏征",
+      "icon": "📜",
+      "subagentType": "code-reviewer",
+      "specialty": "代码审查"
+    },
+    "simaqian": {
+      "name": "司马迁",
+      "icon": "📝",
+      "subagentType": "technical-writer",
+      "specialty": "文档撰写"
+    },
+    "cangjie": {
+      "name": "仓颉",
+      "icon": "📊",
+      "subagentType": "database-architect",
+      "specialty": "数据库设计"
+    },
+    "laozi": {
+      "name": "老子",
+      "icon": "☯️",
+      "subagentType": "general-purpose",
+      "specialty": "代码简化"
+    }
+  },
+
+  "parallelGroups": {
+    "exploration": {
+      "agents": ["wukong", "simaqian"],
+      "description": "探索和文档"
+    },
+    "design": {
+      "agents": ["zhuge", "cangjie"],
+      "description": "架构和数据设计"
+    },
+    "implementation": {
+      "agents": ["luban", "gukaizhi"],
+      "description": "实现类（不推荐并行）"
+    },
+    "quality": {
+      "agents": ["bianque", "baozheng", "weizheng"],
+      "description": "质量保障"
+    },
+    "optimization": {
+      "agents": ["sunzi", "laozi", "mozi"],
+      "description": "优化和安全"
+    }
+  },
+
+  "maxParallelAgents": 3,
+
+  "statusIcons": {
+    "starting": "⏳",
+    "running": "🔄",
+    "completed": "✅",
+    "failed": "❌"
+  },
+
+  "outputFormat": {
+    "showProgress": true,
+    "showTimestamp": true,
+    "aggregateResults": true
+  }
+}

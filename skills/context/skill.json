@@ -1,0 +1,91 @@
+{
+  "name": "context",
+  "version": "1.0.0",
+  "description": "智能上下文管理 - 监控、压缩和优化上下文使用，预防上下文窗口耗尽",
+  "keywords": ["context", "memory", "compression", "optimization", "上下文", "压缩", "优化"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/context": ["/上下文", "/ctx"]
+  },
+
+  "subCommands": {
+    "status": {
+      "description": "显示上下文使用状态（默认）",
+      "usage": "/context [status]"
+    },
+    "compact": {
+      "description": "压缩对话历史",
+      "usage": "/context compact"
+    },
+    "clean": {
+      "description": "清理缓存和临时数据",
+      "usage": "/context clean"
+    },
+    "export": {
+      "description": "导出重要信息",
+      "usage": "/context export"
+    }
+  },
+
+  "contextWindow": {
+    "estimated": 200000,
+    "unit": "tokens"
+  },
+
+  "tokenEstimation": {
+    "chineseCharPerToken": 1.5,
+    "englishCharPerToken": 4,
+    "codeCharPerToken": 3
+  },
+
+  "usageLevels": {
+    "normal": {
+      "max": 50,
+      "icon": "🟢",
+      "status": "充裕",
+      "action": "可自由工作"
+    },
+    "moderate": {
+      "max": 70,
+      "icon": "🟢",
+      "status": "正常",
+      "action": "关注变化"
+    },
+    "attention": {
+      "max": 85,
+      "icon": "⚠️",
+      "status": "注意",
+      "action": "建议压缩"
+    },
+    "warning": {
+      "max": 95,
+      "icon": "🟠",
+      "status": "警告",
+      "action": "尽快压缩"
+    },
+    "critical": {
+      "max": 100,
+      "icon": "🚨",
+      "status": "紧急",
+      "action": "立即处理"
+    }
+  },
+
+  "progressStyle": {
+    "full": "█",
+    "empty": "░",
+    "width": 30
+  },
+
+  "compressionStrategies": {
+    "summary": "摘要压缩 - 提取关键信息",
+    "keypoints": "要点压缩 - 保留决策点",
+    "hierarchical": "层次压缩 - 分层归档"
+  },
+
+  "cacheDir": "~/.oh-my-claude/context/",
+  "exportFile": ".claude/context-export.md"
+}

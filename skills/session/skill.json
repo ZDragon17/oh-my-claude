@@ -1,0 +1,68 @@
+{
+  "name": "session",
+  "version": "1.0.0",
+  "description": "会话持久化与恢复 - 跨会话保存和恢复工作进度，实现断点续传",
+  "keywords": ["session", "persistence", "save", "resume", "checkpoint", "会话", "恢复", "断点续传"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "commandAliases": {
+    "/session": ["/会话", "/ses"]
+  },
+
+  "subCommands": {
+    "save": {
+      "description": "保存当前会话",
+      "usage": "/session save [name]",
+      "example": "/session save \"重构认证模块\""
+    },
+    "list": {
+      "description": "列出所有已保存的会话",
+      "usage": "/session list"
+    },
+    "resume": {
+      "description": "恢复指定会话",
+      "usage": "/session resume [id|index]",
+      "example": "/session resume 1"
+    },
+    "info": {
+      "description": "查看会话详细信息",
+      "usage": "/session info [id|index]"
+    },
+    "delete": {
+      "description": "删除指定会话",
+      "usage": "/session delete [id|index]"
+    }
+  },
+
+  "storage": {
+    "baseDir": "~/.oh-my-claude/sessions",
+    "indexFile": "index.json",
+    "sessionFilePattern": "{session_id}.json"
+  },
+
+  "sessionIdFormat": {
+    "pattern": "ses_{timestamp}_{random4}",
+    "example": "ses_1706012345_a1b2"
+  },
+
+  "statusIcons": {
+    "saved": "💾",
+    "resumed": "🔄",
+    "deleted": "🗑️",
+    "listing": "📂",
+    "info": "📋"
+  },
+
+  "progressStyle": {
+    "full": "█",
+    "empty": "░",
+    "width": 24
+  },
+
+  "timeFormat": {
+    "relative": true,
+    "locale": "auto"
+  }
+}

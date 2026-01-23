@@ -231,6 +231,15 @@
       },
       {
         "type": "command",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/context-smart-alert.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "智能上下文预警 - 多级预警和可视化进度条"
+      },
+      {
+        "type": "command",
         "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/anthropic-context-window-limit-recovery.sh",
         "timeout": 2000,
         "continueOnError": true,
@@ -332,7 +341,8 @@
   },
   "disabled_hooks": [],
   "hook_config": {
-    "parallel_execution": false,
+    "parallel_execution": true,
+    "max_parallel_agents": 3,
     "log_enabled": true,
     "log_path": "$HOME/.oh-my-claude/logs/hooks.log",
     "performance_tracking": true,
