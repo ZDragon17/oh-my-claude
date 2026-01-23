@@ -8,7 +8,6 @@ aliases:
   - /伯牙
   - /知音
   - /语音
-  - /speak
 allowed-tools:
   - Bash
   - TodoWrite

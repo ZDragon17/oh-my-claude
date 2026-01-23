@@ -7,7 +7,6 @@ aliases:
   - /华佗kb
   - /药方
   - /错误
-  - /err
 allowed-tools:
   - Read
   - Write

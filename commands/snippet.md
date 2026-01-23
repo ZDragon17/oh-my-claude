@@ -6,8 +6,7 @@ description: |
 aliases:
   - /蔡伦
   - /锦囊
-  - /片段
-  - /code
+  - /代码片段
 allowed-tools:
   - Read
   - Write

@@ -19,18 +19,18 @@ const V2025_COMMANDS = {
   p3: ['voice.md', 'pair.md', 'timeline.md', 'agent.md']
 };
 
-// 传统文化别名映射
+// 传统文化别名映射（移除通用英文别名，避免与其他工具冲突）
 const CULTURAL_ALIASES: Record<string, string[]> = {
-  'stats.md': ['/张衡stats', '/统计'],
-  'init.md': ['/盘古', '/开天'],
-  'learn.md': ['/孔子', '/求学'],
-  'snippet.md': ['/蔡伦', '/锦囊'],
-  'share.md': ['/孔融', '/让梨'],
-  'error.md': ['/华佗kb', '/药方'],
-  'voice.md': ['/伯牙', '/知音'],
-  'pair.md': ['/管鲍', '/结对'],
-  'timeline.md': ['/太史', '/春秋'],
-  'agent.md': ['/女娲', '/造物']
+  'stats.md': ['/张衡stats'],
+  'init.md': ['/盘古'],
+  'learn.md': ['/孔子'],
+  'snippet.md': ['/蔡伦'],
+  'share.md': ['/孔融'],
+  'error.md': ['/华佗kb'],
+  'voice.md': ['/伯牙'],
+  'pair.md': ['/管鲍'],
+  'timeline.md': ['/太史'],
+  'agent.md': ['/女娲']
 };
 
 interface Frontmatter {

@@ -7,8 +7,7 @@ description: |
 aliases:
   - /太史
   - /春秋
-  - /历史
-  - /history
+  - /时间线
 allowed-tools:
   - Bash
   - Read

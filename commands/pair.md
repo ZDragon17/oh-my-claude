@@ -7,8 +7,7 @@ description: |
 aliases:
   - /管鲍
   - /结对
-  - /pairing
-  - /copilot
+  - /pair-programming
 allowed-tools:
   - Read
   - Glob

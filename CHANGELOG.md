@@ -18,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.1] - 2026-01-23
+
+### 🔧 Fixed / 修复
+
+- **移除冲突别名**: 移除可能与其他工具（如 opencode、Claude 原生命令）冲突的通用英文别名
+  - 移除: `/code`, `/analyze`, `/history`, `/speak`, `/template`, `/diagnose`, `/err`, `/statistics`, `/copilot`, `/pairing`, `/restructure`, `/code-review`
+  - 保留: 中文别名（oh-my-claude 特色）+ 必要的短别名如 `/rf`
+  - 原因: 避免与其他 CLI 工具产生命令名冲突
+
+---
+
 ## [2.1.0] - 2026-01-23
 
 ### 🎉 Major Feature Release / 重大功能发布

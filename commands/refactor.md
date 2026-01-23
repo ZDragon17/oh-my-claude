@@ -3,11 +3,9 @@ name: refactor
 description: |
   重构命令 - 安全、系统化的代码重构模板。
   支持重命名、提取、移动等重构操作，带并行分析和验证。
-  别名：/rf, /restructure
 aliases:
-  - /rf
-  - /restructure
   - /重构
+  - /rf
 allowed-tools:
   - Read
   - Glob

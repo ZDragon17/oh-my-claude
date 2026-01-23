@@ -7,7 +7,6 @@ aliases:
   - /孔融
   - /让梨
   - /分享
-  - /共享
 allowed-tools:
   - Read
   - Write

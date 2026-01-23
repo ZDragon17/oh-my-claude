@@ -5,8 +5,7 @@ description: |
   支持：error (错误诊断)、trace (堆栈分析)、watch (变量监控建议)
 aliases:
   - /调试
-  - /diagnose
-  - /诊断
+  - /排错
 allowed-tools:
   - Read
   - Bash

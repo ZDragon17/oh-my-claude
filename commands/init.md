@@ -7,7 +7,6 @@ aliases:
   - /盘古
   - /开天
   - /初始化
-  - /template
 allowed-tools:
   - Read
   - Write

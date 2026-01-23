@@ -6,8 +6,6 @@ description: |
 aliases:
   - /张衡stats
   - /统计
-  - /statistics
-  - /分析
 allowed-tools:
   - Read
   - Bash

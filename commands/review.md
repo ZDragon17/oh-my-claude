@@ -5,8 +5,7 @@ description: |
   支持：staged (暂存区)、pr (Pull Request)、files (指定文件)
 aliases:
   - /审查
-  - /cr
-  - /code-review
+  - /魏征review
 allowed-tools:
   - Read
   - Bash

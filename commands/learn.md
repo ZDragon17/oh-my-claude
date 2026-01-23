@@ -6,8 +6,7 @@ description: |
 aliases:
   - /孔子
   - /求学
-  - /学习
-  - /analyze
+  - /项目学习
 allowed-tools:
   - Read
   - Write
