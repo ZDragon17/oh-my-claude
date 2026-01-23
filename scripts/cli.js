@@ -424,9 +424,22 @@ function installCommands(packageDir) {
     try {
       fs.rmSync(legacyZcfDir, { recursive: true, force: true });
       stats.cleaned = true;
-      info('已清理旧版本 zcf 子目录');
+      info('已清理全局 zcf 子目录');
     } catch (err) {
       warn(`清理旧版本目录失败: ${err.message}`);
+    }
+  }
+
+  // 清理当前工作目录的项目本地 zcf 残留（如果存在）
+  const cwd = process.cwd();
+  const projectZcfDir = path.join(cwd, '.claude', 'commands', 'zcf');
+  if (fs.existsSync(projectZcfDir)) {
+    try {
+      fs.rmSync(projectZcfDir, { recursive: true, force: true });
+      stats.cleaned = true;
+      info('已清理项目本地 zcf 子目录');
+    } catch (err) {
+      warn(`清理项目本地旧版本目录失败: ${err.message}`);
     }
   }
 
@@ -880,7 +893,8 @@ function install() {
   info('  1. 确保完全退出 Claude Code（不只是关闭窗口）');
   info('  2. 检查文件是否存在: ls ~/.claude/commands/');
   info('  3. 清除缓存: rm ~/.claude.json && 重启');
-  log('');
+  info('  4. 如果看到 /zcf:yishan (project) 等旧命令：');
+  info('     rm -rf .claude/commands/zcf  # 在项目目录中执行');
 }
 
 // 执行卸载操作
@@ -1039,6 +1053,8 @@ function update() {
   info('  1. 确保完全退出 Claude Code（不只是关闭窗口）');
   info('  2. 检查文件是否存在: ls ~/.claude/commands/');
   info('  3. 清除缓存: rm ~/.claude.json && 重启');
+  info('  4. 如果看到 /zcf:yishan (project) 等旧命令：');
+  info('     rm -rf .claude/commands/zcf  # 在项目目录中执行');
   log('');
 }
 

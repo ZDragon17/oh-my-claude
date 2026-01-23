@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.8] - 2026-01-23
+
+### ✨ Enhanced / 增强
+
+- **项目本地旧版本清理**: 安装/更新时自动清理当前项目目录的 `.claude/commands/zcf` 残留
+  - 解决用户更新到新版本后仍看到 `/zcf:yishan (project)` 的问题
+  - 故障排除指引中增加项目本地残留的清理说明
+
+---
+
 ## [2.1.7] - 2026-01-23
 
 ### ✨ Enhanced / 增强
