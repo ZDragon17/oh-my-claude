@@ -132,7 +132,7 @@ if [ "$usage_percent" -ge "$CRITICAL_THRESHOLD" ]; then
     record_alert_time
     progress_bar=$(generate_progress_bar "$usage_percent")
 
-    printf '{"systemMessage":"\\n\\n🚨 **上下文紧急警报**\\n\\n```\\n📈 使用率: [%s] %d%%\\n   估算: ~%d / %d tokens\\n```\\n\\n**状态: 🚨 紧急 - 上下文即将耗尽！**\\n\\n**立即行动:**\\n1. `/context compact` - 压缩对话历史\\n2. `/session save` - 保存当前进度\\n3. 开始新会话继续工作\\n\\n⚠️ 继续操作可能导致会话中断！\\n"}\n' "$progress_bar" "$usage_percent" "$accumulated_tokens" "$MAX_CONTEXT_TOKENS"
+    printf '{"systemMessage":"\\n\\n┌─────────────────────────────────────────┐\\n│  🚨 CONTEXT CRITICAL - 上下文即将耗尽  │\\n└─────────────────────────────────────────┘\\n\\n  📊 [%s] %d%%\\n     ~%dk / %dk tokens\\n\\n  ⚡ 立即行动 (选一个):\\n     • /context compact  压缩历史\\n     • /session save     保存进度后开新会话\\n\\n  ⚠️  继续操作可能导致会话中断！\\n"}\n' "$progress_bar" "$usage_percent" "$((accumulated_tokens / 1000))" "$((MAX_CONTEXT_TOKENS / 1000))"
     exit 0
 fi
 
@@ -144,7 +144,7 @@ if [ "$usage_percent" -ge "$WARNING_THRESHOLD" ]; then
     record_alert_time
     progress_bar=$(generate_progress_bar "$usage_percent")
 
-    printf '{"systemMessage":"\\n\\n⚠️ **上下文警告**\\n\\n```\\n📈 使用率: [%s] %d%%\\n   估算: ~%d / %d tokens\\n```\\n\\n**状态: 🟠 警告 - 请尽快处理**\\n\\n**建议操作:**\\n- `/context compact` - 压缩对话历史\\n- `/context` - 查看详细状态\\n- 避免读取大型文件\\n"}\n' "$progress_bar" "$usage_percent" "$accumulated_tokens" "$MAX_CONTEXT_TOKENS"
+    printf '{"systemMessage":"\\n\\n┌──────────────────────────────────────┐\\n│  ⚠️  CONTEXT WARNING - 请尽快处理   │\\n└──────────────────────────────────────┘\\n\\n  📊 [%s] %d%%\\n     ~%dk / %dk tokens\\n\\n  💡 建议: /context compact 压缩历史\\n"}\n' "$progress_bar" "$usage_percent" "$((accumulated_tokens / 1000))" "$((MAX_CONTEXT_TOKENS / 1000))"
     exit 0
 fi
 
@@ -156,7 +156,7 @@ if [ "$usage_percent" -ge "$HINT_THRESHOLD" ]; then
     record_alert_time
     progress_bar=$(generate_progress_bar "$usage_percent")
 
-    printf '{"systemMessage":"\\n\\n💡 **上下文提示**\\n\\n使用率: %d%% - 建议适时使用 `/context` 查看状态\\n"}\n' "$usage_percent"
+    printf '{"systemMessage":"\\n  💡 上下文: [%s] %d%% - 使用 /context 查看详情\\n"}\n' "$progress_bar" "$usage_percent"
     exit 0
 fi
 

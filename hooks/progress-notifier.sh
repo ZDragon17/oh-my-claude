@@ -194,9 +194,26 @@ fi
 # 计算剩余任务数
 remaining=$((pending + in_progress))
 
+# 预估剩余时间（基于平均每个任务 3-5 分钟）
+avg_time_per_task=4  # 分钟
+estimated_minutes=$((remaining * avg_time_per_task))
+
+# 格式化时间显示
+if [ "$estimated_minutes" -lt 60 ]; then
+    time_display="${estimated_minutes}分钟"
+else
+    hours=$((estimated_minutes / 60))
+    mins=$((estimated_minutes % 60))
+    time_display="${hours}小时${mins}分钟"
+fi
+
 # 构建进度信息文本（用于显示）
 progress_line1=$(printf '📊 %s %d%% (%d/%d) %s' "$bar" "$percent" "$completed" "$total" "$emoji")
-progress_line2=$(printf '🔄 当前: %s | ⏳ 剩余: %d' "$current_task" "$remaining")
+if [ "$remaining" -gt 0 ]; then
+    progress_line2=$(printf '🔄 当前: %s | ⏳ 剩余: %d | ⏱️ 预计: ~%s' "$current_task" "$remaining" "$time_display")
+else
+    progress_line2=$(printf '✅ 所有任务完成！')
+fi
 
 # 转义 JSON 特殊字符
 escape_json() {

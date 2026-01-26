@@ -2,7 +2,7 @@
 name: bianque
 description: |
   扁鹊诊断 - 召唤扁鹊进行 Bug 诊断和修复。
-  别名：/wangwen, /debug, /diagnose
+  别名：/wangwen, /debug, /diagnose, /fix
 ---
 
 # 扁鹊诊断模式
@@ -28,7 +28,7 @@ description: |
 
 直接描述你遇到的问题，扁鹊会为你诊断。
 
-> 提示：你也可以使用别名 `/wangwen`、`/debug`、`/diagnose` 来调用此命令。
+> 提示：你也可以使用别名 `/wangwen`、`/debug`、`/diagnose`、`/fix` 来调用此命令。
 
 ## 用户的问题
 
