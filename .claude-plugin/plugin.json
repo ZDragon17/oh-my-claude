@@ -1,7 +1,7 @@
 {
   "$schema": "https://code.claude.com/plugin-schema.json",
   "name": "oh-my-claude",
-  "version": "2.1.10",
+  "version": "2.1.14",
   "hooks": "./hooks/hooks.json",
   "description": "基于中国传统文化的 Claude Code 智能编排插件 - A Claude Code plugin inspired by Chinese traditional culture",
   "author": "ZDragon17",

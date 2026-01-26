@@ -18,6 +18,86 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.14] - 2026-01-26
+
+### ✨ Added / 新增
+
+#### 自然语言自动激活 / Natural Language Auto-Activation
+
+本版本实现了所有 Agent 的自然语言自动激活功能，用户无需再手动输入命令，系统会根据自然语言自动识别意图并激活对应模式。
+
+##### 直接激活模式升级
+
+将 16 个 Agent 从"建议使用命令"升级为"直接激活模式"：
+
+| Agent | 触发场景 | 激活模式 |
+|-------|----------|----------|
+| 墨子 (MoZi) | 安全审计 | `<mozi-mode>` |
+| 仓颉 (CangJie) | 数据库设计 | `<cangjie-mode>` |
+| 孙子 (SunZi) | 性能优化 | `<sunzi-mode>` |
+| 郑和 (ZhengHe) | API 集成 | `<zhenghe-mode>` |
+| 李冰 (LiBing) | DevOps | `<libing-mode>` |
+| 张衡 (ZhangHeng) | 监控告警 | `<zhangheng-mode>` |
+| 嫦娥 (ChangE) | 云原生 | `<change-mode>` |
+| 老子 (LaoZi) | 代码简化 | `<laozi-mode>` |
+| 顾恺之 (GuKaiZhi) | UI/UX 设计 | `<gukaizhi-mode>` |
+| 鲁班 (LuBan) | 前端开发 | `<luban-mode>` |
+| 李白 (LiBai) | 需求分析 | `<libai-mode>` |
+| 司马迁 (SimaQian) | 文档撰写 | `<simaqian-mode>` |
+| 诸葛 (ZhuGe) | 架构设计 | `<zhuge-mode>` |
+| 悟空 (WuKong) | 代码探索 | `<wukong-mode>` |
+| 刘伯温 (LiuBoWen) | 计划审查 | `<liubowen-mode>` |
+| 离娄 (LiLou) | 多模态分析 | `<lilou-mode>` |
+
+##### 使用示例
+
+```bash
+# 以前需要输入命令
+/mozi 检查代码安全性
+
+# 现在直接说自然语言，系统自动激活
+"帮我检查一下这个代码有没有安全漏洞"  # → 自动激活墨子安全模式
+
+"这个查询太慢了，帮我优化"  # → 自动激活孙子性能模式
+
+"设计一下用户表结构"  # → 自动激活仓颉数据库模式
+```
+
+### Changed / 变更
+
+- **`hooks/keyword-detector.sh`** - 关键词检测器重构
+  - 所有 Agent 触发改为直接注入完整模式指令
+  - 移除"建议使用命令"的间接引导
+  - 每个模式包含详细的工作流程和检查清单
+
+---
+
+## [2.1.13] - 2026-01-26
+
+### ✨ Added / 新增
+
+#### 帮助系统增强 / Help System Enhancement
+
+- **更新 `commands/help.md`** - 新增"遇到问题？"章节
+  - 引导用户使用错误恢复命令
+  - 提供 `/quickfix`、`/stuck`、`/retry`、`/skip`、`/rollback` 快速入口
+
+- **更新 `hooks/keyword-detector.sh`** - 错误恢复关键词检测
+  - 检测用户输入中的错误恢复意图
+  - 自动提示相关恢复命令
+
+---
+
+## [2.1.11] - 2026-01-26
+
+### 🐛 Fixed / 修复
+
+- **`hooks/progress-notifier.sh`** - 修复语法错误
+  - 问题：`if/else` 块缺少 `fi` 闭合语句
+  - 修复：在第 215 行 `else` 块后添加 `fi`
+
+---
+
 ## [2.1.12] - 2026-01-26
 
 ### ✨ Added / 新增
