@@ -18,6 +18,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.12] - 2026-01-26
+
+### ✨ Added / 新增
+
+#### 用户体验优化 - 第四轮 / UX Optimization Round 4
+
+本版本专注于降低新用户的入门门槛，提供场景化快速开始向导和常用命令英文别名。
+
+##### 场景化快速开始 `/quickstart`
+
+- **新增 `commands/quickstart.md`** - 场景化快速开始向导
+  - 5 种常见场景：Bug修复、功能实现、代码探索、代码审查、项目了解
+  - 交互式选择或直接指定场景编号
+  - 每个场景提供清晰的工作流程和建议命令
+  - 别名：`/qs`、`/fast`、`/开始`
+
+##### 常用 Agent 英文别名
+
+为方便英文用户和减少记忆负担，新增以下英文别名：
+
+| 中文命令 | 英文别名 | 功能 |
+|----------|----------|------|
+| `/sunzi` | `/perf` | 性能优化 |
+| `/mozi` | `/secure` | 安全审计 |
+| `/baozheng` | `/test` | 测试设计 |
+| `/wukong` | `/explore` | 代码探索 |
+| `/zhuge` | `/arch` | 架构设计 |
+| `/simaqian` | `/doc` | 文档撰写 |
+
+新增文件：
+- `commands/perf.md`
+- `commands/secure.md`
+- `commands/test.md`
+- `commands/explore.md`
+- `commands/arch.md`
+- `commands/doc.md`
+
+##### 帮助系统优化
+
+- **更新 `commands/help.md`** - 首推 `/quickstart` 命令
+- **更新 `hooks/first-use-onboarding.sh`** - 新手引导优先推荐 `/quickstart`
+- **更新 `docs/ESSENTIAL_COMMANDS.md`** - 添加英文别名列
+
+### 📝 Changed / 变更
+
+- **README.md** - 添加场景化快速开始章节、Agent 表格添加英文别名列
+
+---
+
 ## [2.1.10] - 2026-01-23
 
 ### 🐛 Fixed / 修复

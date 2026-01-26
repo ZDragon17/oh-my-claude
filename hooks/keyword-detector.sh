@@ -376,10 +376,10 @@ fi
 # 帮助类：用户困惑时
 # ============================================================================
 
-if echo "$prompt_lower" | grep -qE '(帮帮我|不知道怎么|怎么用|从哪开始|help me|how to|where to start|什么命令|该用谁)'; then
+if echo "$prompt_lower" | grep -qE '(帮帮我|不知道怎么|怎么用|从哪开始|help me|how to|where to start|什么命令|该用谁|新手|刚开始|first time|getting started)'; then
     cat << 'EOF'
 {
-  "systemMessage": "\n\n👋 **需要帮助？**\n\n快捷方式：\n- /do [任务] - 万能入口，自动匹配专家\n- /help - 查看命令速查表\n- /agents - 查看所有专家\n- /suggest [描述] - 智能推荐\n"
+  "systemMessage": "\n\n👋 **需要帮助？**\n\n🆕 **推荐新手使用**：\n- `/quickstart` - 场景化快速开始，告诉我你想做什么\n\n**其他快捷方式**：\n- `/do [任务]` - 万能入口，自动匹配专家\n- `/help` - 查看命令速查表\n"
 }
 EOF
     exit 0

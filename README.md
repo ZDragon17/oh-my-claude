@@ -45,28 +45,28 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 
 基于中国传统文化人物的专业化 Agent：
 
-| Agent | 名称 | 专长 | 命令 |
-|-------|------|------|------|
-| 🏔️ | **愚公** (YuGong) | 主编排，大规模任务 | `/yugong` `/yishan` |
-| 🎯 | **诸葛** (ZhuGe) | 战略顾问，架构设计 | `/zhuge` `/longzhong` |
-| 🔧 | **鲁班** (LuBan) | 精工巧匠，代码实现 | `/luban` `/qiaogong` |
-| 🔍 | **悟空** (WuKong) | 代码侦察，快速探索 | `/wukong` `/huoyan` |
-| 🩺 | **扁鹊** (BianQue) | Bug 诊断，问题修复 | `/bianque` `/wangwen` |
-| 🛡️ | **墨子** (MoZi) | 安全审计，防御编程 | `/mozi` `/security` |
-| ⚔️ | **孙子** (SunZi) | 性能优化，系统调优 | `/sunzi` `/perf` |
-| 📜 | **司马迁** (SimaQian) | 文档撰写，变更记录 | `/simaqian` `/doc` |
-| ⛵ | **郑和** (ZhengHe) | API 集成，外部服务 | `/zhenghe` `/api` |
-| 🔭 | **张衡** (ZhangHeng) | 系统监控，可观测性 | `/zhangheng` `/monitor` |
-| 🌊 | **李冰** (LiBing) | DevOps，基础设施 | `/libing` `/devops` |
-| ☯️ | **老子** (LaoZi) | 代码简化，Clean Code | `/laozi` `/simplify` |
-| ⚖️ | **包拯** (BaoZheng) | 测试专家，TDD | `/baozheng` `/test` |
-| 🪞 | **魏征** (WeiZheng) | 代码审查，规范检查 | `/weizheng` `/review` |
-| 📊 | **仓颉** (CangJie) | 数据库设计，SQL 优化 | `/cangjie` `/db` |
-| ✨ | **李白** (LiBai) | 需求分析，用户故事 | `/libai` `/poet` |
-| 🎨 | **顾恺之** (GuKaiZhi) | UI/UX 设计，界面美学 | `/gukaizhi` `/painter` |
-| 🌙 | **嫦娥** (ChangE) | 云服务，DevOps 部署 | `/change` `/cloud` |
-| 🖼️ | **离娄** (LiLou) | 多模态分析，图像理解 | `/lilou` `/looker` |
-| 🔮 | **刘伯温** (LiuBoWen) | 计划审查，风险评估 | `/liubowen` `/momus` |
+| Agent | 名称 | 专长 | 命令 | 英文别名 |
+|-------|------|------|------|----------|
+| 🏔️ | **愚公** (YuGong) | 主编排，大规模任务 | `/yugong` `/yishan` | |
+| 🎯 | **诸葛** (ZhuGe) | 战略顾问，架构设计 | `/zhuge` `/longzhong` | `/arch` |
+| 🔧 | **鲁班** (LuBan) | 精工巧匠，代码实现 | `/luban` `/qiaogong` | |
+| 🔍 | **悟空** (WuKong) | 代码侦察，快速探索 | `/wukong` `/huoyan` | `/explore` |
+| 🩺 | **扁鹊** (BianQue) | Bug 诊断，问题修复 | `/bianque` `/wangwen` | |
+| 🛡️ | **墨子** (MoZi) | 安全审计，防御编程 | `/mozi` `/security` | `/secure` |
+| ⚔️ | **孙子** (SunZi) | 性能优化，系统调优 | `/sunzi` `/perf` | |
+| 📜 | **司马迁** (SimaQian) | 文档撰写，变更记录 | `/simaqian` `/doc` | |
+| ⛵ | **郑和** (ZhengHe) | API 集成，外部服务 | `/zhenghe` `/api` | |
+| 🔭 | **张衡** (ZhangHeng) | 系统监控，可观测性 | `/zhangheng` `/monitor` | |
+| 🌊 | **李冰** (LiBing) | DevOps，基础设施 | `/libing` `/devops` | |
+| ☯️ | **老子** (LaoZi) | 代码简化，Clean Code | `/laozi` `/simplify` | |
+| ⚖️ | **包拯** (BaoZheng) | 测试专家，TDD | `/baozheng` `/test` | |
+| 🪞 | **魏征** (WeiZheng) | 代码审查，规范检查 | `/weizheng` `/review` | |
+| 📊 | **仓颉** (CangJie) | 数据库设计，SQL 优化 | `/cangjie` `/db` | |
+| ✨ | **李白** (LiBai) | 需求分析，用户故事 | `/libai` `/poet` | |
+| 🎨 | **顾恺之** (GuKaiZhi) | UI/UX 设计，界面美学 | `/gukaizhi` `/painter` | |
+| 🌙 | **嫦娥** (ChangE) | 云服务，DevOps 部署 | `/change` `/cloud` | |
+| 🖼️ | **离娄** (LiLou) | 多模态分析，图像理解 | `/lilou` `/looker` | |
+| 🔮 | **刘伯温** (LiuBoWen) | 计划审查，风险评估 | `/liubowen` `/momus` | |
 
 ### 🔄 愚公移山模式
 
@@ -337,6 +337,26 @@ rm ~/.claude.json
 
 ## 🚀 快速开始
 
+### 🆕 场景化快速开始 (v2.1.12 新增)
+
+**不知道从哪开始？试试：**
+
+```bash
+/quickstart
+```
+
+系统会问你想做什么，然后直接引导你开始：
+
+| 场景 | 命令 | 说明 |
+|------|------|------|
+| 修 Bug | `/quickstart 1` 或 `/qs 1` | 诊断错误、定位问题、修复代码 |
+| 做功能 | `/quickstart 2` 或 `/qs 2` | 分析需求、设计方案、实现功能 |
+| 找代码 | `/quickstart 3` 或 `/qs 3` | 探索项目、定位文件、理解结构 |
+| 审代码 | `/quickstart 4` 或 `/qs 4` | 代码审查、安全检查、质量分析 |
+| 了解项目 | `/quickstart 5` 或 `/qs 5` | 技术栈分析、架构理解、依赖梳理 |
+
+---
+
 ### 🎯 只需要记住一个命令
 
 ```bash
@@ -538,13 +558,14 @@ oh-my-claude/
 
 ### 工具命令
 
-| 命令 | 功能 |
-|------|------|
-| `/do` | 🚀 极简万能入口（等同 /yishan） |
-| `/suggest` | 🎯 智能命令推荐 |
-| `/cheatsheet` | 📋 快速参考卡 |
-| `/progress` | 📊 可视化进度面板 |
-| `/team` | 🤝 多 Agent 团队协作 |
+| 命令 | 功能 | 英文别名 |
+|------|------|----------|
+| `/quickstart` | 🆕 场景化快速开始向导 | `/qs` `/fast` |
+| `/do` | 🚀 极简万能入口（等同 /yishan） | |
+| `/suggest` | 🎯 智能命令推荐 | |
+| `/cheatsheet` | 📋 快速参考卡 | |
+| `/progress` | 📊 可视化进度面板 | |
+| `/team` | 🤝 多 Agent 团队协作 | |
 
 ### 关键词触发
 
@@ -809,6 +830,7 @@ model: sonnet
 - [x] v2.1.8 - **项目本地残留清理** 🧹（安装时自动清理 zcf 目录残留）
 - [x] v2.1.9 - **npx 安装修复** 🐛（isMainModule 检测增强）
 - [x] v2.1.10 - **ESM 路径解析修复** 🐛（import.meta.url + realpathSync 完整修复 npx 安装）
+- [x] v2.1.12 - **用户体验优化第四轮** ✨（场景化快速开始 `/quickstart`、常用命令英文别名）
 
 ## 🤝 贡献
 
