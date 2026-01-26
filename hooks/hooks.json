@@ -1,5 +1,16 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/auto-update-checker.sh --session-start",
+        "timeout": 10000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "启动时自动检查更新 - 后台静默检查和更新"
+      }
+    ],
     "Stop": [
       {
         "type": "command",

@@ -18,6 +18,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.15] - 2026-01-26
+
+### ✨ Added / 新增
+
+#### 启动时自动更新 / Auto-Update on Startup
+
+新增 `SessionStart` Hook，Claude Code 启动时自动检查和更新 oh-my-claude：
+
+- **自动检查**：每小时最多检查一次新版本
+- **后台静默更新**：不阻塞启动，不影响使用
+- **智能通知**：仅在有更新时显示提示
+
+**配置选项**（环境变量）：
+```bash
+OH_MY_CLAUDE_AUTO_UPDATE=false      # 禁用自动更新（默认开启）
+OH_MY_CLAUDE_UPDATE_CHECK_INTERVAL=12  # 检查间隔（小时，默认 1）
+```
+
+**相关文件**：
+- `hooks/hooks.json` - 添加 `SessionStart` Hook
+- `hooks/auto-update-checker.sh` - 增强启动时检查逻辑
+
+### 🐛 Fixed / 修复
+
+- **`hooks/hooks.json`** - 修复 SessionStart Hook 配置结构
+  - 问题：错误使用嵌套 `hooks` 结构但未配置 `matcher`
+  - 修复：使用与其他 Hook 一致的扁平结构
+
+---
+
 ## [2.1.14] - 2026-01-26
 
 ### ✨ Added / 新增

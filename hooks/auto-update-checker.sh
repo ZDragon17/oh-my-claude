@@ -520,10 +520,104 @@ detect_update_commands() {
     return 1
 }
 
+# ==================== SessionStart 专用函数 ====================
+
+# SessionStart 时的快速检查和自动更新
+# 特点：
+# 1. 非阻塞 - 不影响启动速度
+# 2. 静默 - 只在有更新时才显示消息
+# 3. 自动更新 - 后台执行更新
+session_start_check() {
+    log "SessionStart 触发自动更新检查"
+    
+    # 首先检查之前的后台更新是否完成
+    check_background_update_result
+    
+    # 检查插件是否安装
+    if ! is_plugin_installed; then
+        log "插件未安装，跳过更新检查"
+        return 0
+    fi
+    
+    # 检查是否有正在进行的后台更新
+    local pid_file="$UPDATE_CACHE/update-pid.txt"
+    if [ -f "$pid_file" ]; then
+        local pid=$(cat "$pid_file" 2>/dev/null)
+        if kill -0 "$pid" 2>/dev/null; then
+            log "后台更新正在进行中 (PID: $pid)，跳过本次检查"
+            return 0
+        fi
+    fi
+    
+    # 检查是否需要检查（时间间隔）- SessionStart 时使用较短的间隔检查
+    # 但如果距离上次检查不足 1 小时，则跳过
+    local last_check=$(get_last_check_time)
+    if [ -n "$last_check" ]; then
+        local last_ts=$(date -d "$last_check" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%S" "$last_check" +%s 2>/dev/null || echo 0)
+        local now_ts=$(date +%s)
+        local hours_diff=$(( (now_ts - last_ts) / 3600 ))
+        
+        if [ "$hours_diff" -lt 1 ]; then
+            log "距离上次检查不足 1 小时，跳过"
+            return 0
+        fi
+    fi
+    
+    log "开始 SessionStart 更新检查"
+    
+    local current=$(get_current_version)
+    local latest=$(get_latest_npm_version)
+    
+    if [ -z "$latest" ]; then
+        latest=$(get_latest_github_version)
+    fi
+    
+    local status=$(compare_versions "$current" "$latest")
+    
+    save_update_state "$current" "$latest" "$status"
+    
+    # 如果有更新且启用了自动更新
+    if [ "$status" = "outdated" ]; then
+        if [ "$AUTO_UPDATE" = "true" ]; then
+            # 输出 JSON 格式的 systemMessage，在启动时显示更新提示
+            cat << EOF
+{
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "🔄 oh-my-claude 发现新版本: $current → $latest，正在后台自动更新..."
+  }
+}
+EOF
+            # 启动后台更新
+            background_update "$current" "$latest"
+        else
+            # 非自动更新模式：只显示提示
+            cat << EOF
+{
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "🔔 oh-my-claude 有新版本可用! 当前: $current → 最新: $latest。更新命令: npm update -g $PACKAGE_NAME"
+  }
+}
+EOF
+        fi
+    else
+        log "当前已是最新版本或无法确定版本状态: $status"
+    fi
+    
+    return 0
+}
+
 # ==================== 主函数 ====================
 
 main() {
     local input="$1"
+
+    # 检查是否是 SessionStart 模式
+    if [ "$input" = "--session-start" ]; then
+        session_start_check
+        exit 0
+    fi
 
     if [ -z "$input" ]; then
         # 无输入时，执行自动检查
