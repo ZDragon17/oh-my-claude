@@ -18,6 +18,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.18] - 2026-01-27
+
+### 🔧 Changed / 变更
+
+#### GitHub Packages 发布支持 / GitHub Packages Publishing Support
+
+新增 GitHub Packages 发布功能，实现双平台包分发：
+
+- **CI/CD 增强** - 添加 GitHub Packages 发布步骤
+  - NPM: `claude-pangu` (保持不变)
+  - GitHub Packages: `@zdragon17/claude-pangu`
+- **权限配置** - 添加 `packages: write` 权限
+- **自动转换** - 发布时自动转换包名为 scoped 格式
+
+**安装方式**：
+```bash
+# NPM (推荐)
+npx claude-pangu install
+
+# GitHub Packages
+npm install @zdragon17/claude-pangu --registry=https://npm.pkg.github.com
+```
+
+---
+
 ## [2.1.17] - 2026-01-27
 
 ### ✨ Added / 新增

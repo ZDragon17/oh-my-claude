@@ -172,12 +172,13 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write  # Required for creating GitHub releases
+      packages: write  # Required for GitHub Packages
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
+    - name: Setup Node.js for npm
       uses: actions/setup-node@v4
       with:
         node-version: '20'
@@ -203,6 +204,30 @@ jobs:
         }
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      continue-on-error: true
+
+    - name: Setup Node.js for GitHub Packages
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        registry-url: 'https://npm.pkg.github.com'
+        scope: '@zdragon17'
+
+    - name: Publish to GitHub Packages
+      run: |
+        # 临时修改包名为 scoped 格式
+        node -e "
+          const pkg = require('./package.json');
+          pkg.name = '@zdragon17/claude-pangu';
+          require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+        "
+        npm publish --access public 2>&1 || {
+          echo "GitHub Packages publish failed or version exists, continuing..."
+        }
+        # 恢复原包名
+        git checkout package.json
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       continue-on-error: true
 
     - name: Create GitHub release
