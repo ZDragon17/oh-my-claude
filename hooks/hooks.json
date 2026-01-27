@@ -333,6 +333,15 @@
       },
       {
         "type": "command",
+        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/tmux-agent-visualizer.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": false,
+        "description": "Tmux 可视化 - 在 tmux 环境中自动为后台 Agent 创建可视化窗格"
+      },
+      {
+        "type": "command",
         "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/background-compaction.sh",
         "timeout": 2000,
         "continueOnError": true,

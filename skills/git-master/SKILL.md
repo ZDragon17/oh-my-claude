@@ -3,11 +3,99 @@ name: git-master
 description: |
   Git Master 智能 Git 操作技能 - 提供安全、规范的 Git 操作指引。
   支持 Conventional Commits、Co-authored-by、智能提交消息生成。
+  对标 oh-my-opencode 的 git-master skill，包含三大专业化角色。
+triggers:
+  keywords: [commit, rebase, squash, blame, git, 提交, 合并, 历史]
+  commands: [/git, /git-master, /commit, /pr, /branch]
 ---
 
 # Git Master 技能
 
 智能 Git 操作技能，提供安全、规范的版本控制操作指引。
+
+## 三大专业化角色
+
+Git Master 包含三个专业化角色，根据任务自动切换：
+
+### 1. Commit Architect (提交架构师)
+
+负责创建原子化、高质量的提交。
+
+**核心原则 - 默认多提交**:
+
+```
+┌─────────────────────────────────────────┐
+│  文件数量规则 (MANDATORY)                │
+├─────────────────────────────────────────┤
+│  3+ 文件 → 必须 2+ 个提交               │
+│  5+ 文件 → 必须 3+ 个提交               │
+│  10+ 文件 → 必须 5+ 个提交              │
+└─────────────────────────────────────────┘
+```
+
+**原子提交原则**:
+- 每个提交只做一件事
+- 提交之间有清晰的依赖关系
+- 后续提交依赖前序提交
+
+### 2. Rebase Surgeon (变基外科医生)
+
+负责历史重写、冲突解决、分支清理。
+
+**专长**:
+- 交互式 rebase 操作
+- 冲突解决策略
+- 分支合并整理
+- Squash 和 fixup 操作
+
+### 3. History Archaeologist (历史考古学家)
+
+负责查找特定变更的时间和作者。
+
+**专长**:
+- `git blame` 追溯
+- `git bisect` 二分查找
+- `git log -S` 代码搜索
+- 历史变更分析
+
+---
+
+## 自动风格检测
+
+Git Master 会自动分析仓库的提交风格并匹配：
+
+### 检测方法
+
+```bash
+# 分析最近 30 个提交
+git log --oneline -30
+```
+
+### 检测维度
+
+| 维度 | 选项 | 示例 |
+|------|------|------|
+| **语言** | 英文 / 中文 / 混合 | `feat: add login` vs `feat: 添加登录` |
+| **风格** | Conventional / Plain / Short | `feat(auth): add OAuth` vs `Add OAuth login` |
+| **大小写** | lowercase / Capitalize / UPPERCASE | `add feature` vs `Add feature` |
+| **长度** | 详细 / 简洁 | 50+ chars vs <30 chars |
+
+### 风格报告
+
+```markdown
+## 仓库提交风格分析
+
+**检测样本**: 最近 30 个提交
+
+| 维度 | 检测结果 | 置信度 |
+|------|----------|--------|
+| 语言 | 英文 | 95% |
+| 格式 | Conventional Commits | 87% |
+| 大小写 | lowercase | 92% |
+| 平均长度 | 45 字符 | - |
+
+**将采用风格**: `<type>(<scope>): <lowercase description>`
+```
 
 ## 安全协议（不可违反）
 
@@ -140,6 +228,217 @@ feat(api)!: change response format
 
 BREAKING CHANGE: Response now wraps data in { data, meta } structure.
 Migration guide available in docs/migration.md
+```
+
+---
+
+## 原子提交工作流 (Commit Architect)
+
+### 多文件提交分解
+
+当有多个文件需要提交时，**必须**按以下规则分解：
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  原子提交分解流程                                             │
+├─────────────────────────────────────────────────────────────┤
+│  1. 识别更改的逻辑分组                                        │
+│     - 同一功能的相关文件                                      │
+│     - 基础设施变更 vs 业务逻辑变更                            │
+│     - 依赖变更 vs 代码变更                                    │
+│                                                             │
+│  2. 确定依赖顺序                                              │
+│     - 被依赖的代码先提交                                      │
+│     - 配置/类型先于实现                                       │
+│     - 工具/辅助函数先于业务代码                                │
+│                                                             │
+│  3. 每组独立提交                                              │
+│     - 每个提交可独立编译通过                                   │
+│     - 每个提交有清晰的目的                                    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 示例：10 个文件的原子提交
+
+假设修改了以下 10 个文件：
+
+```
+修改的文件:
+├── package.json              # 新增依赖
+├── tsconfig.json             # 配置更新
+├── src/types/user.ts         # 类型定义
+├── src/utils/validation.ts   # 工具函数
+├── src/services/auth.ts      # 认证服务
+├── src/services/user.ts      # 用户服务
+├── src/controllers/auth.ts   # 认证控制器
+├── src/routes/auth.ts        # 认证路由
+├── tests/auth.test.ts        # 测试
+└── README.md                 # 文档
+```
+
+**正确的提交分解** (5 个提交):
+
+```bash
+# Commit 1: 基础设施
+git add package.json tsconfig.json
+git commit -m "chore: add zod validation library"
+
+# Commit 2: 类型和工具
+git add src/types/user.ts src/utils/validation.ts
+git commit -m "feat(types): add user types and validation utils"
+
+# Commit 3: 服务层
+git add src/services/auth.ts src/services/user.ts
+git commit -m "feat(services): implement auth and user services"
+
+# Commit 4: API 层
+git add src/controllers/auth.ts src/routes/auth.ts
+git commit -m "feat(api): add auth controller and routes"
+
+# Commit 5: 测试和文档
+git add tests/auth.test.ts README.md
+git commit -m "test(auth): add auth service tests and docs"
+```
+
+### 提交依赖图
+
+```
+Commit 1 (chore: add zod)
+    ↓
+Commit 2 (types & utils) ─────────────┐
+    ↓                                 │
+Commit 3 (services) ←─ 依赖 types     │
+    ↓                                 │
+Commit 4 (api) ←─ 依赖 services       │
+    ↓                                 │
+Commit 5 (tests) ←─ 依赖所有上述 ─────┘
+```
+
+---
+
+## 历史考古工具 (History Archaeologist)
+
+### 查找代码作者
+
+```bash
+# 查看文件每一行的最后修改者
+git blame <file>
+
+# 查看特定行范围
+git blame -L 10,20 <file>
+
+# 忽略空白字符变更
+git blame -w <file>
+
+# 显示邮箱
+git blame -e <file>
+```
+
+### 查找特定代码的引入时间
+
+```bash
+# 搜索添加/删除特定字符串的提交
+git log -S "functionName" --oneline
+
+# 搜索正则表达式
+git log -G "pattern.*regex" --oneline
+
+# 显示差异
+git log -S "functionName" -p
+```
+
+### 二分查找 Bug 引入点
+
+```bash
+# 开始二分
+git bisect start
+
+# 标记当前为坏
+git bisect bad
+
+# 标记已知好的版本
+git bisect good <commit>
+
+# Git 会自动切换到中间版本，测试后标记：
+git bisect good  # 或
+git bisect bad
+
+# 找到后重置
+git bisect reset
+```
+
+### 历史分析报告
+
+```markdown
+## 历史考古报告
+
+### 查找目标
+[要查找的代码/功能]
+
+### 发现
+
+| 提交 | 日期 | 作者 | 变更 |
+|------|------|------|------|
+| abc123 | 2024-01-15 | Alice | 首次引入 |
+| def456 | 2024-02-20 | Bob | 重构 |
+| ghi789 | 2024-03-10 | Alice | Bug 修复 |
+
+### 关键变更点
+[重要的变更说明]
+
+### 建议
+[基于历史的建议]
+```
+
+---
+
+## Rebase 外科手术 (Rebase Surgeon)
+
+### 交互式 Rebase
+
+```bash
+# 编辑最近 N 个提交
+git rebase -i HEAD~N
+
+# 编辑从某个提交开始
+git rebase -i <commit>^
+```
+
+### Rebase 操作符
+
+| 操作 | 缩写 | 说明 |
+|------|------|------|
+| pick | p | 使用提交 |
+| reword | r | 使用提交，但编辑提交消息 |
+| edit | e | 使用提交，但停下来修改 |
+| squash | s | 使用提交，但合并到前一个 |
+| fixup | f | 类似 squash，但丢弃提交消息 |
+| drop | d | 删除提交 |
+
+### Squash 工作流
+
+```bash
+# 将最近 3 个提交合并为 1 个
+git rebase -i HEAD~3
+
+# 在编辑器中：
+# pick abc123 First commit
+# squash def456 Second commit  
+# squash ghi789 Third commit
+
+# 然后编辑合并后的提交消息
+```
+
+### 冲突解决策略
+
+```
+冲突解决流程：
+1. 查看冲突文件: git status
+2. 打开文件，找到冲突标记
+3. 选择保留的内容
+4. 删除冲突标记
+5. git add <resolved-files>
+6. git rebase --continue
 ```
 
 ---

@@ -18,6 +18,95 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.17] - 2026-01-27
+
+### ✨ Added / 新增
+
+#### Feature Parity with oh-my-opencode / 与 oh-my-opencode 功能对齐
+
+本版本新增多个 Agent 定义和 Skill 文档，对标 oh-my-opencode 的设计理念。
+
+##### P0: Planning Triad / 规划三角
+
+- **Metis Agent** - 预规划分析顾问 (`agents/metis.md`, `commands/metis.md`)
+  - 在执行前分析请求，识别隐藏意图和潜在问题
+  - 提供结构化的分析报告：隐藏意图、歧义点、AI 失败风险、建议改进
+  - 别名：`/metis`, `/pre-plan`, `/分析`
+
+- **Momus/刘伯温增强** - 严格验证标准 (`agents/liubowen.md`)
+  - 新增 Momus 风格的严格验证框架
+  - 三重验证：清晰度验证、可验证性检查、完整性审计
+  - 每项使用 ✅/❌ 明确标记通过/失败
+
+##### P1: Core Agents & Skills / 核心 Agent 和技能
+
+- **Oracle Agent** - 只读高智商咨询顾问 (`agents/oracle.md`, `commands/oracle.md`)
+  - 使用 opus 模型进行深度分析
+  - 专注：架构决策、代码审查、复杂调试、设计评审
+  - 严格只读：仅限 Read、Grep、Glob、WebSearch、LSP 工具
+  - 别名：`/oracle`, `/神谕`, `/consult`
+
+- **Librarian Agent** - 文档和代码搜索专家 (`agents/librarian.md`, `commands/librarian.md`)
+  - 集成 Context7 查询官方文档
+  - 集成 grep.app 搜索 GitHub 代码示例
+  - 提供带置信度的证据支持答案
+  - 别名：`/librarian`, `/图书馆`, `/docs`
+
+- **Frontend UI/UX Skill** - 设计师转开发者技能 (`skills/frontend-ui-ux/SKILL.md`)
+  - 即使没有设计稿也能创建精美 UI
+  - 包含：美学方向、排版系统、色彩系统、动效原则
+  - 响应式设计和可访问性内置
+
+- **Git Master Skill 增强** - 三角色专业化 (`skills/git-master/SKILL.md`)
+  - Commit Architect：原子提交、依赖排序
+  - Rebase Surgeon：历史重写、冲突解决
+  - History Archaeologist：blame、bisect、log -S
+  - 自动风格检测（分析最近 30 次提交）
+  - 强制多提交规则（3+ 文件 → 2+ 提交）
+
+##### P2: Visualization & Browser / 可视化和浏览器
+
+- **Tmux Visualization Skill** - 多 Agent 工作可视化 (`skills/tmux-visualization/SKILL.md`, `hooks/tmux-agent-visualizer.sh`)
+  - ✅ 已实现（实验性）：通过 PostToolUse hook 自动检测后台任务
+  - 在 tmux 环境中自动创建窗格显示 Agent 输出
+  - 仅 Unix/Linux/macOS 环境支持
+
+- **Agent Browser Skill** - 双引擎浏览器自动化指南 (`skills/agent-browser/SKILL.md`)
+  - Playwright MCP 与 Vercel agent-browser 功能对比
+  - 选择指南和使用建议
+  - 配置参考
+
+### 📋 新增文件 / New Files
+
+| 文件 | 功能 |
+|------|------|
+| `agents/metis.md` | Metis 预规划分析 Agent |
+| `agents/oracle.md` | Oracle 只读咨询 Agent |
+| `agents/librarian.md` | Librarian 文档搜索 Agent |
+| `commands/metis.md` | /metis 命令 |
+| `commands/oracle.md` | /oracle 命令 |
+| `commands/librarian.md` | /librarian 命令 |
+| `skills/frontend-ui-ux/SKILL.md` | 前端 UI/UX 设计技能 |
+| `skills/tmux-visualization/SKILL.md` | Tmux 可视化技能文档 |
+| `skills/agent-browser/SKILL.md` | 双引擎浏览器自动化技能 |
+| `hooks/tmux-agent-visualizer.sh` | Tmux 可视化 Hook（实验性） |
+
+### 📝 Modified / 修改
+
+| 文件 | 变更 |
+|------|------|
+| `agents/liubowen.md` | 新增 Momus 严格验证标准 |
+| `skills/git-master/SKILL.md` | 三角色专业化、自动风格检测、原子提交规则 |
+
+### 📊 Statistics / 统计
+
+- 新增 Agent 定义: 3 个（Metis, Oracle, Librarian）
+- 新增 Skill: 3 个（frontend-ui-ux, tmux-visualization, agent-browser）
+- 新增 Hook: 1 个（tmux-agent-visualizer.sh）
+- 注意: Librarian 依赖 context7/grep-app MCP；tmux-visualization 已实现（实验性，仅 Unix/macOS）
+
+---
+
 ## [2.1.16] - 2026-01-26
 
 ### 🐛 Fixed / 修复
