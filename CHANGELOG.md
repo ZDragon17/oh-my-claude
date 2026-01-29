@@ -18,6 +18,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.4] - 2026-01-29
+
+### 🐛 Fixed / 修复
+
+#### 🔧 Windows hooks 路径解析问题
+
+**问题**: Windows 上进度条和通知不显示，而 macOS 正常工作。
+
+**根本原因**:
+- `plugin.json` 中 hooks 路径配置为 `"hooks": "./hooks/hooks.json"`
+- Claude Code 从 `.claude-plugin/` 目录解析此相对路径
+- 导致实际查找路径为 `.claude-plugin/hooks/hooks.json`（不存在）
+- 而不是正确的 `hooks/hooks.json`
+
+**修复**:
+- 将路径改为 `"hooks": "../hooks/hooks.json"`（向上一级后进入 hooks 目录）
+
+**受影响文件**:
+- `.claude-plugin/plugin.json` - 修复 hooks 路径
+
+---
+
 ## [2.2.3] - 2026-01-29
 
 ### 🐛 Fixed / 修复
