@@ -132,7 +132,7 @@ if [ "$usage_percent" -ge "$CRITICAL_THRESHOLD" ]; then
     record_alert_time
     progress_bar=$(generate_progress_bar "$usage_percent")
 
-    printf '{"systemMessage":"\\n\\n┌─────────────────────────────────────────┐\\n│  🚨 CONTEXT CRITICAL - 上下文即将耗尽  │\\n└─────────────────────────────────────────┘\\n\\n  📊 [%s] %d%%\\n     ~%dk / %dk tokens\\n\\n  ⚡ 立即行动 (选一个):\\n     • /context compact  压缩历史\\n     • /session save     保存进度后开新会话\\n\\n  ⚠️  继续操作可能导致会话中断！\\n"}\n' "$progress_bar" "$usage_percent" "$((accumulated_tokens / 1000))" "$((MAX_CONTEXT_TOKENS / 1000))"
+    printf '{"hookSpecificOutput":{"additionalContext":"\\n\\n┌─────────────────────────────────────────┐\\n│  🚨 CONTEXT CRITICAL - 上下文即将耗尽  │\\n└─────────────────────────────────────────┘\\n\\n  📊 [%s] %d%%\\n     ~%dk / %dk tokens\\n\\n  ⚡ 立即行动 (选一个):\\n     • /context compact  压缩历史\\n     • /session save     保存进度后开新会话\\n\\n  ⚠️  继续操作可能导致会话中断！\\n"}}\n' "$progress_bar" "$usage_percent" "$((accumulated_tokens / 1000))" "$((MAX_CONTEXT_TOKENS / 1000))"
     exit 0
 fi
 
@@ -144,7 +144,7 @@ if [ "$usage_percent" -ge "$WARNING_THRESHOLD" ]; then
     record_alert_time
     progress_bar=$(generate_progress_bar "$usage_percent")
 
-    printf '{"systemMessage":"\\n\\n┌──────────────────────────────────────┐\\n│  ⚠️  CONTEXT WARNING - 请尽快处理   │\\n└──────────────────────────────────────┘\\n\\n  📊 [%s] %d%%\\n     ~%dk / %dk tokens\\n\\n  💡 建议: /context compact 压缩历史\\n"}\n' "$progress_bar" "$usage_percent" "$((accumulated_tokens / 1000))" "$((MAX_CONTEXT_TOKENS / 1000))"
+    printf '{"hookSpecificOutput":{"additionalContext":"\\n\\n┌──────────────────────────────────────┐\\n│  ⚠️  CONTEXT WARNING - 请尽快处理   │\\n└──────────────────────────────────────┘\\n\\n  📊 [%s] %d%%\\n     ~%dk / %dk tokens\\n\\n  💡 建议: /context compact 压缩历史\\n"}}\n' "$progress_bar" "$usage_percent" "$((accumulated_tokens / 1000))" "$((MAX_CONTEXT_TOKENS / 1000))"
     exit 0
 fi
 
@@ -156,7 +156,7 @@ if [ "$usage_percent" -ge "$HINT_THRESHOLD" ]; then
     record_alert_time
     progress_bar=$(generate_progress_bar "$usage_percent")
 
-    printf '{"systemMessage":"\\n  💡 上下文: [%s] %d%% - 使用 /context 查看详情\\n"}\n' "$progress_bar" "$usage_percent"
+    printf '{"hookSpecificOutput":{"additionalContext":"\\n  💡 上下文: [%s] %d%% - 使用 /context 查看详情\\n"}}\n' "$progress_bar" "$usage_percent"
     exit 0
 fi
 

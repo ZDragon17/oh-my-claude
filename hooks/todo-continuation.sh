@@ -43,7 +43,7 @@ if [ -f "$YISHAN_STATE_FILE" ]; then
 fi
 
 # 返回 JSON 阻止退出
-# 注意：使用 printf 而不是 echo 来确保正确的 JSON 格式
-printf '{"decision":"block","systemMessage":"\\n\\n🏔️ **愚公移山 第 %d 次搬石**\\n\\n## 强制自检流程\\n\\n**必须执行以下步骤：**\\n\\n1. 调用 `mcp_todoread` 工具查看当前 TODO 列表\\n2. 检查是否有 `pending` 或 `in_progress` 状态的任务\\n3. 如果有未完成任务 → 继续工作，不要停止\\n4. 如果所有任务都是 `completed` → 执行结束流程\\n\\n## 结束方式\\n\\n当所有 TODO 完成后：\\n1. 向用户报告任务完成\\n2. 执行: `rm -f .claude/yishan-loop.local.md` 删除循环状态文件\\n3. 循环将自动结束\\n\\n**⚠️ 不要跳过 todoread 检查！**\\n"}\n' "$NEXT_ITERATION"
+# 注意：Stop hook 使用 decision + reason 字段（非 systemMessage）
+printf '{"decision":"block","reason":"🏔️ 愚公移山 第 %d 次搬石 - 必须先检查 TODO 列表","hookSpecificOutput":{"additionalContext":"\\n\\n🏔️ **愚公移山 第 %d 次搬石**\\n\\n## 强制自检流程\\n\\n**必须执行以下步骤：**\\n\\n1. 调用 `mcp_todoread` 工具查看当前 TODO 列表\\n2. 检查是否有 `pending` 或 `in_progress` 状态的任务\\n3. 如果有未完成任务 → 继续工作，不要停止\\n4. 如果所有任务都是 `completed` → 执行结束流程\\n\\n## 结束方式\\n\\n当所有 TODO 完成后：\\n1. 向用户报告任务完成\\n2. 执行: `rm -f .claude/yishan-loop.local.md` 删除循环状态文件\\n3. 循环将自动结束\\n\\n**⚠️ 不要跳过 todoread 检查！**\\n"}}\n' "$NEXT_ITERATION" "$NEXT_ITERATION"
 
 exit 0

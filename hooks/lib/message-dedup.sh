@@ -82,11 +82,23 @@ clear_all_dedup() {
 }
 
 # 带去重的消息输出函数
-# $1: systemMessage 内容（不包含 JSON 包装）
+# $1: 消息内容（不包含 JSON 包装）
+# 注意：使用 additionalContext 而非 systemMessage（systemMessage 非 Claude Code 标准字段）
 output_system_message() {
     local message="$1"
 
     if should_show_message "$message"; then
-        printf '{"systemMessage":"%s"}\n' "$message"
+        printf '{"hookSpecificOutput":{"additionalContext":"%s"}}\n' "$message"
+    fi
+}
+
+# 带去重的重要消息输出函数（会显示给用户）
+# $1: 消息内容
+output_user_visible_message() {
+    local message="$1"
+
+    if should_show_message "$message"; then
+        # 使用 additionalContext 添加指令让 Claude 显示给用户
+        printf '{"hookSpecificOutput":{"additionalContext":"[DISPLAY TO USER]\\n%s"}}\n' "$message"
     fi
 }

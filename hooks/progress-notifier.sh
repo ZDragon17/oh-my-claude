@@ -234,18 +234,24 @@ else
     progress_line2=$(printf '✅ 所有任务完成！')
 fi
 
-# 转义 JSON 特殊字符
+# 转义 JSON 特殊字符（Windows Git Bash 兼容）
 escape_json() {
-    printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g'
+    local str="$1"
+    # 使用 bash 内置替换，避免 sed 处理 emoji 时出错
+    str="${str//\\/\\\\}"    # 转义反斜杠
+    str="${str//\"/\\\"}"    # 转义双引号
+    str="${str//$'\t'/\\t}"  # 转义制表符
+    str="${str//$'\n'/\\n}"  # 转义换行符
+    printf '%s' "$str"
 }
 
 line1_escaped=$(escape_json "$progress_line1")
 line2_escaped=$(escape_json "$progress_line2")
 
-# 输出 JSON（使用 hookSpecificOutput 确保 Claude 能看到并展示给用户）
-# systemMessage 用于直接显示给用户，additionalContext 用于 Claude 上下文
-output=$(printf '{"systemMessage":"\\n%s\\n%s\\n","hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"【任务进度】%s | %s"}}' \
-    "$line1_escaped" "$line2_escaped" "$line1_escaped" "$line2_escaped")
+# 输出 JSON（使用 additionalContext 让 Claude 看到进度并显示给用户）
+# 注意：systemMessage 不是标准字段，只使用 additionalContext
+output=$(printf '{"hookSpecificOutput":{"additionalContext":"\\n【任务进度】\\n%s\\n%s\\n"}}' \
+    "$line1_escaped" "$line2_escaped")
 
 debug_log "Final output: $output"
 printf '%s\n' "$output"
