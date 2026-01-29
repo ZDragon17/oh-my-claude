@@ -22,6 +22,7 @@ PLUGIN_NAME="oh-my-claude"
 INSTALL_DIR="$HOME/.claude/plugins/$PLUGIN_NAME"
 COMMANDS_DIR="$HOME/.claude/commands"
 SKILLS_DIR="$HOME/.claude/skills"
+SETTINGS_FILE="$HOME/.claude/settings.json"
 
 # 输出函数
 info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
@@ -224,6 +225,123 @@ install_plugin() {
     fi
 }
 
+# 同步 hooks 配置到 settings.json
+setup_hooks() {
+    info "正在配置 hooks..."
+
+    # 检查 settings.json 是否存在
+    if [ ! -f "$SETTINGS_FILE" ]; then
+        warn "未找到 $SETTINGS_FILE，跳过 hooks 配置"
+        warn "请手动将 hooks/hooks.json 中的配置添加到 settings.json"
+        return 0
+    fi
+
+    # 备份 settings.json
+    cp "$SETTINGS_FILE" "${SETTINGS_FILE}.backup-$(date +%s)" 2>/dev/null || true
+
+    # 检查是否已经配置了 oh-my-claude hooks（通过检查 progress-notifier）
+    if grep -q "progress-notifier.sh" "$SETTINGS_FILE" 2>/dev/null; then
+        success "hooks 已配置，跳过"
+        return 0
+    fi
+
+    # 尝试使用 Python 合并 JSON（跨平台兼容）
+    if command -v python3 >/dev/null 2>&1; then
+        PYTHON_CMD="python3"
+    elif command -v python >/dev/null 2>&1; then
+        PYTHON_CMD="python"
+    else
+        warn "未找到 Python，无法自动配置 hooks"
+        warn "请手动将以下内容添加到 $SETTINGS_FILE 的 hooks 部分："
+        echo ""
+        echo '  "hooks": {'
+        echo '    "PostToolUse": ['
+        echo '      {'
+        echo '        "type": "command",'
+        echo "        \"command\": \"bash \\\"$INSTALL_DIR/hooks/progress-notifier.sh\\\"\","
+        echo '        "timeout": 3000'
+        echo '      }'
+        echo '    ]'
+        echo '  }'
+        echo ""
+        return 0
+    fi
+
+    # 使用 Python 脚本合并 hooks 配置
+    $PYTHON_CMD << PYTHON_SCRIPT
+import json
+import sys
+import os
+
+settings_file = "$SETTINGS_FILE"
+install_dir = "$INSTALL_DIR"
+
+try:
+    with open(settings_file, 'r', encoding='utf-8') as f:
+        settings = json.load(f)
+except Exception as e:
+    print(f"读取 settings.json 失败: {e}", file=sys.stderr)
+    sys.exit(1)
+
+# 定义核心 hooks（只添加最重要的几个）
+core_hooks = {
+    "PostToolUse": [
+        {
+            "type": "command",
+            "command": f'bash "{install_dir}/hooks/progress-notifier.sh"',
+            "timeout": 3000
+        },
+        {
+            "type": "command",
+            "command": f'bash "{install_dir}/hooks/context-smart-alert.sh"',
+            "timeout": 2000
+        }
+    ],
+    "Stop": [
+        {
+            "type": "command",
+            "command": f'bash "{install_dir}/hooks/todo-continuation.sh"',
+            "timeout": 3000
+        },
+        {
+            "type": "command",
+            "command": f'bash "{install_dir}/hooks/ralph-loop.sh"',
+            "timeout": 3000
+        }
+    ]
+}
+
+# 合并 hooks
+if "hooks" not in settings:
+    settings["hooks"] = {}
+
+for hook_type, hooks in core_hooks.items():
+    if hook_type not in settings["hooks"]:
+        settings["hooks"][hook_type] = []
+
+    # 添加新的 hooks（避免重复）
+    existing_commands = [h.get("command", "") for h in settings["hooks"][hook_type] if isinstance(h, dict)]
+    for hook in hooks:
+        if hook["command"] not in existing_commands:
+            settings["hooks"][hook_type].append(hook)
+
+# 写回文件
+try:
+    with open(settings_file, 'w', encoding='utf-8') as f:
+        json.dump(settings, f, indent=2, ensure_ascii=False)
+    print("hooks 配置成功")
+except Exception as e:
+    print(f"写入 settings.json 失败: {e}", file=sys.stderr)
+    sys.exit(1)
+PYTHON_SCRIPT
+
+    if [ $? -eq 0 ]; then
+        success "hooks 配置完成"
+    else
+        warn "hooks 自动配置失败，请手动配置"
+    fi
+}
+
 # 验证安装
 verify_installation() {
     info "验证安装..."
@@ -283,6 +401,7 @@ main() {
     show_banner
     check_dependencies
     install_plugin
+    setup_hooks
     verify_installation
     show_success
 }

@@ -263,11 +263,132 @@ export function registerPluginToClaudeCode(): boolean {
     success('插件已注册到 Claude Code');
     info(`注册路径: ${INSTALLED_PLUGINS_PATH}`);
 
+    // 同步 hooks 到 settings.json（关键步骤！）
+    syncHooksToSettings();
+
     return true;
   } catch (err) {
     error(`插件注册失败: ${err instanceof Error ? err.message : 'Unknown error'}`);
     warn('hooks 功能可能无法正常工作');
     return false;
+  }
+}
+
+// ==================== Hooks 同步 ====================
+
+/** settings.json 路径 */
+const SETTINGS_PATH = path.join(os.homedir(), '.claude', 'settings.json');
+
+interface HookConfig {
+  type: string;
+  command: string;
+  timeout: number;
+}
+
+interface SettingsFile {
+  hooks?: Record<string, HookConfig[]>;
+  [key: string]: unknown;
+}
+
+/**
+ * 同步 hooks 配置到 settings.json
+ * Claude Code 需要在 settings.json 中配置 hooks 才能生效
+ */
+function syncHooksToSettings(): void {
+  info('正在同步 hooks 到 settings.json...');
+
+  try {
+    // 读取现有 settings.json
+    let settings: SettingsFile = {};
+    if (fs.existsSync(SETTINGS_PATH)) {
+      try {
+        const content = fs.readFileSync(SETTINGS_PATH, 'utf-8');
+        settings = JSON.parse(content) as SettingsFile;
+      } catch {
+        warn('settings.json 解析失败，将创建新配置');
+      }
+    }
+
+    // 备份 settings.json
+    if (fs.existsSync(SETTINGS_PATH)) {
+      const backupPath = `${SETTINGS_PATH}.backup-${Date.now()}`;
+      fs.copyFileSync(SETTINGS_PATH, backupPath);
+    }
+
+    // 定义核心 hooks（使用插件安装路径）
+    const coreHooks: Record<string, HookConfig[]> = {
+      PostToolUse: [
+        {
+          type: 'command',
+          command: `bash "${PLUGIN_DIR}/hooks/progress-notifier.sh"`,
+          timeout: 3000
+        },
+        {
+          type: 'command',
+          command: `bash "${PLUGIN_DIR}/hooks/context-smart-alert.sh"`,
+          timeout: 2000
+        }
+      ],
+      Stop: [
+        {
+          type: 'command',
+          command: `bash "${PLUGIN_DIR}/hooks/todo-continuation.sh"`,
+          timeout: 3000
+        },
+        {
+          type: 'command',
+          command: `bash "${PLUGIN_DIR}/hooks/ralph-loop.sh"`,
+          timeout: 3000
+        }
+      ]
+    };
+
+    // 合并 hooks（避免重复）
+    if (!settings.hooks) {
+      settings.hooks = {};
+    }
+
+    let hooksAdded = 0;
+    for (const [hookType, hooks] of Object.entries(coreHooks)) {
+      if (!settings.hooks[hookType]) {
+        settings.hooks[hookType] = [];
+      }
+
+      // 获取现有命令列表
+      const existingCommands = new Set(
+        settings.hooks[hookType]
+          .filter((h): h is HookConfig => typeof h === 'object' && 'command' in h)
+          .map(h => h.command)
+      );
+
+      // 添加新的 hooks（如果不存在）
+      for (const hook of hooks) {
+        // 检查是否已存在相同脚本的 hook（忽略路径差异）
+        const scriptName = hook.command.split('/').pop() || '';
+        const alreadyExists = Array.from(existingCommands).some(cmd => cmd.includes(scriptName));
+
+        if (!alreadyExists) {
+          settings.hooks[hookType].push(hook);
+          hooksAdded++;
+        }
+      }
+    }
+
+    // 写回 settings.json
+    const settingsDir = path.dirname(SETTINGS_PATH);
+    if (!fs.existsSync(settingsDir)) {
+      fs.mkdirSync(settingsDir, { recursive: true });
+    }
+    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(settings, null, 2), 'utf-8');
+
+    if (hooksAdded > 0) {
+      success(`hooks 已同步到 settings.json (新增 ${hooksAdded} 个)`);
+    } else {
+      info('hooks 已是最新，无需更新');
+    }
+  } catch (err) {
+    warn(`hooks 同步失败: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    warn('请手动配置 hooks，或运行 /diagnose 获取帮助');
   }
 }
 
