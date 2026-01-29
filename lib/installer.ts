@@ -598,6 +598,11 @@ export async function update(): Promise<void> {
   installCommands(packageDir);
   installSkills(packageDir);
 
+  // 更新 Claude Code 的插件注册信息（修复 v2.2.3）
+  // 这是关键步骤 - 确保 Claude Code 使用最新的 hooks 配置
+  const { registerPluginToClaudeCode } = await import('./plugin-installer.js');
+  registerPluginToClaudeCode();
+
   const { verifyInstallation } = await import('./verifier.js');
   verifyInstallation();
 

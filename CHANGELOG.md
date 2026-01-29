@@ -18,6 +18,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.3] - 2026-01-29
+
+### 🐛 Fixed / 修复
+
+#### 🔧 `update` 命令不更新 Claude 插件注册
+
+**问题**: `npx claude-pangu@latest update` 执行后，Claude Code 的插件注册信息未更新，导致使用旧版本的 hooks 配置。
+
+**现象**:
+- `~/.claude/plugins/installed_plugins.json` 中版本号不更新
+- Windows 上进度条和通知不显示（因为使用了旧的 hook 配置）
+
+**修复**:
+- `update()` 函数现在会调用 `registerPluginToClaudeCode()` 更新插件注册
+- 确保 Claude Code 使用最新的 hooks 配置
+
+**受影响文件**:
+- `lib/installer.ts` - 添加 `registerPluginToClaudeCode()` 调用
+
+---
+
 ## [2.2.2] - 2026-01-29
 
 ### ✨ Added / 新增
