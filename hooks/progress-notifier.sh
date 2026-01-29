@@ -109,21 +109,40 @@ else
     fi
 fi
 
-# 只处理 TodoWrite 工具调用
+# 只处理 TodoWrite 工具调用（兼容 MCP 工具名格式）
 debug_log "Extracted tool_name: [$tool_name]"
-if [ "$tool_name" != "TodoWrite" ]; then
-    debug_log "Not TodoWrite, exiting"
+if [ "$tool_name" != "TodoWrite" ] && [ "$tool_name" != "mcp_todowrite" ]; then
+    debug_log "Not TodoWrite/mcp_todowrite, exiting"
     exit 0
 fi
 debug_log "Processing TodoWrite event"
 
 # 提取 todo 统计信息
 if [ "$HAS_JQ" -eq 1 ]; then
-    # 使用 jq 精确解析
-    completed=$(echo "$input" | jq -r '.tool_input.todos | map(select(.status == "completed")) | length' 2>/dev/null)
-    in_progress=$(echo "$input" | jq -r '.tool_input.todos | map(select(.status == "in_progress")) | length' 2>/dev/null)
-    pending=$(echo "$input" | jq -r '.tool_input.todos | map(select(.status == "pending")) | length' 2>/dev/null)
-    current_task=$(echo "$input" | jq -r '.tool_input.todos | map(select(.status == "in_progress")) | .[0].content // "准备下一个任务"' 2>/dev/null)
+    # 使用 jq 精确解析（兼容多种 JSON 路径）
+    # MCP 工具可能在: .tool_input.todos, .parameters.todos, .input.todos, 或直接 .todos
+    todos_path=""
+    for path in ".tool_input.todos" ".parameters.todos" ".input.todos" ".todos"; do
+        check=$(echo "$input" | jq -r "$path // empty" 2>/dev/null)
+        if [ -n "$check" ] && [ "$check" != "null" ]; then
+            todos_path="$path"
+            break
+        fi
+    done
+    debug_log "Found todos at path: $todos_path"
+    
+    if [ -n "$todos_path" ]; then
+        completed=$(echo "$input" | jq -r "$todos_path | map(select(.status == \"completed\")) | length" 2>/dev/null)
+        in_progress=$(echo "$input" | jq -r "$todos_path | map(select(.status == \"in_progress\")) | length" 2>/dev/null)
+        pending=$(echo "$input" | jq -r "$todos_path | map(select(.status == \"pending\")) | length" 2>/dev/null)
+        current_task=$(echo "$input" | jq -r "$todos_path | map(select(.status == \"in_progress\")) | .[0].content // \"准备下一个任务\"" 2>/dev/null)
+    else
+        # 如果找不到路径，使用降级方案
+        completed=$(count_status "$input" "completed")
+        in_progress=$(count_status "$input" "in_progress")
+        pending=$(count_status "$input" "pending")
+        current_task=$(extract_current_task "$input")
+    fi
 else
     # 降级方案：使用纯 shell 解析
     completed=$(count_status "$input" "completed")
