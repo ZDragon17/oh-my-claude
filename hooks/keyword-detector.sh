@@ -56,10 +56,106 @@ EOF
 fi
 
 # ============================================================================
-# 第一优先级：愚公移山模式（最高优先级，需要持续执行）
-# v2.1.13: 扩展自然语言触发，自动识别大任务需求
+# 第一优先级：四大执行模式智能路由
+# v2.2.0: 根据任务特征自动选择最佳执行模式
 # ============================================================================
 
+# ---- /auto 智能模式命令 (显式触发) ----
+# 用户明确使用 /auto 或 /smart 命令时，输出智能模式引导
+# 支持带参数 (/auto 任务) 和不带参数 (/auto) 两种情况
+if echo "$prompt_lower" | grep -qE '^[[:space:]]*/?(auto|smart|zhineng|智能模式)([[:space:]]|$)'; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n<auto-mode>\n🤖 **智能自动模式已激活！**\n\n正在分析任务特征，自动选择最佳执行模式...\n\n## 模式选择规则\n\n| 检测特征 | 选择模式 |\n|----------|----------|\n| 多组件/全栈/微服务 | ⚡ 超级模式 |\n| 批量/所有/每个 | 🐝 蜂群模式 |\n| 简单/省token/haiku | 💰 节俭模式 |\n| 其他 | ⛰️ 标准模式 |\n\n## 开始分析任务...\n\n请描述你的任务，我会自动选择最佳执行策略。\n</auto-mode>\n"
+}
+EOF
+    exit 0
+fi
+
+# ---- 超级模式检测 (Ultrapilot) ----
+# 特征：多组件、并行、全栈、多模块、微服务
+ultrapilot_mode=false
+if echo "$prompt_lower" | grep -qE '(ultrapilot|chaoji|超级模式|up模式)'; then
+    ultrapilot_mode=true
+elif echo "$prompt_lower" | grep -qE '(全栈|fullstack|full[-_]?stack).{0,15}(应用|项目|系统|app)' || \
+     echo "$prompt_lower" | grep -qE '(前端|后端|数据库|测试|文档).{0,5}(和|与|,|、).{0,5}(前端|后端|数据库|测试|文档)' || \
+     echo "$prompt_lower" | grep -qE '(多模块|多组件|多服务|多个模块|多个组件|多个服务|multiple.{0,5}(module|component|service))' || \
+     echo "$prompt_lower" | grep -qE '(构建|创建|开发|实现).{0,10}(完整|整个|全部).{0,10}(应用|系统|项目)' || \
+     echo "$prompt_lower" | grep -qE '(frontend|backend|database|test).{0,5}(and|&|,).{0,5}(frontend|backend|database|test)' || \
+     echo "$prompt_lower" | grep -qE '(微服务|microservice|分布式|distributed).{0,10}(架构|系统|应用|architecture)' || \
+     echo "$prompt_lower" | grep -qE '(monorepo|mono[-_]?repo|工作区|workspace).{0,10}(项目|应用)'; then
+    ultrapilot_mode=true
+fi
+
+if [ "$ultrapilot_mode" = true ]; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n<ultrapilot-mode>\n⚡ **超级模式 (Ultrapilot) 已激活！**\n\n[并行执行 - 最多 5 倍加速]\n\n## 为什么选择此模式\n检测到多组件/多模块任务，适合并行执行。\n\n## 执行策略\n\n### 阶段 1: 任务分解\n将任务拆分为独立子任务，每个子任务分配独占文件区域：\n```\nWorker 1 (鲁班):   src/api/**     (后端)\nWorker 2 (顾恺之): src/ui/**      (前端)\nWorker 3 (仓颉):   src/db/**      (数据库)\nWorker 4 (司马迁): docs/**        (文档)\nWorker 5 (包拯):   tests/**       (测试)\n```\n\n### 阶段 2: 并行执行\n使用 Task 工具生成最多 5 个 Worker，设置 `run_in_background: true`\n\n### 阶段 3: 整合验证\n顺序处理共享文件，验证系统完整性\n\n## 委派规则 (强制)\n**你是协调者，不是实现者。**\n- ✓ 分解任务、分区文件、生成 Worker、追踪进度\n- ✗ 绝不直接写代码（委派给专家 Worker）\n\n## 完成标志\n```\n<promise>ULTRAPILOT_COMPLETE</promise>\n```\n\n**开始并行执行...**\n</ultrapilot-mode>\n"
+}
+EOF
+    exit 0
+fi
+
+# ---- 蜂群模式检测 (Swarm) ----
+# 特征：批量、所有、N个同类任务
+swarm_mode=false
+swarm_count=""
+swarm_agent=""
+if echo "$prompt_lower" | grep -qE '(fengqun|swarm|蜂群模式)'; then
+    swarm_mode=true
+    # 尝试提取 N:agent 格式
+    # 支持所有主要 Agent: 鲁班/顾恺之/包拯/扁鹊/墨子/司马迁/仓颉/诸葛/悟空/孙子/老子/魏征/祖冲之/狄仁杰/大禹
+    swarm_params=$(echo "$prompt_lower" | grep -oE '[0-9]+:(luban|gukaizhi|baozheng|bianque|mozi|simaqian|cangjie|zhuge|wukong|sunzi|laozi|weizheng|scientist|qa-tester|build-fixer|鲁班|顾恺之|包拯|扁鹊|墨子|司马迁|仓颉|诸葛|悟空|孙子|老子|魏征|祖冲之|狄仁杰|大禹)' | head -1)
+    if [ -n "$swarm_params" ]; then
+        swarm_count=$(echo "$swarm_params" | cut -d: -f1)
+        swarm_agent=$(echo "$swarm_params" | cut -d: -f2)
+    fi
+elif echo "$prompt_lower" | grep -qE '(修复|fix|添加|add|更新|update|检查|check|审计|audit).{0,5}(所有|全部|每个|all|every|each).{0,10}(文件|错误|组件|测试|类型|type|file|component|error)' || \
+     echo "$prompt_lower" | grep -qE '(所有|全部|每个|all|every|each).{0,5}(文件|错误|组件|测试|类型).{0,5}(修复|fix|添加|add|更新|update)' || \
+     echo "$prompt_lower" | grep -qE '(批量|batch).{0,10}(修复|处理|更新|添加|fix|process|update|add)' || \
+     echo "$prompt_lower" | grep -qE '(为|给|对).{0,5}(所有|全部|每个).{0,10}(添加|实现|写|编写)'; then
+    swarm_mode=true
+fi
+
+if [ "$swarm_mode" = true ]; then
+    if [ -n "$swarm_count" ] && [ -n "$swarm_agent" ]; then
+        cat << EOF
+{
+  "systemMessage": "\n\n<swarm-mode>\n🐝 **蜂群模式 (Swarm) 已激活！**\n\n[${swarm_count} 个 ${swarm_agent} Agent 协作执行]\n\n## 执行策略\n\n### 1. 任务分解\n将任务拆分为文件级子任务，创建共享任务池\n\n### 2. 生成 ${swarm_count} 个 ${swarm_agent} Agent\n每个 Agent 自动从任务池认领任务，完成后认领下一个\n\n### 3. 原子认领机制\n- 每个任务仅被一个 Agent 认领\n- 心跳监控检测死亡 Agent\n- 超时任务自动释放\n\n### 4. 进度追踪\n实时显示：pending/claimed/done/failed 计数\n\n## 启动蜂群...\n\n**众人拾柴火焰高！**\n</swarm-mode>\n"
+}
+EOF
+    else
+        cat << 'EOF'
+{
+  "systemMessage": "\n\n<swarm-mode>\n🐝 **蜂群模式 (Swarm) 已激活！**\n\n[多 Agent 协作执行批量任务]\n\n## 为什么选择此模式\n检测到批量/同类任务，适合多 Agent 并行处理。\n\n## 执行策略\n\n### 1. 分析任务\n确定子任务数量和类型，选择合适的 Agent 类型\n\n### 2. 推荐配置\n| 任务类型 | Agent | 数量 |\n|----------|-------|------|\n| 修复错误 | luban | 3-5 |\n| UI组件 | gukaizhi | 2-4 |\n| 测试编写 | baozheng | 2-3 |\n| 安全审计 | mozi | 2-4 |\n| 文档 | simaqian | 2-3 |\n\n### 3. 生成蜂群\n使用 Task 工具并行启动 N 个同类 Agent\n\n### 4. 监控与整合\n追踪进度，汇总结果\n\n## 使用示例\n```\n/fengqun 5:luban \"修复所有 TypeScript 错误\"\n/fengqun 3:baozheng \"为所有服务添加单元测试\"\n```\n\n**开始蜂群协作...**\n</swarm-mode>\n"
+}
+EOF
+    fi
+    exit 0
+fi
+
+# ---- 节俭模式检测 (Ecomode) ----
+# 特征：简单任务、成本敏感、省token
+ecomode=false
+if echo "$prompt_lower" | grep -qE '(ecomode|jiejian|节俭模式|eco模式)'; then
+    ecomode=true
+elif echo "$prompt_lower" | grep -qE '(省[[:space:]]*token|省钱|便宜|budget|cheap|低成本|cost.{0,5}(save|efficient)|token.{0,5}(save|efficient))' || \
+     echo "$prompt_lower" | grep -qE '(简单|快速|小改动|小修改|simple|quick|minor|small).{0,10}(任务|改动|修复|功能)' || \
+     echo "$prompt_lower" | grep -qE '(不要|别|禁止|avoid).{0,5}(opus|高级|expensive)' || \
+     echo "$prompt_lower" | grep -qE '(用[[:space:]]*haiku|优先[[:space:]]*haiku|haiku.{0,5}(first|优先))'; then
+    ecomode=true
+fi
+
+if [ "$ecomode" = true ]; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n<ecomode>\n💰 **节俭模式 (Ecomode) 已激活！**\n\n[Token 高效执行 - 节省 30-50%]\n\n## 为什么选择此模式\n检测到成本敏感需求或简单任务，适合使用低成本模型。\n\n## 智能模型路由\n\n| 任务类型 | 首选 (Haiku) | 备选 (Sonnet) |\n|---------|-------------|---------------|\n| 代码探索 | wukong | - |\n| 简单实现 | luban-low | luban |\n| 前端组件 | gukaizhi-low | gukaizhi |\n| 测试编写 | baozheng-low | baozheng |\n| 文档更新 | simaqian | - |\n| Bug诊断 | bianque-low | bianque |\n\n## 执行原则\n1. **默认 LOW** - Haiku Agent 优先\n2. **按需升级** - 复杂度需要才用 Sonnet\n3. **避免 HIGH** - Opus 仅在规划时使用\n\n## 委派规则 (强制)\n**你是编排者，不是实现者。**\n- ✓ 读取文件、追踪进度、生成 Agent\n- ✗ 绝不直接写代码（委派给 xxx-low Agent）\n\n## 完成标志\n```\n<promise>ECOMODE_COMPLETE</promise>\n```\n\n**一粥一饭，当思来之不易。**\n</ecomode>\n"
+}
+EOF
+    exit 0
+fi
+
+# ---- 标准愚公模式 (默认) ----
 # 显式触发词（命令式）
 explicit_yishan=false
 if echo "$prompt_lower" | grep -qE '(ultra[-_]?work|ulw|移山|yi[-_]?shan|persist|愚公|yu[-_]?gong)'; then
