@@ -1,0 +1,23 @@
+{
+  "name": "ecomode",
+  "version": "1.0.0",
+  "description": "节俭模式 - 智能模型路由，节省 30-50% Token",
+  "keywords": ["ecomode", "jiejian", "节俭", "eco", "budget", "save-tokens"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["ecomode", "jiejian", "节俭", "eco", "efficient", "save-tokens", "budget"],
+    "commands": ["/jiejian", "/ecomode", "/eco", "/节俭"]
+  },
+
+  "activation": {
+    "announcement": "💰 节俭模式已激活！智能路由中...",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/jiejian": ["/ecomode", "/eco", "/节俭"]
+  }
+}

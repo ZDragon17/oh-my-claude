@@ -18,6 +18,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.0] - 2026-01-29
+
+### ✨ Added / 新增
+
+#### 四大执行模式 / Four Execution Modes
+
+本版本新增三种高级执行模式，与标准愚公移山模式组成完整的任务执行体系：
+
+##### ⚡ 超级模式 (Ultrapilot)
+
+- **并行执行** - 最多 5 个 Worker 同时工作，实现 3-5 倍加速
+- **文件所有权分区** - 每个 Worker 独占文件区域，避免冲突
+- **智能整合** - 自动处理共享文件和边界依赖
+- 命令：`/chaoji`, `/ultrapilot`, `/up`
+
+##### 💰 节俭模式 (Ecomode)
+
+- **智能模型路由** - 优先使用 Haiku，节省 30-50% Token
+- **按需升级** - 简单任务用 LOW，复杂任务自动升级到 MEDIUM
+- **成本优化** - 避免不必要的 Opus 调用
+- 命令：`/jiejian`, `/ecomode`, `/eco`
+
+##### 🐝 蜂群模式 (Swarm)
+
+- **N 个同类 Agent 协作** - 批量处理同类型任务
+- **原子任务认领** - 无竞争条件的任务分配
+- **心跳监控** - 自动检测和恢复失败的 Worker
+- 命令：`/fengqun N:agent`, `/swarm N:agent`
+
+#### Agent 分层体系 / Agent Tier System
+
+为支持节俭模式，核心 Agent 提供多层级版本：
+
+| 层级 | 模型 | Agent 示例 |
+|------|------|-----------|
+| **LOW** | Haiku | zhuge-low, luban-low, baozheng-low, bianque-low, gukaizhi-low, mozi-low, cangjie-low |
+| **MEDIUM** | Sonnet | 所有标准 Agent, wukong-medium |
+| **HIGH** | Opus | wukong-high, luban-high, scientist-high, qa-tester-high |
+
+#### 新增 Agent / New Agents
+
+- **祖冲之 (ZuChongZhi)** - 数据科学家，擅长数据分析、统计检验、假设验证
+  - 命令：`/zuchongzhi`, `/scientist`, `/data`
+- **狄仁杰 (DiRenJie)** - QA 测试员，擅长交互式 CLI 测试、手动测试执行
+  - 命令：`/direnjie`, `/qa-tester`, `/qa`
+- **大禹 (DaYu)** - 构建修复师，擅长构建错误修复、依赖问题、CI/CD 故障
+  - 命令：`/dayu`, `/build-fixer`, `/fix-build`
+
+#### 新增技能 / New Skills
+
+| 技能 | 命令 | 说明 |
+|------|------|------|
+| Autopilot (自动驾驶) | `/shenxing`, `/autopilot` | 完全自主执行，从想法到代码 |
+| DeepSearch (深度搜索) | `/shensou`, `/deepsearch` | 多策略并行代码库搜索 |
+| Doctor (诊断修复) | `/doctor`, `/zhenduan` | 插件自诊断和自动修复 |
+| Pipeline (流水线) | `/liushuixian`, `/pipeline` | CI/CD 流水线配置 |
+| Research (研究编排) | `/yanjiu`, `/research` | 多科学家并行研究 |
+| TDD (测试驱动) | `/honglv`, `/tdd` | Red→Green→Refactor 循环 |
+| Learner (学徒) | `/xuetu`, `/learner` | 智能学习和模式识别 |
+| Note (笔记) | `/biji`, `/note` | 知识记录和整理 |
+| Release (发布) | `/fabu`, `/release` | 版本发布管理 |
+
+### 🔧 Changed / 变更
+
+- **愚公移山升级到 v2.2** - 支持四种执行模式选择
+- **README 更新** - 添加新功能文档和使用示例
+
+---
+
 ## [2.1.18] - 2026-01-27
 
 ### 🔧 Changed / 变更

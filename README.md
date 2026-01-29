@@ -67,6 +67,21 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 | 🌙 | **嫦娥** (ChangE) | 云服务，DevOps 部署 | `/change` `/cloud` | |
 | 🖼️ | **离娄** (LiLou) | 多模态分析，图像理解 | `/lilou` `/looker` | |
 | 🔮 | **刘伯温** (LiuBoWen) | 计划审查，风险评估 | `/liubowen` `/momus` | |
+| 📊 | **祖冲之** (ZuChongZhi) | 数据分析，统计检验 | `/zuchongzhi` `/scientist` | `/data` |
+| 🔍 | **狄仁杰** (DiRenJie) | QA 测试，交互测试 | `/direnjie` `/qa-tester` | `/qa` |
+| 🌊 | **大禹** (DaYu) | 构建修复，CI/CD | `/dayu` `/build-fixer` | `/fix-build` |
+
+#### 🆕 Agent 分层体系 (v2.2.0 新增)
+
+为支持节俭模式，核心 Agent 提供多个版本：
+
+| 层级 | 模型 | Agent 示例 | 适用场景 |
+|------|------|-----------|----------|
+| **LOW** | Haiku | zhuge-low, luban-low, baozheng-low, bianque-low, gukaizhi-low, mozi-low, cangjie-low, scientist-low, qa-tester-low, build-fixer-low | 简单任务、快速响应 |
+| **MEDIUM** | Sonnet | 所有标准 Agent, wukong-medium | 日常开发任务 |
+| **HIGH** | Opus | wukong-high, luban-high, scientist-high, qa-tester-high | 复杂架构、关键决策 |
+
+> 💡 节俭模式 (`/jiejian`) 会根据任务复杂度自动选择合适的 Agent 版本
 
 ### 🔄 愚公移山模式
 
@@ -84,6 +99,32 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 - ✅ Todo 强制执行（未完成不能停止）
 - ✅ 智能错误恢复
 - ✅ 进度透明报告
+
+#### 🆕 四种执行模式 (v2.2.0 新增)
+
+| 模式 | 命令 | 说明 | 适用场景 |
+|------|------|------|----------|
+| ⚡ **超级模式** | `/chaoji` `/ultrapilot` `/up` | 并行执行，最多 5 倍加速 | 大型任务、多文件修改 |
+| 💰 **节俭模式** | `/jiejian` `/ecomode` `/eco` | 智能模型路由，节省 30-50% Token | 简单任务、预算敏感 |
+| 🐝 **蜂群模式** | `/fengqun N:agent` `/swarm N:agent` | N 个同类 Agent 协作 | 批量处理、大规模重构 |
+| 🏔️ **标准模式** | `/yishan` `/ultrawork` | 单 Agent 顺序执行 | 默认模式、复杂逻辑 |
+
+```bash
+# 超级模式：并行处理，加速执行
+/chaoji 重构整个用户模块
+
+# 节俭模式：优先使用低成本模型
+/jiejian 修复这个简单的 typo
+
+# 蜂群模式：3 个诸葛 Agent 并行分析架构
+/fengqun 3:zhuge 分析整个项目架构
+```
+
+**模式选择指南：**
+- 🔥 追求速度 → `/chaoji` (超级模式)
+- 💵 节省成本 → `/jiejian` (节俭模式)  
+- 📦 批量任务 → `/fengqun` (蜂群模式)
+- 🎯 复杂逻辑 → `/yishan` (标准模式)
 
 #### 🆕 任务恢复命令 (v2.0 新增)
 
@@ -567,6 +608,14 @@ oh-my-claude/
 | `/progress` | 📊 可视化进度面板 | |
 | `/team` | 🤝 多 Agent 团队协作 | |
 
+### 执行模式命令 (v2.2.0 新增)
+
+| 命令 | 功能 | 别名 |
+|------|------|------|
+| `/chaoji` | ⚡ 超级模式 - 并行执行，5 倍加速 | `/ultrapilot` `/up` |
+| `/jiejian` | 💰 节俭模式 - 智能路由，省 Token | `/ecomode` `/eco` |
+| `/fengqun` | 🐝 蜂群模式 - N 个同类 Agent 协作 | `/swarm` |
+
 ### 关键词触发
 
 在任何提示中包含这些关键词会自动激活相应模式：
@@ -586,6 +635,9 @@ oh-my-claude/
 | `测试` `单元测试` `test` `TDD` `jest` `pytest` `coverage` `包拯` `baozheng` | 包拯测试提示 |
 | `审查` `code review` `review` `CR` `PR` `魏征` `weizheng` | 魏征审查提示 |
 | `数据库` `database` `SQL` `表设计` `索引` `migration` `仓颉` `cangjie` | 仓颉数据库提示 |
+| `超级` `chaoji` `ultrapilot` `并行` `parallel` `up` | 超级模式 (并行加速) |
+| `节俭` `jiejian` `ecomode` `eco` `省钱` `节约` | 节俭模式 (智能路由) |
+| `蜂群` `fengqun` `swarm` `协作` `批量` | 蜂群模式 (多 Agent) |
 
 ## 🔧 配置
 
@@ -836,6 +888,71 @@ model: sonnet
 - [x] v2.1.15 - **启动时自动更新** 🔄（后台静默检查和更新）
 - [x] v2.1.16 - **关键词精准度优化** 🎯（减少误触发，提升识别准确率）
 - [x] v2.1.17 - **功能对齐增强** 🚀（Metis/Oracle/Librarian Agent, Tmux 可视化, Frontend UI/UX）
+- [x] v2.2.0 - **oh-my-claudecode 功能集成** ⚡（三大核心功能：超级模式/节俭模式/蜂群模式，Agent 分层体系）
+- [x] v2.2.1 - **第二阶段功能集成** 📦（5 个新技能 + 3 个新 Agent + 新命令）
+- [x] v2.2.2 - **第三阶段功能集成** 🔬（3 个新技能 + 5 个 Agent 变体）
+
+### v2.2.2 核心更新
+
+**🆕 新增技能**（灵感来源：[oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)）
+
+| 技能 | 命令 | 说明 |
+|------|------|------|
+| 🔬 Research (研究编排) | `/yanjiu` `/research` `/rs` | 多科学家并行研究，交叉验证 |
+| 🧪 TDD (测试驱动开发) | `/honglv` `/tdd` `/test-first` | Red→Green→Refactor 循环 |
+| 📦 Release (自动化发布) | `/fabu` `/release` `/rel` | 标准化版本发布流程 |
+
+**🆕 Agent 变体扩展**
+
+| Agent | 版本 | 模型 | 专长 |
+|-------|------|------|------|
+| 悟空 | wukong-medium | Sonnet | 深度代码分析 |
+| 悟空 | wukong-high | Opus | 架构级洞察 |
+| 鲁班 | luban-high | Opus | 复杂重构 |
+| 祖冲之 | scientist-high | Opus | 因果推断/ML |
+| 狄仁杰 | qa-tester-high | Opus | 测试架构设计 |
+
+### v2.2.1 核心更新
+
+**🆕 新增技能**（灵感来源：[oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)）
+
+| 技能 | 命令 | 说明 |
+|------|------|------|
+| 🔍 DeepSearch (深度搜索) | `/shensou` `/deepsearch` `/ds` | 多策略并行搜索，彻底查找 |
+| 🧪 UltraQA (自主测试) | `/ceshi` `/ultraqa` `/qa` | 自动测试循环，直到全部通过 |
+| 🎯 RalPlan (迭代规划) | `/gongshi` `/ralplan` `/plan+` | Planner+Architect+Critic 三方共识 |
+| 📝 Note (笔记本) | `/biji` `/note` `/n` | 压缩抗性笔记，重要信息不丢失 |
+| 🏥 Doctor (诊断修复) | `/doctor` `/zhenduan` `/diag` | 自动诊断并修复安装问题 |
+
+**🆕 新增 Agent**
+
+| Agent | 名称 | 专长 | 命令 |
+|-------|------|------|------|
+| 📊 | **祖冲之** (ZuChongZhi) | 数据分析、统计检验 | `/scientist` `/zuchongzhi` |
+| 🔍 | **狄仁杰** (DiRenJie) | QA 测试、交互式测试 | `/qa-tester` `/direnjie` |
+| 🌊 | **大禹** (DaYu) | 构建修复、CI/CD 故障 | `/build-fixer` `/dayu` |
+
+**🆕 Agent 分层体系扩展**
+
+新增 LOW 版本 Agent：scientist-low, qa-tester-low, build-fixer-low
+
+### v2.2.0 核心更新
+
+**🆕 三大执行模式**（灵感来源：[oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)）
+
+| 功能 | 命令 | 说明 |
+|------|------|------|
+| ⚡ Ultrapilot (超级模式) | `/chaoji` `/ultrapilot` | 并行执行，最多 5 倍加速 |
+| 💰 Ecomode (节俭模式) | `/jiejian` `/ecomode` | 智能模型路由，节省 30-50% Token |
+| 🐝 Swarm (蜂群模式) | `/fengqun N:agent` `/swarm` | N 个同类 Agent 共享任务池协作 |
+
+**🆕 Agent 分层体系**
+
+| 层级 | 模型 | Agent | 用途 |
+|------|------|-------|------|
+| LOW | Haiku | zhuge-low, luban-low, baozheng-low 等 | 简单任务，节省成本 |
+| MEDIUM | Sonnet | 原有 Agent | 标准任务 |
+| HIGH | Opus | zhuge (复杂架构) | 高难度任务 |
 
 ## 🤝 贡献
 

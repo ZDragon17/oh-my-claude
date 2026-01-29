@@ -1,0 +1,23 @@
+{
+  "name": "deepsearch",
+  "version": "1.0.0",
+  "description": "深度搜索 - 多策略并行搜索，彻底查找",
+  "keywords": ["deepsearch", "shensou", "深搜", "search", "thorough"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["deepsearch", "shensou", "深搜", "ds", "thorough search", "找到所有"],
+    "commands": ["/shensou", "/deepsearch", "/ds", "/深搜"]
+  },
+
+  "activation": {
+    "announcement": "🔍 深度搜索模式已激活！",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/shensou": ["/deepsearch", "/ds", "/深搜", "/thorough"]
+  }
+}

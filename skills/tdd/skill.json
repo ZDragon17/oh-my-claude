@@ -1,0 +1,23 @@
+{
+  "name": "tdd",
+  "version": "1.0.0",
+  "description": "测试驱动开发 - Red→Green→Refactor 循环",
+  "keywords": ["tdd", "honglv", "红绿", "test-first", "red-green"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["tdd", "honglv", "红绿", "test first", "红灯绿灯"],
+    "commands": ["/honglv", "/tdd", "/test-first", "/红绿"]
+  },
+
+  "activation": {
+    "announcement": "🧪 TDD 模式已激活！Red→Green→Refactor...",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/honglv": ["/tdd", "/test-first", "/红绿"]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "learner",
+  "version": "1.0.0",
+  "description": "学徒模式 - 从会话中提取可复用技能",
+  "keywords": ["learner", "xuetu", "学徒", "extract", "skill"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["learner", "xuetu", "学徒", "extract skill"],
+    "commands": ["/xuetu", "/learner", "/extract", "/学徒"]
+  },
+
+  "activation": {
+    "announcement": "📚 学徒模式已激活！学习中...",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/xuetu": ["/learner", "/extract", "/学徒"]
+  }
+}

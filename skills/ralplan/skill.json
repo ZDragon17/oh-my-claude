@@ -1,0 +1,23 @@
+{
+  "name": "ralplan",
+  "version": "1.0.0",
+  "description": "迭代规划 - Planner+Architect+Critic 三方共识",
+  "keywords": ["ralplan", "gongshi", "共识", "planning", "iterative"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["ralplan", "gongshi", "共识", "iterative plan"],
+    "commands": ["/gongshi", "/ralplan", "/plan+", "/共识"]
+  },
+
+  "activation": {
+    "announcement": "🎯 迭代规划模式已激活！三方共识进行中...",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/gongshi": ["/ralplan", "/plan+", "/共识"]
+  }
+}

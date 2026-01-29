@@ -1,0 +1,23 @@
+{
+  "name": "release",
+  "version": "1.0.0",
+  "description": "自动化发布 - 标准化版本发布流程",
+  "keywords": ["release", "fabu", "发布", "publish", "version"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["release", "fabu", "发布", "publish", "上线"],
+    "commands": ["/fabu", "/release", "/rel", "/发布"]
+  },
+
+  "activation": {
+    "announcement": "📦 发布模式已激活！",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/fabu": ["/release", "/rel", "/publish", "/发布"]
+  }
+}

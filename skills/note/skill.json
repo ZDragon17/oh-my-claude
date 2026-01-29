@@ -1,0 +1,23 @@
+{
+  "name": "note",
+  "version": "1.0.0",
+  "description": "笔记本 - 压缩抗性笔记，重要信息不丢失",
+  "keywords": ["note", "biji", "笔记", "notepad", "memo"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["note", "biji", "笔记"],
+    "commands": ["/biji", "/note", "/n", "/笔记"]
+  },
+
+  "activation": {
+    "announcement": "📝 笔记本已打开！",
+    "mustSay": false
+  },
+
+  "commandAliases": {
+    "/biji": ["/note", "/n", "/笔记"]
+  }
+}

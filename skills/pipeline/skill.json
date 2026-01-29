@@ -1,0 +1,23 @@
+{
+  "name": "pipeline",
+  "version": "1.0.0",
+  "description": "流水线模式 - Agent 顺序链式执行",
+  "keywords": ["pipeline", "liushuixian", "流水线", "chain", "sequential"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["pipeline", "liushuixian", "流水线", "chain agents"],
+    "commands": ["/liushuixian", "/pipeline", "/chain", "/流水线"]
+  },
+
+  "activation": {
+    "announcement": "🔗 流水线模式已激活！顺序执行中...",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/liushuixian": ["/pipeline", "/chain", "/流水线"]
+  }
+}

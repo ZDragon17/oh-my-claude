@@ -1,0 +1,23 @@
+{
+  "name": "ultraqa",
+  "version": "1.0.0",
+  "description": "自主测试 - 自动测试循环，直到全部通过",
+  "keywords": ["ultraqa", "ceshi", "测试", "qa", "testing"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["ultraqa", "ceshi", "测试循环", "test loop"],
+    "commands": ["/ceshi", "/ultraqa", "/qa", "/测试"]
+  },
+
+  "activation": {
+    "announcement": "🧪 自主测试模式已激活！循环测试中...",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/ceshi": ["/ultraqa", "/qa", "/测试"]
+  }
+}

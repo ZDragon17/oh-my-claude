@@ -1,0 +1,23 @@
+{
+  "name": "swarm",
+  "version": "1.0.0",
+  "description": "蜂群模式 - N 个同类 Agent 协作共享任务池",
+  "keywords": ["swarm", "fengqun", "蜂群", "协作", "batch"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["swarm", "fengqun", "蜂群", "swarm agents"],
+    "commands": ["/fengqun", "/swarm", "/蜂群"]
+  },
+
+  "activation": {
+    "announcement": "🐝 蜂群模式已激活！N 个 Agent 协作中...",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/fengqun": ["/swarm", "/蜂群"]
+  }
+}

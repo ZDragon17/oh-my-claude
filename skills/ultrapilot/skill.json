@@ -1,0 +1,23 @@
+{
+  "name": "ultrapilot",
+  "version": "1.0.0",
+  "description": "超级模式 - 并行执行，最多 5 倍加速",
+  "keywords": ["ultrapilot", "chaoji", "parallel", "超级", "并行", "加速"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["ultrapilot", "chaoji", "超级", "up", "parallel-build"],
+    "commands": ["/chaoji", "/ultrapilot", "/up", "/超级"]
+  },
+
+  "activation": {
+    "announcement": "⚡ 超级模式已激活！并行执行中...",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/chaoji": ["/ultrapilot", "/up", "/超级"]
+  }
+}

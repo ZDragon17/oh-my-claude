@@ -1,0 +1,23 @@
+{
+  "name": "research",
+  "version": "1.0.0",
+  "description": "研究编排 - 多科学家并行研究，交叉验证",
+  "keywords": ["research", "yanjiu", "研究", "scientist", "parallel"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["research", "yanjiu", "研究", "analyze data", "统计分析"],
+    "commands": ["/yanjiu", "/research", "/rs", "/研究"]
+  },
+
+  "activation": {
+    "announcement": "🔬 研究编排模式已激活！并行研究中...",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/yanjiu": ["/research", "/rs", "/研究", "/xuanwu"]
+  }
+}

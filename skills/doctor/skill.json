@@ -1,0 +1,23 @@
+{
+  "name": "doctor",
+  "version": "1.0.0",
+  "description": "诊断修复 - 自动诊断并修复安装问题",
+  "keywords": ["doctor", "zhenduan", "诊断", "diagnose", "fix"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["doctor", "zhenduan", "诊断", "diagnose"],
+    "commands": ["/doctor", "/zhenduan", "/diag", "/诊断"]
+  },
+
+  "activation": {
+    "announcement": "🏥 诊断模式已激活！",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/doctor": ["/zhenduan", "/diag", "/诊断"]
+  }
+}

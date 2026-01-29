@@ -1,0 +1,23 @@
+{
+  "name": "autopilot",
+  "version": "1.0.0",
+  "description": "自动驾驶模式 - 全自主执行从想法到代码",
+  "keywords": ["autopilot", "shenxing", "autonomous", "自动", "神行"],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "repository": "https://github.com/ZDragon17/oh-my-claude",
+
+  "triggers": {
+    "keywords": ["autopilot", "shenxing", "神行", "build me", "I want a"],
+    "commands": ["/shenxing", "/autopilot", "/auto", "/神行"]
+  },
+
+  "activation": {
+    "announcement": "🚀 自动驾驶模式已激活！",
+    "mustSay": true
+  },
+
+  "commandAliases": {
+    "/shenxing": ["/autopilot", "/auto", "/神行"]
+  }
+}
