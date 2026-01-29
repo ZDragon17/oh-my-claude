@@ -22,7 +22,8 @@ MAX_FAILURES=3
 mkdir -p "$FAILURE_STATE_DIR" 2>/dev/null
 
 # 加载去重库（如果存在）
-SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
+# 使用 BASH_SOURCE 确保在 source 执行时也能正确获取脚本路径
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd)"
 if [ -f "$SCRIPT_DIR/lib/message-dedup.sh" ]; then
     . "$SCRIPT_DIR/lib/message-dedup.sh"
     USE_DEDUP=1

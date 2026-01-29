@@ -25,7 +25,8 @@ debug_log() {
 debug_log "=== progress-notifier.sh started ==="
 
 # 加载去重库（如果存在）
-SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
+# 使用 BASH_SOURCE 而非 $0，确保在 source 执行时也能正确获取脚本路径
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd)"
 debug_log "SCRIPT_DIR: $SCRIPT_DIR"
 if [ -f "$SCRIPT_DIR/lib/message-dedup.sh" ]; then
     . "$SCRIPT_DIR/lib/message-dedup.sh"
@@ -248,10 +249,11 @@ escape_json() {
 line1_escaped=$(escape_json "$progress_line1")
 line2_escaped=$(escape_json "$progress_line2")
 
-# 输出 JSON（使用 additionalContext 让 Claude 看到进度并显示给用户）
-# 注意：systemMessage 不是标准字段，只使用 additionalContext
-output=$(printf '{"hookSpecificOutput":{"additionalContext":"\\n【任务进度】\\n%s\\n%s\\n"}}' \
-    "$line1_escaped" "$line2_escaped")
+# 输出 JSON
+# systemMessage: 显示给用户的消息
+# additionalContext: 添加到 Claude 上下文（Claude 能看到）
+output=$(printf '{"systemMessage":"\\n%s\\n%s\\n","hookSpecificOutput":{"additionalContext":"【任务进度】%s"}}' \
+    "$line1_escaped" "$line2_escaped" "$line1_escaped")
 
 debug_log "Final output: $output"
 printf '%s\n' "$output"
