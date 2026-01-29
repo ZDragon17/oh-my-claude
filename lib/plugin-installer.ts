@@ -279,14 +279,19 @@ export function registerPluginToClaudeCode(): boolean {
 /** settings.json 路径 */
 const SETTINGS_PATH = path.join(os.homedir(), '.claude', 'settings.json');
 
-interface HookConfig {
+interface HookCommand {
   type: string;
   command: string;
   timeout: number;
 }
 
+interface HookEntry {
+  matcher: string | { tools?: string[] };
+  hooks: HookCommand[];
+}
+
 interface SettingsFile {
-  hooks?: Record<string, HookConfig[]>;
+  hooks?: Record<string, HookEntry[]>;
   [key: string]: unknown;
 }
 
@@ -315,31 +320,51 @@ function syncHooksToSettings(): void {
       fs.copyFileSync(SETTINGS_PATH, backupPath);
     }
 
-    // 定义核心 hooks（使用插件安装路径）
+    // 定义核心 hooks（使用新格式：matcher + hooks 数组）
     // 注意：在 Windows Git Bash 中，使用 bash -c '. script' 才能正确接收 stdin 管道输入
-    const coreHooks: Record<string, HookConfig[]> = {
+    const coreHooks: Record<string, HookEntry[]> = {
       PostToolUse: [
         {
-          type: 'command',
-          command: `bash -c '. "${PLUGIN_DIR}/hooks/progress-notifier.sh"'`,
-          timeout: 3000
+          matcher: 'TodoWrite',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${PLUGIN_DIR}/hooks/progress-notifier.sh"'`,
+              timeout: 3000
+            }
+          ]
         },
         {
-          type: 'command',
-          command: `bash -c '. "${PLUGIN_DIR}/hooks/context-smart-alert.sh"'`,
-          timeout: 2000
+          matcher: '*',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${PLUGIN_DIR}/hooks/context-smart-alert.sh"'`,
+              timeout: 2000
+            }
+          ]
         }
       ],
       Stop: [
         {
-          type: 'command',
-          command: `bash -c '. "${PLUGIN_DIR}/hooks/todo-continuation.sh"'`,
-          timeout: 3000
+          matcher: '*',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${PLUGIN_DIR}/hooks/todo-continuation.sh"'`,
+              timeout: 3000
+            }
+          ]
         },
         {
-          type: 'command',
-          command: `bash -c '. "${PLUGIN_DIR}/hooks/ralph-loop.sh"'`,
-          timeout: 3000
+          matcher: '*',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${PLUGIN_DIR}/hooks/ralph-loop.sh"'`,
+              timeout: 3000
+            }
+          ]
         }
       ]
     };
@@ -350,26 +375,34 @@ function syncHooksToSettings(): void {
     }
 
     let hooksAdded = 0;
-    for (const [hookType, hooks] of Object.entries(coreHooks)) {
+    for (const [hookType, hookEntries] of Object.entries(coreHooks)) {
       if (!settings.hooks[hookType]) {
         settings.hooks[hookType] = [];
       }
 
-      // 获取现有命令列表
-      const existingCommands = new Set(
-        settings.hooks[hookType]
-          .filter((h): h is HookConfig => typeof h === 'object' && 'command' in h)
-          .map(h => h.command)
-      );
+      // 获取现有脚本名列表（从新格式的 hooks 数组中提取）
+      const existingScripts = new Set<string>();
+      for (const entry of settings.hooks[hookType]) {
+        if (entry && typeof entry === 'object' && 'hooks' in entry && Array.isArray(entry.hooks)) {
+          for (const h of entry.hooks) {
+            if (h && typeof h === 'object' && 'command' in h) {
+              const scriptName = (h.command as string).split('/').pop() || '';
+              existingScripts.add(scriptName);
+            }
+          }
+        }
+      }
 
-      // 添加新的 hooks（如果不存在）
-      for (const hook of hooks) {
-        // 检查是否已存在相同脚本的 hook（忽略路径差异）
-        const scriptName = hook.command.split('/').pop() || '';
-        const alreadyExists = Array.from(existingCommands).some(cmd => cmd.includes(scriptName));
+      // 添加新的 hook entries（如果脚本不存在）
+      for (const hookEntry of hookEntries) {
+        // 提取这个 entry 中的脚本名
+        const scriptNames = hookEntry.hooks.map(h => h.command.split('/').pop() || '');
+        const allExist = scriptNames.every(name =>
+          Array.from(existingScripts).some(existing => existing.includes(name))
+        );
 
-        if (!alreadyExists) {
-          settings.hooks[hookType].push(hook);
+        if (!allExist) {
+          settings.hooks[hookType].push(hookEntry);
           hooksAdded++;
         }
       }
