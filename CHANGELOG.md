@@ -18,6 +18,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.2] - 2026-01-29
+
+### ✨ Added / 新增
+
+#### 🔧 /session 命令集成 MCP 工具
+
+**现在 `/session list` 会自动读取 Claude Code 原生会话历史！**
+
+- 集成 MCP 内置工具：`mcp_session_list`, `mcp_session_read`, `mcp_session_search`, `mcp_session_info`
+- 无需手动保存，自动有历史记录
+- `/session save` 作为增强功能（添加 TODO 快照和上下文摘要）
+
+##### 新增功能
+
+| 子命令 | 功能 | 说明 |
+|--------|------|------|
+| `/session list` | 列出所有会话 | 同时显示原生会话和增强会话 |
+| `/session info [id]` | 查看详情 | 支持原生会话 ID 和增强会话 ID |
+| `/session search [query]` | 🆕 搜索内容 | 全文搜索会话消息 |
+
+##### 数据来源
+
+| 类型 | 存储位置 | 特点 |
+|------|----------|------|
+| 原生会话 | `~/.claude/transcripts/` | Claude Code 自动记录 |
+| 增强会话 | `~/.oh-my-claude/sessions/` | 手动保存，含 TODO |
+
+### 📝 Changed / 变更
+
+- `/session` 命令添加 `allowed-tools` 配置：`mcp_session_list`, `mcp_session_read`, `mcp_session_search`, `mcp_session_info`
+- 帮助信息更新，说明 MCP 集成功能
+
+---
+
 ## [2.2.1] - 2026-01-29
 
 ### ✨ Added / 新增

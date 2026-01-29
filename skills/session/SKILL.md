@@ -3,6 +3,8 @@ name: session
 description: |
   会话持久化与恢复技能 - 跨会话保存和恢复工作进度，实现断点续传。
   支持保存 TODO 状态、上下文摘要、关键决策等信息。
+  
+  ⚡ v2.2.2: 集成 MCP 工具，自动读取 Claude Code 原生会话历史！
 ---
 
 # 会话持久化与恢复 (Session Persistence)
@@ -14,9 +16,46 @@ description: |
 > 工欲善其事，必先利其器。
 > 会话管理让长任务不再因中断而丢失进度。
 
+## ⚡ 重要更新 (v2.2.2)
+
+**现在会自动读取 Claude Code 原生会话历史！**
+
+- 使用 MCP 内置工具读取 `~/.claude/transcripts/` 数据
+- 无需手动保存，自动有历史记录
+- `/session save` 作为增强功能（添加 TODO 快照和上下文摘要）
+
+### 数据来源
+
+| 类型 | 存储位置 | 特点 |
+|------|----------|------|
+| 原生会话 | `~/.claude/transcripts/` | Claude Code 自动记录，无需手动操作 |
+| 增强会话 | `~/.oh-my-claude/sessions/` | 手动保存，包含 TODO 和上下文 |
+
 ## 功能概述
 
-### 1. 会话保存 (/session save)
+### 1. 会话列表 (/session list) - 🆕 集成 MCP
+
+列出所有可恢复的会话：
+- **原生会话**: 调用 `mcp_session_list` 获取 Claude Code 自动记录的会话
+- **增强会话**: 读取 `~/.oh-my-claude/sessions/index.json`
+- 按时间倒序排列
+- 相对时间显示（如"2小时前"）
+
+### 2. 会话详情 (/session info) - 🆕 支持原生会话
+
+查看会话详细信息：
+- **原生会话**: 调用 `mcp_session_info` + `mcp_session_read` 获取元数据和消息预览
+- **增强会话**: 读取本地 JSON 文件
+- 显示消息数量、时间范围、使用的 Agent
+
+### 3. 会话搜索 (/session search) - 🆕 新增功能
+
+搜索会话内容：
+- 调用 `mcp_session_search` 进行全文搜索
+- 支持关键词搜索
+- 返回匹配的消息片段
+
+### 4. 会话保存 (/session save) - 增强功能
 
 保存当前工作状态，包括：
 - TODO 任务列表及状态
@@ -25,37 +64,34 @@ description: |
 - 使用的 Agent 记录
 - 当前进度百分比
 
-### 2. 会话列表 (/session list)
+> 💡 注意：Claude Code 会自动保存对话历史，此功能用于额外保存 TODO 和上下文。
 
-列出所有可恢复的会话：
-- 按时间倒序排列
-- 显示进度百分比
-- 相对时间显示（如"2小时前"）
+### 5. 会话恢复 (/session resume)
 
-### 3. 会话恢复 (/session resume)
-
-恢复指定会话：
+恢复增强会话：
 - 恢复 TODO 列表
 - 注入上下文摘要
 - 显示恢复状态概览
 
-### 4. 会话详情 (/session info)
+### 6. 会话删除 (/session delete)
 
-查看会话详细信息：
-- 基本信息（ID、名称、时间）
-- 进度统计
-- Agent 使用记录
-- 关键决策列表
-
-### 5. 会话删除 (/session delete)
-
-删除不再需要的会话：
+删除增强会话：
 - 确认删除
 - 清理存储文件
+- ⚠️ 不能删除原生会话（由系统管理）
 
 ## 数据存储
 
-### 存储位置
+### 原生会话（Claude Code 管理）
+
+```
+~/.claude/transcripts/
+├── ses_3f803d400ffeqQhnIgcXJCicub.jsonl
+├── ses_402f9b282ffeAeJFapgAfmdyWG.jsonl
+└── ...
+```
+
+### 增强会话（oh-my-claude 管理）
 
 ```
 ~/.oh-my-claude/sessions/
