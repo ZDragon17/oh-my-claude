@@ -312,14 +312,16 @@ install_dir = normalize_path_for_hooks(install_dir)
 # Windows 上需要使用 bash -c '. script' 格式，否则 stdout 不会被捕获
 is_windows = platform.system() == 'Windows'
 
-def make_hook_command(script_path):
-    """生成 hook 命令，Windows 使用特殊格式"""
-    if is_windows:
-        # Windows: bash -c '. "script.sh"' 格式确保 stdout 正确输出
-        return f"bash -c '. \"{script_path}\"'"
-    else:
-        # macOS/Linux: 标准格式
-        return f'bash "{script_path}"'
+# 使用 $HOME 环境变量，让 bash 在运行时解析路径
+# 这样可以兼容 Git Bash、WSL 等不同环境
+hooks_base_path = r'$HOME/.claude/plugins/oh-my-claude/hooks'
+
+def make_hook_command(script_name):
+    """生成 hook 命令，使用 $HOME 环境变量"""
+    script_path = f"{hooks_base_path}/{script_name}"
+    # 统一使用 bash -c '. "script"' 格式
+    # $HOME 在 bash 执行时会被解析为正确的用户目录
+    return f"bash -c '. \"{script_path}\"'"
 
 try:
     with open(settings_file, 'r', encoding='utf-8') as f:
@@ -328,7 +330,7 @@ except Exception as e:
     print(f"读取 settings.json 失败: {e}", file=sys.stderr)
     sys.exit(1)
 
-# 定义核心 hooks（使用绝对路径，不依赖环境变量）
+# 定义核心 hooks（使用 $HOME 环境变量，运行时解析）
 core_hooks = {
     "PostToolUse": [
         {
@@ -336,7 +338,7 @@ core_hooks = {
             "hooks": [
                 {
                     "type": "command",
-                    "command": make_hook_command(f"{install_dir}/hooks/progress-notifier.sh"),
+                    "command": make_hook_command("progress-notifier.sh"),
                     "timeout": 3000
                 }
             ]
@@ -346,7 +348,7 @@ core_hooks = {
             "hooks": [
                 {
                     "type": "command",
-                    "command": make_hook_command(f"{install_dir}/hooks/context-smart-alert.sh"),
+                    "command": make_hook_command("context-smart-alert.sh"),
                     "timeout": 2000
                 }
             ]
@@ -358,7 +360,7 @@ core_hooks = {
             "hooks": [
                 {
                     "type": "command",
-                    "command": make_hook_command(f"{install_dir}/hooks/todo-continuation.sh"),
+                    "command": make_hook_command("todo-continuation.sh"),
                     "timeout": 3000
                 }
             ]
@@ -368,7 +370,7 @@ core_hooks = {
             "hooks": [
                 {
                     "type": "command",
-                    "command": make_hook_command(f"{install_dir}/hooks/ralph-loop.sh"),
+                    "command": make_hook_command("ralph-loop.sh"),
                     "timeout": 3000
                 }
             ]

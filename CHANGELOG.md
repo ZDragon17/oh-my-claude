@@ -18,6 +18,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.11] - 2026-02-03
+
+### 🐛 Fixed / 修复
+
+#### Windows hooks 路径兼容性改进 (v2)
+
+修复 v2.2.10 的路径方案在某些环境下仍无法工作的问题：
+
+**问题**：
+
+- `/c/Users/xxx/...` 格式在 Git Bash 中可用，但在有 WSL 的环境下 Claude Code 可能调用 WSL 的 bash
+- WSL 的 bash 无法识别 `/c/Users/...` 格式（需要 `/mnt/c/Users/...`）
+- 中文用户名可能导致编码问题
+
+**解决方案**：
+
+改用 `$HOME` 环境变量，让 bash 在运行时自行解析路径：
+
+```bash
+# 之前（绝对路径，可能格式不兼容）
+bash -c '. "/c/Users/xxx/.claude/plugins/oh-my-claude/hooks/xxx.sh"'
+
+# 现在（使用环境变量，运行时解析）
+bash -c '. "$HOME/.claude/plugins/oh-my-claude/hooks/xxx.sh"'
+```
+
+**其他改进**：
+
+- 安装时自动检测并替换旧格式的 hooks 配置
+- `scripts/install.sh` 同步更新，curl 安装方式也能正确配置
+
+---
+
 ## [2.2.10] - 2026-02-03
 
 ### 🐛 Fixed / 修复

@@ -11,30 +11,6 @@ import { InstallResult, InstallResultSchema } from './file-operations.js';
 import { success, info, warn, error } from '../scripts/logger.js';
 import AgentStateManagerImpl from './agent-state-manager.js';
 
-// ==================== 路径工具 ====================
-
-/**
- * 将 Windows 路径转换为 Git Bash 兼容格式
- * C:\Users\xxx => /c/Users/xxx
- */
-function toUnixPath(windowsPath: string): string {
-  if (process.platform !== 'win32') {
-    return windowsPath;
-  }
-  // 匹配 Windows 驱动器路径 C:\... 或 C:/...
-  const match = windowsPath.match(/^([A-Za-z]):[/\\]/);
-  if (match && match[1]) {
-    const drive = match[1].toLowerCase();
-    const rest = windowsPath.slice(2).replace(/\\/g, '/');
-    return `/${drive}${rest}`;
-  }
-  // 已经是 Unix 格式或相对路径，只替换反斜杠
-  return windowsPath.replace(/\\/g, '/');
-}
-
-/** Git Bash 兼容的插件目录路径 */
-const PLUGIN_DIR_UNIX = toUnixPath(PLUGIN_DIR);
-
 // ==================== 插件注册表路径 ====================
 
 /** installed_plugins.json 路径 */
@@ -345,7 +321,9 @@ function syncHooksToSettings(): void {
     }
 
     // 定义核心 hooks（使用新格式：matcher + hooks 数组）
-    // 注意：在 Windows Git Bash 中，使用 bash -c '. script' 才能正确接收 stdin 管道输入
+    // 注意：使用 $HOME 环境变量，让 bash 在运行时解析路径
+    // 这样可以兼容 Git Bash、WSL 等不同环境
+    const hooksBasePath = '$HOME/.claude/plugins/oh-my-claude/hooks';
     const coreHooks: Record<string, HookEntry[]> = {
       PostToolUse: [
         {
@@ -353,7 +331,7 @@ function syncHooksToSettings(): void {
           hooks: [
             {
               type: 'command',
-              command: `bash -c '. "${PLUGIN_DIR_UNIX}/hooks/progress-notifier.sh"'`,
+              command: `bash -c '. "${hooksBasePath}/progress-notifier.sh"'`,
               timeout: 3000
             }
           ]
@@ -363,7 +341,7 @@ function syncHooksToSettings(): void {
           hooks: [
             {
               type: 'command',
-              command: `bash -c '. "${PLUGIN_DIR_UNIX}/hooks/context-smart-alert.sh"'`,
+              command: `bash -c '. "${hooksBasePath}/context-smart-alert.sh"'`,
               timeout: 2000
             }
           ]
@@ -375,7 +353,7 @@ function syncHooksToSettings(): void {
           hooks: [
             {
               type: 'command',
-              command: `bash -c '. "${PLUGIN_DIR_UNIX}/hooks/todo-continuation.sh"'`,
+              command: `bash -c '. "${hooksBasePath}/todo-continuation.sh"'`,
               timeout: 3000
             }
           ]
@@ -385,7 +363,7 @@ function syncHooksToSettings(): void {
           hooks: [
             {
               type: 'command',
-              command: `bash -c '. "${PLUGIN_DIR_UNIX}/hooks/ralph-loop.sh"'`,
+              command: `bash -c '. "${hooksBasePath}/ralph-loop.sh"'`,
               timeout: 3000
             }
           ]
@@ -393,15 +371,46 @@ function syncHooksToSettings(): void {
       ]
     };
 
-    // 合并 hooks（避免重复）
+    // 合并 hooks（避免重复，同时更新旧格式的 hooks）
     if (!settings.hooks) {
       settings.hooks = {};
     }
 
     let hooksAdded = 0;
+    let hooksUpdated = 0;
+
+    // 需要更新的脚本名列表
+    const scriptsToManage = ['progress-notifier.sh', 'context-smart-alert.sh', 'todo-continuation.sh', 'ralph-loop.sh'];
+
     for (const [hookType, hookEntries] of Object.entries(coreHooks)) {
       if (!settings.hooks[hookType]) {
         settings.hooks[hookType] = [];
+      }
+
+      // 检查并移除旧格式的 oh-my-claude hooks（使用绝对路径而非 $HOME）
+      const oldLength = settings.hooks[hookType].length;
+      settings.hooks[hookType] = settings.hooks[hookType].filter((entry: HookEntry) => {
+        if (entry && typeof entry === 'object' && 'hooks' in entry && Array.isArray(entry.hooks)) {
+          for (const h of entry.hooks) {
+            if (h && typeof h === 'object' && 'command' in h) {
+              const cmd = h.command as string;
+              // 检查是否是旧格式的 oh-my-claude hook（使用绝对路径）
+              if (cmd.includes('oh-my-claude/hooks/') && !cmd.includes('$HOME')) {
+                // 检查是否是我们管理的脚本
+                for (const script of scriptsToManage) {
+                  if (cmd.includes(script)) {
+                    return false; // 移除这个旧格式的 hook
+                  }
+                }
+              }
+            }
+          }
+        }
+        return true; // 保留其他 hooks
+      });
+
+      if (settings.hooks[hookType].length < oldLength) {
+        hooksUpdated += oldLength - settings.hooks[hookType].length;
       }
 
       // 获取现有脚本名列表（从新格式的 hooks 数组中提取）
@@ -439,8 +448,12 @@ function syncHooksToSettings(): void {
     }
     fs.writeFileSync(SETTINGS_PATH, JSON.stringify(settings, null, 2), 'utf-8');
 
-    if (hooksAdded > 0) {
-      success(`hooks 已同步到 settings.json (新增 ${hooksAdded} 个)`);
+    if (hooksAdded > 0 || hooksUpdated > 0) {
+      if (hooksUpdated > 0) {
+        success(`hooks 已更新到 settings.json (更新 ${hooksUpdated} 个，新增 ${hooksAdded} 个)`);
+      } else {
+        success(`hooks 已同步到 settings.json (新增 ${hooksAdded} 个)`);
+      }
     } else {
       info('hooks 已是最新，无需更新');
     }
