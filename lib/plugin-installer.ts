@@ -11,6 +11,30 @@ import { InstallResult, InstallResultSchema } from './file-operations.js';
 import { success, info, warn, error } from '../scripts/logger.js';
 import AgentStateManagerImpl from './agent-state-manager.js';
 
+// ==================== 路径工具 ====================
+
+/**
+ * 将 Windows 路径转换为 Git Bash 兼容格式
+ * C:\Users\xxx => /c/Users/xxx
+ */
+function toUnixPath(windowsPath: string): string {
+  if (process.platform !== 'win32') {
+    return windowsPath;
+  }
+  // 匹配 Windows 驱动器路径 C:\... 或 C:/...
+  const match = windowsPath.match(/^([A-Za-z]):[/\\]/);
+  if (match && match[1]) {
+    const drive = match[1].toLowerCase();
+    const rest = windowsPath.slice(2).replace(/\\/g, '/');
+    return `/${drive}${rest}`;
+  }
+  // 已经是 Unix 格式或相对路径，只替换反斜杠
+  return windowsPath.replace(/\\/g, '/');
+}
+
+/** Git Bash 兼容的插件目录路径 */
+const PLUGIN_DIR_UNIX = toUnixPath(PLUGIN_DIR);
+
 // ==================== 插件注册表路径 ====================
 
 /** installed_plugins.json 路径 */
@@ -329,7 +353,7 @@ function syncHooksToSettings(): void {
           hooks: [
             {
               type: 'command',
-              command: `bash -c '. "${PLUGIN_DIR}/hooks/progress-notifier.sh"'`,
+              command: `bash -c '. "${PLUGIN_DIR_UNIX}/hooks/progress-notifier.sh"'`,
               timeout: 3000
             }
           ]
@@ -339,7 +363,7 @@ function syncHooksToSettings(): void {
           hooks: [
             {
               type: 'command',
-              command: `bash -c '. "${PLUGIN_DIR}/hooks/context-smart-alert.sh"'`,
+              command: `bash -c '. "${PLUGIN_DIR_UNIX}/hooks/context-smart-alert.sh"'`,
               timeout: 2000
             }
           ]
@@ -351,7 +375,7 @@ function syncHooksToSettings(): void {
           hooks: [
             {
               type: 'command',
-              command: `bash -c '. "${PLUGIN_DIR}/hooks/todo-continuation.sh"'`,
+              command: `bash -c '. "${PLUGIN_DIR_UNIX}/hooks/todo-continuation.sh"'`,
               timeout: 3000
             }
           ]
@@ -361,7 +385,7 @@ function syncHooksToSettings(): void {
           hooks: [
             {
               type: 'command',
-              command: `bash -c '. "${PLUGIN_DIR}/hooks/ralph-loop.sh"'`,
+              command: `bash -c '. "${PLUGIN_DIR_UNIX}/hooks/ralph-loop.sh"'`,
               timeout: 3000
             }
           ]

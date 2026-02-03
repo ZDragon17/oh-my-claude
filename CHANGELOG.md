@@ -18,6 +18,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.10] - 2026-02-03
+
+### 🐛 Fixed / 修复
+
+#### Windows 路径格式兼容性
+
+修复 `npx claude-pangu install` 在 Windows 上生成的 hooks 路径格式错误：
+
+**问题**：
+
+```bash
+bash -c '. "C:\Users\xxx\.claude\plugins\oh-my-claude/hooks/xxx.sh"'
+```
+
+混合了 Windows (`\`) 和 Unix (`/`) 路径分隔符，导致 Git Bash 无法识别。
+
+**修复后**：
+
+```bash
+bash -c '. "/c/Users/xxx/.claude/plugins/oh-my-claude/hooks/xxx.sh"'
+```
+
+**修改文件**：
+
+- `lib/plugin-installer.ts`: 新增 `toUnixPath()` 函数，将 Windows 路径转换为 Git Bash 兼容格式
+
+**受影响的 hooks**：
+
+- `progress-notifier.sh`
+- `context-smart-alert.sh`
+- `todo-continuation.sh`
+- `ralph-loop.sh`
+
+---
+
 ## [2.2.9] - 2026-02-03
 
 ### ✨ Added / 新增
