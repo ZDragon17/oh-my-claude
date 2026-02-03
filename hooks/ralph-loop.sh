@@ -17,6 +17,8 @@ RALPH_STATE_FILE=".claude/ralph-loop.local.md"
 
 # 如果状态文件不存在，允许正常退出
 if [ ! -f "$RALPH_STATE_FILE" ]; then
+    # Stop hook 需要输出 JSON 响应，即使是允许停止的情况
+    echo '{}' 2>/dev/null || true
     exit 0
 fi
 
@@ -34,6 +36,7 @@ COMPLETION_PROMISE=${COMPLETION_PROMISE:-DONE}
 if [ "$MAX_ITERATIONS" -gt 0 ] 2>/dev/null && [ "$ITERATION" -ge "$MAX_ITERATIONS" ] 2>/dev/null; then
     echo "🛑 Ralph Loop: 已达最大迭代次数 ($MAX_ITERATIONS)" >&2
     rm -f "$RALPH_STATE_FILE"
+    echo '{}' 2>/dev/null || true
     exit 0
 fi
 

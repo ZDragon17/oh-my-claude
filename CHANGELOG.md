@@ -18,6 +18,125 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.9] - 2026-02-03
+
+### ✨ Added / 新增
+
+#### 🎯 Agent 三层体系完善
+
+**新增高级版 Agent (Opus 模型)**：
+- `mozi-high` - 深度安全审计，STRIDE 威胁建模，合规评估
+- `bianque-high` - 深度问题诊断，5 Whys+ 根因分析，分布式追踪
+
+**新增文档**：
+- `docs/AGENT_TIERS.md` - 完整的 Agent 三层体系文档
+  - Low (Haiku): 快速探索、简单修改
+  - Standard (Sonnet): 复杂实现、重构、审查
+  - High (Opus): 架构设计、深度分析
+
+#### 🔐 安全能力增强
+
+`agents/mozi.md` 新增 OWASP Top 10 安全检查清单：
+- 四级严重程度：🔴 CRITICAL / 🟠 HIGH / 🟡 MEDIUM / 🔵 LOW
+- 覆盖 SQL 注入、XSS、CSRF 等常见漏洞
+- 包含代码示例和修复建议
+
+#### 🛠️ 构建错误模式库
+
+`agents/build-fixer.md` 新增 10 个常见错误模式：
+1. 类型推断失败
+2. Null/Undefined 错误
+3. 缺少属性
+4. 模块导入错误
+5. 类型不匹配
+6. 泛型约束
+7. React Hook 错误
+8. Async/Await 错误
+9. React 19/Next.js 15 兼容性
+10. 枚举和联合类型
+
+#### 📚 其他新增
+
+- `skills/continuous-learning/skill.md` - 连续学习技能
+- `commands/xuetu.md` 增强 - 支持 list/search/apply/save 操作
+- `docs/COMMAND_ALIASES.md` - 五大执行模式对比表
+
+### 🐛 Fixed / 修复
+
+- 修正 `docs/AGENT_TIERS.md` 中 zhuge 的分类（从 Low+Standard 改为 Low+High）
+- 修正 `commands/error.md` 描述与实际别名不一致的问题
+- 删除 AGENT_TIERS.md 中重复的表格
+
+---
+
+## [2.2.8] - 2026-01-29
+
+### 🐛 Fixed / 修复
+
+#### 🔧 hooks 同步格式问题
+
+**问题**: 更新插件后 Claude Code 启动报错 `hooks: Expected array, but received undefined`
+
+**根本原因**:
+- `syncHooksToSettings()` 生成的 hooks 格式不符合 Claude Code 要求
+- 缺少 `matcher` 和 `hooks` 数组包装
+
+**修复**:
+- 更新 hooks 格式为 Claude Code 要求的新格式
+- 修复合并逻辑以正确处理新格式的 hooks
+
+---
+
+## [2.2.7] - 2026-01-29
+
+### 🐛 Fixed / 修复
+
+#### 🔧 Windows Git Bash stdin 管道问题
+
+**问题**: Windows Git Bash 下 hooks 无法接收 stdin 管道输入
+
+**根本原因**:
+- `bash script.sh` 方式执行脚本时，stdin 管道输入无法传递
+
+**修复**:
+- 改用 `bash -c '. script.sh'` (source) 方式执行
+- 所有 hooks 脚本使用 `BASH_SOURCE` 代替 `$0` 获取脚本路径
+- progress-notifier.sh 输出添加 `systemMessage` 字段
+
+---
+
+## [2.2.6] - 2026-01-29
+
+### ✨ Added / 新增
+
+#### 🔧 自动同步 hooks 到 settings.json
+
+**新功能**: 安装/更新时自动将核心 hooks 配置合并到 `~/.claude/settings.json`
+
+- 支持增量更新，不覆盖用户已有配置
+- 自动备份 settings.json 防止数据丢失
+- install.sh 也添加了相同功能（供 curl 安装方式使用）
+
+**同步的核心 hooks**:
+- PostToolUse: progress-notifier.sh, context-smart-alert.sh
+- Stop: todo-continuation.sh, ralph-loop.sh
+
+---
+
+## [2.2.5] - 2026-01-29
+
+### 🐛 Fixed / 修复
+
+#### 🔧 hooks 兼容性和稳定性改进
+
+- progress-notifier: 使用 bash 内置替换处理 JSON 转义，修复 emoji 问题
+- progress-notifier: 统一使用 additionalContext 输出格式
+- ralph-loop/todo-continuation: 改进跨平台 sed 处理
+- message-dedup: 增强去重库功能
+- context-smart-alert: 代码清理
+
+---
+
 ## [2.2.4] - 2026-01-29
 
 ### 🐛 Fixed / 修复

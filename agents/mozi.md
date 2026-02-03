@@ -100,29 +100,140 @@ db.query(query, [userId]);
 
 ## 安全检查清单
 
-### 认证与授权
-- [ ] 密码使用强哈希算法（bcrypt/argon2）
-- [ ] JWT 设置合理过期时间
-- [ ] 实现刷新令牌机制
+### 🔴 严重级 (CRITICAL) - 必须立即修复
+
+#### 1. 硬编码凭证检查
+```bash
+# 检测模式
+grep -rE "(api[_-]?key|secret|password|token)\s*[:=]\s*['\"][^'\"]+['\"]" --include="*.ts" --include="*.js"
+```
+- [ ] 无硬编码 API 密钥
+- [ ] 无硬编码数据库密码
+- [ ] 无硬编码 JWT 密钥
+- [ ] .env 文件已加入 .gitignore
+
+#### 2. SQL 注入检查
+```typescript
+// ❌ 危险
+db.query(`SELECT * FROM users WHERE id = ${userId}`)
+
+// ✅ 安全
+db.query('SELECT * FROM users WHERE id = ?', [userId])
+```
+- [ ] 所有数据库查询使用参数化
+- [ ] 无字符串拼接构建 SQL
+- [ ] ORM 查询使用正确方式
+
+#### 3. XSS 跨站脚本检查
+```typescript
+// ❌ 危险
+element.innerHTML = userInput
+
+// ✅ 安全
+element.textContent = userInput
+// 或使用 DOMPurify
+element.innerHTML = DOMPurify.sanitize(userInput)
+```
+- [ ] 用户输入在输出时正确转义
+- [ ] 使用 CSP 头部限制脚本来源
+- [ ] React 避免使用 dangerouslySetInnerHTML
+
+#### 4. CSRF 跨站请求伪造
+- [ ] 状态变更操作使用 CSRF token
+- [ ] Cookie 设置 SameSite 属性
+- [ ] 敏感操作验证 Referer/Origin
+
+### 🟠 高危级 (HIGH) - 尽快修复
+
+#### 5. 认证缺陷
+- [ ] 密码使用 bcrypt/argon2 哈希 (cost >= 10)
+- [ ] JWT 过期时间合理 (access: 15min, refresh: 7day)
+- [ ] 实现刷新令牌轮换机制
+- [ ] 登录失败后有延迟/锁定机制
 - [ ] 敏感操作需要重新认证
 
-### 输入验证
-- [ ] 所有用户输入都经过验证
-- [ ] 使用白名单而非黑名单
-- [ ] 参数化所有数据库查询
-- [ ] 文件上传有类型和大小限制
+#### 6. 授权缺陷
+- [ ] 每个 API 端点验证权限
+- [ ] 实现 RBAC/ABAC 访问控制
+- [ ] 防止水平越权 (IDOR)
+- [ ] 防止垂直越权 (权限提升)
 
-### 数据保护
-- [ ] 敏感数据加密存储
-- [ ] 传输使用 HTTPS
-- [ ] 日志不包含敏感信息
+#### 7. 敏感数据暴露
+- [ ] 传输层使用 HTTPS
+- [ ] 敏感数据加密存储 (AES-256)
+- [ ] 日志不记录敏感信息
+- [ ] API 响应不返回多余字段
 - [ ] 错误信息不泄露系统细节
 
-### 配置安全
+### 🟡 中危级 (MEDIUM) - 计划修复
+
+#### 8. 速率限制
+```typescript
+// 推荐配置
+const rateLimiter = {
+  login: '5 requests per minute',
+  api: '100 requests per minute',
+  passwordReset: '3 requests per hour'
+}
+```
+- [ ] 登录接口有速率限制
+- [ ] API 有全局速率限制
+- [ ] 敏感操作有更严格限制
+
+#### 9. 安全响应头
+```typescript
+// 推荐头部
+{
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Content-Security-Policy': "default-src 'self'",
+  'X-XSS-Protection': '1; mode=block'
+}
+```
+- [ ] 设置 HSTS 头
+- [ ] 设置 X-Content-Type-Options
+- [ ] 设置 X-Frame-Options
+- [ ] 配置合适的 CSP
+
+#### 10. 依赖安全
+```bash
+# 检测已知漏洞
+npm audit
+pnpm audit
+```
+- [ ] 定期运行依赖审计
+- [ ] 无已知高危漏洞
+- [ ] 依赖版本保持更新
+
+### 🔵 低危级 (LOW) - 有空修复
+
+#### 配置安全
 - [ ] 生产环境关闭调试模式
 - [ ] 密钥使用环境变量
 - [ ] 设置安全的 CORS 策略
-- [ ] 启用安全响应头
+- [ ] 禁用不必要的 HTTP 方法
+
+#### 其他最佳实践
+- [ ] 使用安全的随机数生成器
+- [ ] 文件上传有类型和大小限制
+- [ ] 实现安全的密码重置流程
+- [ ] 有适当的审计日志
+
+## OWASP Top 10 快速对照
+
+| 排名 | 风险类型 | 检查点 |
+|------|----------|--------|
+| A01 | 访问控制失效 | 权限验证、IDOR 防护 |
+| A02 | 加密失败 | HTTPS、数据加密、密钥管理 |
+| A03 | 注入 | SQL/XSS/命令注入防护 |
+| A04 | 不安全设计 | 威胁建模、安全架构 |
+| A05 | 安全配置错误 | 默认配置、错误处理 |
+| A06 | 易受攻击组件 | 依赖审计、版本更新 |
+| A07 | 认证失败 | 密码策略、会话管理 |
+| A08 | 完整性失败 | 签名验证、CI/CD 安全 |
+| A09 | 日志监控不足 | 审计日志、告警机制 |
+| A10 | SSRF | 请求验证、白名单 |
 
 ## 响应格式
 

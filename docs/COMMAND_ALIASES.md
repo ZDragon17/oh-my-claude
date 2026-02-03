@@ -12,19 +12,24 @@ oh-my-claude 提供了丰富的命令别名系统，让用户可以用自己熟�
 
 ## 别名分类
 
-### 1. 愚公移山模式（功能完全相同）
+### 1. 五大执行模式
 
-以下命令**完全等效**，调用的是同一个功能：
+oh-my-claude 提供五种执行模式，适用于不同场景：
 
-| 主命令 | 别名 | 说明 |
-|--------|------|------|
-| `/yishan` | `/yugong` | 中文名（移山/愚公） |
-| `/yishan` | `/persist` | 英文（持续执行） |
-| `/yishan` | `/ultrawork` | oh-my-opencode 风格 |
-| `/yishan` | `/ulw` | ultrawork 缩写 |
-| `/yishan` | `/do` | 极简入口 |
+| 主命令 | 别名 | 模式 | 特点 |
+|--------|------|------|------|
+| `/yishan` | `/yugong`, `/persist`, `/ultrawork`, `/ulw` | 愚公移山 | 标准自主执行，智能分派 |
+| `/chaoji` | `/ultrapilot`, `/up`, `/parallel-build` | 超级模式 | 文件分区并行，5x 加速 |
+| `/jiejian` | `/ecomode`, `/eco`, `/budget` | 节俭模式 | Token 高效，优先 Haiku |
+| `/fengqun` | `/swarm`, `/sw` | 蜂群模式 | 多 Agent 共享任务池 |
+| `/huoshen` | `/deepwork`, `/dw`, `/hephaestus`, `/火神` | 深度工作 | 目标导向，探索优先 |
 
-**使用建议**：选择你最习惯的一个，不需要记住所有别名。
+**使用建议**：
+- 一般任务 → `/yishan`
+- 多模块并行 → `/chaoji`
+- 省 Token → `/jiejian`
+- 批量同类任务 → `/fengqun`
+- 复杂深度任务 → `/huoshen`
 
 ---
 

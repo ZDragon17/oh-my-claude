@@ -96,6 +96,28 @@ EOF
     exit 0
 fi
 
+# ---- 深度工作模式检测 (Deepwork/Hephaestus) ----
+# 特征：目标导向、自主实现、端到端、深度
+deepwork_mode=false
+if echo "$prompt_lower" | grep -qE '(deepwork|huoshen|火神|hephaestus|深度工作)'; then
+    deepwork_mode=true
+elif echo "$prompt_lower" | grep -qE '(目标导向|goal[-_]?oriented|自主.{0,5}(实现|完成|开发)|autonomous.{0,5}(implement|develop|complete))' || \
+     echo "$prompt_lower" | grep -qE '(端到端|end[-_]?to[-_]?end|e2e).{0,10}(实现|完成|开发|implement|develop|complete)' || \
+     echo "$prompt_lower" | grep -qE '(深度.{0,5}(理解|探索|分析)|deep.{0,5}(understand|explore|analyze))' || \
+     echo "$prompt_lower" | grep -qE '(给我.{0,5}目标|只需要.{0,5}目标|不用.{0,5}(告诉|说).{0,5}怎么做)' || \
+     echo "$prompt_lower" | grep -qE '(你来决定|你自己决定|自己想办法|自己规划)'; then
+    deepwork_mode=true
+fi
+
+if [ "$deepwork_mode" = true ]; then
+    cat << 'EOF'
+{
+  "systemMessage": "\n\n<deepwork-mode>\n🔥 **火神深度工作模式已激活！**\n\n[目标导向 - 自主探索 - 端到端完成]\n\n## 为什么选择此模式\n检测到需要深度理解和自主完成的任务。\n\n## 核心特性\n\n### 1. 🎯 目标导向\n- 只需提供目标，我来决定实现路径\n- 不需要详细步骤指引\n\n### 2. 🔭 探索优先\n在写任何代码前，并行启动 2-5 个探索任务：\n```\n@wukong - 探索项目结构\n@wukong - 分析代码风格\n@wukong - 搜索相似实现\n@wukong - 识别测试模式\n```\n\n### 3. 🎨 模式匹配\n- 学习项目的编码规范\n- 按照项目风格编写代码\n- 让代码看起来像项目原作者写的\n\n### 4. ✅ 端到端完成\n- 100% 完成才算完成\n- 每个声明都有验证证据\n- 不接受部分完成\n\n## 执行流程\n```\nPhase 0: 目标理解\n    ↓\nPhase 1: 并行探索 (2-5 @wukong)\n    ↓\nPhase 2: 模式学习 → 项目画像\n    ↓\nPhase 3: 自主实现\n    ↓\nPhase 4: 验证循环 (测试→修复→测试)\n    ↓\nPhase 5: 最终验证 + 证据展示\n```\n\n## 完成标志\n```\n<promise>深度工作完成</promise>\n```\n\n**给我目标，我交付完美。**\n</deepwork-mode>\n"
+}
+EOF
+    exit 0
+fi
+
 # ---- 蜂群模式检测 (Swarm) ----
 # 特征：批量、所有、N个同类任务
 swarm_mode=false

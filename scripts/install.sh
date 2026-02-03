@@ -19,6 +19,21 @@ NC='\033[0m' # No Color
 # 配置
 REPO="ZDragon17/oh-my-claude"
 PLUGIN_NAME="oh-my-claude"
+
+# Windows 兼容性：确保 HOME 变量正确设置
+if [[ "$(uname -s)" == MINGW* ]] || [[ "$(uname -s)" == MSYS* ]] || [[ "$(uname -s)" == CYGWIN* ]]; then
+    # Windows Git Bash 环境
+    IS_WINDOWS=true
+    # 如果 HOME 未设置或为空，使用 USERPROFILE
+    if [ -z "$HOME" ] && [ -n "$USERPROFILE" ]; then
+        HOME=$(cygpath -u "$USERPROFILE" 2>/dev/null || echo "$USERPROFILE" | sed 's|\\|/|g' | sed 's|^\([A-Za-z]\):|/\L\1|')
+    fi
+    # 确保 HOME 是 Unix 风格路径 (/c/Users/xxx)
+    HOME=$(cygpath -u "$HOME" 2>/dev/null || echo "$HOME")
+else
+    IS_WINDOWS=false
+fi
+
 INSTALL_DIR="$HOME/.claude/plugins/$PLUGIN_NAME"
 COMMANDS_DIR="$HOME/.claude/commands"
 SKILLS_DIR="$HOME/.claude/skills"
@@ -272,9 +287,39 @@ setup_hooks() {
 import json
 import sys
 import os
+import platform
+import re
 
 settings_file = "$SETTINGS_FILE"
 install_dir = "$INSTALL_DIR"
+
+# Windows 兼容性：确保路径格式正确
+# Claude Code 在 Windows 上执行 bash 命令时需要 Unix 风格路径
+def normalize_path_for_hooks(path):
+    """将路径转换为 Git Bash 兼容格式"""
+    if platform.system() == 'Windows':
+        # 如果是 Windows 原生路径 (C:\Users\...)，转换为 /c/Users/...
+        if re.match(r'^[A-Za-z]:', path):
+            drive = path[0].lower()
+            rest = path[2:].replace('\\\\', '/').replace('\\', '/')
+            return f'/{drive}{rest}'
+        # 如果已经是 Unix 风格但使用了反斜杠
+        path = path.replace('\\\\', '/').replace('\\', '/')
+    return path
+
+install_dir = normalize_path_for_hooks(install_dir)
+
+# Windows 上需要使用 bash -c '. script' 格式，否则 stdout 不会被捕获
+is_windows = platform.system() == 'Windows'
+
+def make_hook_command(script_path):
+    """生成 hook 命令，Windows 使用特殊格式"""
+    if is_windows:
+        # Windows: bash -c '. "script.sh"' 格式确保 stdout 正确输出
+        return f"bash -c '. \"{script_path}\"'"
+    else:
+        # macOS/Linux: 标准格式
+        return f'bash "{script_path}"'
 
 try:
     with open(settings_file, 'r', encoding='utf-8') as f:
@@ -283,30 +328,50 @@ except Exception as e:
     print(f"读取 settings.json 失败: {e}", file=sys.stderr)
     sys.exit(1)
 
-# 定义核心 hooks（只添加最重要的几个）
+# 定义核心 hooks（使用绝对路径，不依赖环境变量）
 core_hooks = {
     "PostToolUse": [
         {
-            "type": "command",
-            "command": f'bash "{install_dir}/hooks/progress-notifier.sh"',
-            "timeout": 3000
+            "matcher": "TodoWrite",
+            "hooks": [
+                {
+                    "type": "command",
+                    "command": make_hook_command(f"{install_dir}/hooks/progress-notifier.sh"),
+                    "timeout": 3000
+                }
+            ]
         },
         {
-            "type": "command",
-            "command": f'bash "{install_dir}/hooks/context-smart-alert.sh"',
-            "timeout": 2000
+            "matcher": "*",
+            "hooks": [
+                {
+                    "type": "command",
+                    "command": make_hook_command(f"{install_dir}/hooks/context-smart-alert.sh"),
+                    "timeout": 2000
+                }
+            ]
         }
     ],
     "Stop": [
         {
-            "type": "command",
-            "command": f'bash "{install_dir}/hooks/todo-continuation.sh"',
-            "timeout": 3000
+            "matcher": "*",
+            "hooks": [
+                {
+                    "type": "command",
+                    "command": make_hook_command(f"{install_dir}/hooks/todo-continuation.sh"),
+                    "timeout": 3000
+                }
+            ]
         },
         {
-            "type": "command",
-            "command": f'bash "{install_dir}/hooks/ralph-loop.sh"',
-            "timeout": 3000
+            "matcher": "*",
+            "hooks": [
+                {
+                    "type": "command",
+                    "command": make_hook_command(f"{install_dir}/hooks/ralph-loop.sh"),
+                    "timeout": 3000
+                }
+            ]
         }
     ]
 }
@@ -315,14 +380,31 @@ core_hooks = {
 if "hooks" not in settings:
     settings["hooks"] = {}
 
+def extract_commands_from_hooks(hooks_list):
+    """从 hooks 列表中提取所有 command"""
+    commands = []
+    for h in hooks_list:
+        if isinstance(h, dict):
+            # 新格式: {"matcher": "...", "hooks": [{"command": "..."}]}
+            if "hooks" in h:
+                for inner_hook in h.get("hooks", []):
+                    if "command" in inner_hook:
+                        commands.append(inner_hook["command"])
+            # 旧格式: {"type": "command", "command": "..."}
+            elif "command" in h:
+                commands.append(h["command"])
+    return commands
+
 for hook_type, hooks in core_hooks.items():
     if hook_type not in settings["hooks"]:
         settings["hooks"][hook_type] = []
 
     # 添加新的 hooks（避免重复）
-    existing_commands = [h.get("command", "") for h in settings["hooks"][hook_type] if isinstance(h, dict)]
+    existing_commands = extract_commands_from_hooks(settings["hooks"][hook_type])
     for hook in hooks:
-        if hook["command"] not in existing_commands:
+        # 从新格式中提取 command
+        hook_command = hook.get("hooks", [{}])[0].get("command", "")
+        if hook_command and hook_command not in existing_commands:
             settings["hooks"][hook_type].append(hook)
 
 # 写回文件

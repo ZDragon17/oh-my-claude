@@ -16,6 +16,8 @@ YISHAN_STATE_FILE=".claude/yishan-loop.local.md"
 
 # 如果状态文件不存在，允许正常退出
 if [ ! -f "$YISHAN_STATE_FILE" ]; then
+    # Stop hook 需要输出 JSON 响应，即使是允许停止的情况
+    echo '{}' 2>/dev/null || true
     exit 0
 fi
 
@@ -31,6 +33,7 @@ MAX_ITERATIONS=${MAX_ITERATIONS:-50}
 if [ "$MAX_ITERATIONS" -gt 0 ] 2>/dev/null && [ "$ITERATION" -ge "$MAX_ITERATIONS" ] 2>/dev/null; then
     echo "🛑 愚公移山: 已达最大迭代次数 ($MAX_ITERATIONS)" >&2
     rm -f "$YISHAN_STATE_FILE"
+    echo '{}' 2>/dev/null || true
     exit 0
 fi
 

@@ -79,7 +79,7 @@ oh-my-claude 的核心理念源自「愚公移山」的精神：**只要方向�
 |------|------|-----------|----------|
 | **LOW** | Haiku | zhuge-low, luban-low, baozheng-low, bianque-low, gukaizhi-low, mozi-low, cangjie-low, scientist-low, qa-tester-low, build-fixer-low | 简单任务、快速响应 |
 | **MEDIUM** | Sonnet | 所有标准 Agent, wukong-medium | 日常开发任务 |
-| **HIGH** | Opus | wukong-high, luban-high, scientist-high, qa-tester-high | 复杂架构、关键决策 |
+| **HIGH** | Opus | wukong-high, luban-high, mozi-high, bianque-high, scientist-high, qa-tester-high | 复杂架构、关键决策 |
 
 > 💡 节俭模式 (`/jiejian`) 会根据任务复杂度自动选择合适的 Agent 版本
 

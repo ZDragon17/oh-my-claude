@@ -281,6 +281,205 @@ Build completed successfully.
 | 超时 | 任务过慢 | 优化或增加时间 |
 | 环境变量 | 未设置 | 添加必要变量 |
 
+## 十大错误模式详解
+
+### 模式 1: 类型推断失败
+
+```typescript
+// ❌ ERROR: Parameter 'x' implicitly has an 'any' type
+function add(x, y) {
+  return x + y
+}
+
+// ✅ FIX: 添加类型注解
+function add(x: number, y: number): number {
+  return x + y
+}
+```
+
+### 模式 2: Null/Undefined 错误
+
+```typescript
+// ❌ ERROR: Object is possibly 'undefined'
+const name = user.name.toUpperCase()
+
+// ✅ FIX: 可选链
+const name = user?.name?.toUpperCase()
+
+// ✅ FIX: 空值检查
+const name = user && user.name ? user.name.toUpperCase() : ''
+```
+
+### 模式 3: 缺少属性
+
+```typescript
+// ❌ ERROR: Property 'age' does not exist on type 'User'
+interface User { name: string }
+const user: User = { name: 'John', age: 30 }
+
+// ✅ FIX: 添加属性到接口
+interface User {
+  name: string
+  age?: number  // 可选属性
+}
+```
+
+### 模式 4: 模块导入错误
+
+```typescript
+// ❌ ERROR: Cannot find module '@/lib/utils'
+
+// ✅ FIX 1: 检查 tsconfig.json paths
+{
+  "compilerOptions": {
+    "paths": { "@/*": ["./src/*"] }
+  }
+}
+
+// ✅ FIX 2: 使用相对路径
+import { formatDate } from '../lib/utils'
+
+// ✅ FIX 3: 安装缺失的类型定义
+npm install @types/xxx
+```
+
+### 模式 5: 类型不匹配
+
+```typescript
+// ❌ ERROR: Type 'string' is not assignable to type 'number'
+const age: number = "30"
+
+// ✅ FIX: 类型转换
+const age: number = parseInt("30", 10)
+
+// ✅ FIX: 或修改类型声明
+const age: string = "30"
+```
+
+### 模式 6: 泛型约束
+
+```typescript
+// ❌ ERROR: Type 'T' is not assignable to type 'string'
+function getLength<T>(item: T): number {
+  return item.length  // T 没有 length 属性
+}
+
+// ✅ FIX: 添加泛型约束
+function getLength<T extends { length: number }>(item: T): number {
+  return item.length
+}
+
+// ✅ FIX: 更具体的约束
+function getLength<T extends string | any[]>(item: T): number {
+  return item.length
+}
+```
+
+### 模式 7: React Hook 错误
+
+```typescript
+// ❌ ERROR: React Hook cannot be called inside a callback
+function MyComponent() {
+  if (condition) {
+    const [state, setState] = useState(0)  // 条件中调用 Hook
+  }
+}
+
+// ✅ FIX: Hook 必须在顶层调用
+function MyComponent() {
+  const [state, setState] = useState(0)  // 顶层
+
+  if (!condition) return null
+
+  // 使用 state
+}
+```
+
+### 模式 8: Async/Await 错误
+
+```typescript
+// ❌ ERROR: 'await' only allowed in async functions
+function fetchData() {
+  const data = await fetch('/api/data')
+}
+
+// ✅ FIX: 添加 async 关键字
+async function fetchData() {
+  const data = await fetch('/api/data')
+}
+
+// ✅ FIX: 或使用 Promise
+function fetchData() {
+  return fetch('/api/data').then(res => res.json())
+}
+```
+
+### 模式 9: React 19 / Next.js 15 兼容性
+
+```typescript
+// ❌ ERROR: React 19 类型变更
+import { FC } from 'react'
+const Component: FC<Props> = ({ children }) => { ... }
+
+// ✅ FIX: React 19 不再需要 FC
+interface Props { children: React.ReactNode }
+const Component = ({ children }: Props) => { ... }
+
+// ❌ ERROR: Next.js 15 cookies() 必须 await
+const cookieStore = cookies()
+
+// ✅ FIX: 添加 await
+const cookieStore = await cookies()
+```
+
+### 模式 10: 枚举和联合类型
+
+```typescript
+// ❌ ERROR: Type '"pending"' is not assignable to type 'Status'
+type Status = 'active' | 'inactive'
+const status: Status = 'pending'
+
+// ✅ FIX 1: 使用已定义的值
+const status: Status = 'active'
+
+// ✅ FIX 2: 扩展联合类型
+type Status = 'active' | 'inactive' | 'pending'
+```
+
+## 最小修改原则
+
+**关键准则：只修复错误，不重构代码**
+
+### ✅ 应该做
+
+- 添加类型注解
+- 添加空值检查
+- 修复导入/导出
+- 安装缺失依赖
+- 更新类型定义
+- 修复配置文件
+
+### ❌ 不应该做
+
+- 重构无关代码
+- 改变架构设计
+- 重命名变量（除非导致错误）
+- 添加新功能
+- 改变逻辑流程
+- 优化性能
+
+```typescript
+// 示例：文件有 200 行，第 45 行有错误
+
+// ❌ 错误做法：重构整个文件
+// 结果：50 行改动
+
+// ✅ 正确做法：只修复第 45 行
+// 结果：1 行改动
+function processData(data) { }  // 第 45 行 - ERROR
+function processData(data: any[]) { }  // 只改这一行
+```
+
 ## 与其他 Agent 的协作
 
 ### 被调用时
