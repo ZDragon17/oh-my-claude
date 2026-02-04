@@ -18,6 +18,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.21] - 2026-02-04
+
+### 🐛 Fixed / 修复
+
+#### WSL 脚本中文路径兼容性
+
+修复 Windows 用户名包含中文时 WSL 符号链接创建失败的问题：
+
+**问题**：
+- 当 Windows 用户名包含中文字符（如 `张不为`）时
+- WSL bash 脚本执行报错：`unexpected EOF while looking for matching '''`
+- 原因是 Windows → WSL 命令传递时的引号转义问题
+
+**修复**：
+- 使用 base64 编码传递脚本内容
+- 避免复杂的引号转义和中文字符问题
+- `wsl bash -c "echo ${base64} | base64 -d | bash"`
+
+---
+
 ## [2.2.20] - 2026-02-04
 
 ### 🐛 Fixed / 修复

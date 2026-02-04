@@ -388,37 +388,45 @@ export function setupWslSymlink(windowsPluginDir: string): { success: boolean; m
 
   try {
     // 在 WSL 中执行符号链接创建
-    const script = `
-      # 确保 plugins 目录存在
-      mkdir -p "${wslPluginsDir}"
-      
-      # 检查目标是否已经是正确的符号链接
-      if [ -L "${wslLinkPath}" ]; then
-        current_target=$(readlink "${wslLinkPath}")
-        if [ "$current_target" = "${wslTargetPath}" ]; then
-          echo "ALREADY_LINKED"
-          exit 0
-        fi
-        # 删除旧的符号链接
-        rm -f "${wslLinkPath}"
-      elif [ -d "${wslLinkPath}" ]; then
-        # 如果是目录，先备份再删除
-        mv "${wslLinkPath}" "${wslLinkPath}.backup.$(date +%s)"
-      fi
-      
-      # 创建新的符号链接
-      ln -s "${wslTargetPath}" "${wslLinkPath}"
-      
-      # 验证链接是否有效
-      if [ -d "${wslLinkPath}/hooks" ]; then
-        echo "SUCCESS"
-      else
-        echo "LINK_INVALID"
-        exit 1
-      fi
-    `;
+    // 使用 base64 编码传递脚本，避免中文路径和引号转义问题
+    const script = `#!/bin/bash
+set -e
+PLUGINS_DIR="${wslPluginsDir}"
+LINK_PATH="${wslLinkPath}"
+TARGET_PATH="${wslTargetPath}"
 
-    const result = execSync(`wsl bash -c '${script.replace(/'/g, "'\"'\"'")}'`, {
+# 确保 plugins 目录存在
+mkdir -p "$PLUGINS_DIR"
+
+# 检查目标是否已经是正确的符号链接
+if [ -L "$LINK_PATH" ]; then
+  current_target=$(readlink "$LINK_PATH")
+  if [ "$current_target" = "$TARGET_PATH" ]; then
+    echo "ALREADY_LINKED"
+    exit 0
+  fi
+  # 删除旧的符号链接
+  rm -f "$LINK_PATH"
+elif [ -d "$LINK_PATH" ]; then
+  # 如果是目录，先备份再删除
+  mv "$LINK_PATH" "$LINK_PATH.backup.$(date +%s)"
+fi
+
+# 创建新的符号链接
+ln -s "$TARGET_PATH" "$LINK_PATH"
+
+# 验证链接是否有效
+if [ -d "$LINK_PATH/hooks" ]; then
+  echo "SUCCESS"
+else
+  echo "LINK_INVALID"
+  exit 1
+fi
+`;
+
+    // 使用 base64 编码传递脚本，避免 Windows → WSL 的转义问题
+    const scriptBase64 = Buffer.from(script, 'utf-8').toString('base64');
+    const result = execSync(`wsl bash -c "echo ${scriptBase64} | base64 -d | bash"`, {
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
       timeout: 30000
