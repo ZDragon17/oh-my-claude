@@ -214,7 +214,10 @@ export const CORE_AGENTS = [
 export const CORE_AGENT_FILES = ['yugong.md', 'zhuge.md', 'baozheng.md'] as const;
 
 /** 必需目录列表 */
-export const REQUIRED_DIRS = ['agents', 'commands', 'skills', '.claude-plugin'] as const;
+export const REQUIRED_DIRS = ['agents', 'commands', 'skills', '.claude-plugin', 'hooks'] as const;
 
 /** 可选目录列表 */
-export const OPTIONAL_DIRS = ['hooks'] as const;
+export const OPTIONAL_DIRS = [] as const;
+
+/** 核心 Hook 文件列表（安装验证时检查） */
+export const CORE_HOOK_FILES = ['todo-continuation.sh', 'ralph-loop.sh', 'keyword-detector.sh', 'hooks.json'] as const;

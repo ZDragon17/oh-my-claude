@@ -11,7 +11,8 @@ import {
   PLUGIN_DIR,
   REQUIRED_DIRS,
   OPTIONAL_DIRS,
-  CORE_AGENT_FILES
+  CORE_AGENT_FILES,
+  CORE_HOOK_FILES
 } from './constants.js';
 import { checkClaudeCode } from './installer.js';
 import { success, info, warn, error, log } from '../scripts/logger.js';
@@ -65,6 +66,33 @@ export function verifyInstallation(): VerificationResult {
   } else {
     warn('commands 目录不存在');
     result.errors.push('commands 目录不存在');
+    result.success = false;
+  }
+
+  // 检查 hooks 目录和关键 hook 文件
+  const hooksDir = path.join(PLUGIN_DIR, 'hooks');
+  if (fs.existsSync(hooksDir)) {
+    const hookFiles = fs.readdirSync(hooksDir).filter(f => f.endsWith('.sh'));
+    if (hookFiles.length > 0) {
+      success(`已安装 ${hookFiles.length} 个 hooks`);
+    } else {
+      warn('hooks 目录为空');
+      result.errors.push('hooks 目录为空');
+      result.success = false;
+    }
+
+    // 检查关键 hook 文件
+    for (const hook of CORE_HOOK_FILES) {
+      const hookPath = path.join(hooksDir, hook);
+      if (!fs.existsSync(hookPath)) {
+        warn(`缺少关键 hook: ${hook}`);
+        result.errors.push(`缺少关键 hook: ${hook}`);
+        result.success = false;
+      }
+    }
+  } else {
+    warn('hooks 目录不存在');
+    result.errors.push('hooks 目录不存在');
     result.success = false;
   }
 
