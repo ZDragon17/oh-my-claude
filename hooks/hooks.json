@@ -3,7 +3,7 @@
     "SessionStart": [
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/auto-update-checker.sh --session-start",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/auto-update-checker.sh --session-start",
         "timeout": 10000,
         "continueOnError": true,
         "priority": "low",
@@ -14,7 +14,7 @@
     "Stop": [
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/ralph-loop.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/ralph-loop.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "critical",
@@ -22,7 +22,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/todo-continuation.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/todo-continuation.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "critical",
@@ -30,7 +30,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/agent-ready-notification.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/agent-ready-notification.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -41,7 +41,7 @@
     "UserPromptSubmit": [
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/first-use-onboarding.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/first-use-onboarding.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -50,7 +50,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/keyword-detector.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/keyword-detector.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "critical",
@@ -59,7 +59,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/at-agent-summoner.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/at-agent-summoner.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -68,7 +68,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/atlas.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/atlas.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "high",
@@ -76,7 +76,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/agent-collaboration.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/agent-collaboration.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "high",
@@ -84,7 +84,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/error-recovery.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/error-recovery.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "high",
@@ -92,7 +92,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-recovery.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/session-recovery.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "high",
@@ -100,7 +100,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/task-checkpointing.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/task-checkpointing.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -108,7 +108,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/context-compression.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/context-compression.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -116,7 +116,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/preemptive-compaction.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/preemptive-compaction.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -124,7 +124,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/rules-injector.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/rules-injector.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -132,7 +132,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/think-mode.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/think-mode.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -140,7 +140,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/lsp-tools.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/lsp-tools.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "low",
@@ -149,7 +149,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/ast-grep.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/ast-grep.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "low",
@@ -158,7 +158,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/code-quality-checker.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/code-quality-checker.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -166,7 +166,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/output-truncator.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/output-truncator.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -174,7 +174,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/directory-agents-injector.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/directory-agents-injector.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -182,7 +182,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/directory-readme-injector.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/directory-readme-injector.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -190,7 +190,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/auto-slash-command.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/auto-slash-command.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -198,7 +198,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/auto-update-checker.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/auto-update-checker.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "low",
@@ -206,7 +206,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/interactive-bash-session.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/interactive-bash-session.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -215,7 +215,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/agent-usage-reminder.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/agent-usage-reminder.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -225,7 +225,7 @@
     "PostToolUse": [
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/progress-notifier.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/progress-notifier.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -234,7 +234,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/context-window-monitor.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/context-window-monitor.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -242,7 +242,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/context-smart-alert.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/context-smart-alert.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "high",
@@ -251,7 +251,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/anthropic-context-window-limit-recovery.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/anthropic-context-window-limit-recovery.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "critical",
@@ -259,7 +259,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/failure-transparency.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/failure-transparency.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "high",
@@ -268,7 +268,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/tool-output-validator.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/tool-output-validator.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "high",
@@ -276,7 +276,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/edit-error-recovery.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/edit-error-recovery.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "high",
@@ -284,7 +284,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/delegate-task-retry.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/delegate-task-retry.sh",
         "timeout": 5000,
         "continueOnError": true,
         "priority": "high",
@@ -292,7 +292,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/empty-task-response-detector.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/empty-task-response-detector.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "normal",
@@ -300,7 +300,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/thinking-block-validator.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/thinking-block-validator.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "normal",
@@ -308,7 +308,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/output-truncator.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/output-truncator.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "normal",
@@ -316,7 +316,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-notification.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/session-notification.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "normal",
@@ -325,7 +325,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/background-notification.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/background-notification.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -333,7 +333,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/tmux-agent-visualizer.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/tmux-agent-visualizer.sh",
         "timeout": 3000,
         "continueOnError": true,
         "priority": "low",
@@ -342,7 +342,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/background-compaction.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/background-compaction.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -350,7 +350,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/hook-performance-monitor.sh cleanup",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/hook-performance-monitor.sh cleanup",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "low",
@@ -359,7 +359,7 @@
       },
       {
         "type": "command",
-        "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/agent-handoff-prompt.sh",
+        "command": "bash $HOME/.claude/plugins/oh-my-claude/hooks/agent-handoff-prompt.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "normal",
@@ -368,7 +368,7 @@
       },
       {
         "type": "command",
-        "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/error-friendly-display.sh",
+        "command": "sh $HOME/.claude/plugins/oh-my-claude/hooks/error-friendly-display.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "normal",
