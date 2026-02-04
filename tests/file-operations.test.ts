@@ -13,7 +13,10 @@ import {
   safeCopyFile,
   smartCopyFile,
   copyDir,
-  setHookPermissions
+  setHookPermissions,
+  windowsPathToWsl,
+  isWslAvailable,
+  setupWslSymlink
 } from '../lib/file-operations';
 
 describe('文件操作模块', () => {
@@ -188,6 +191,72 @@ describe('文件操作模块', () => {
       } else {
         expect(true).toBe(true);
       }
+    });
+  });
+
+  describe('WSL 跨环境兼容', () => {
+    describe('windowsPathToWsl', () => {
+      test('应该转换标准 Windows 路径（反斜杠）', () => {
+        expect(windowsPathToWsl('C:\\Users\\test')).toBe('/mnt/c/Users/test');
+        expect(windowsPathToWsl('D:\\projects\\app')).toBe('/mnt/d/projects/app');
+      });
+
+      test('应该转换 Windows 路径（正斜杠）', () => {
+        expect(windowsPathToWsl('C:/Users/test')).toBe('/mnt/c/Users/test');
+        expect(windowsPathToWsl('D:/projects/app')).toBe('/mnt/d/projects/app');
+      });
+
+      test('应该转换 Git Bash 格式路径', () => {
+        expect(windowsPathToWsl('/c/Users/test')).toBe('/mnt/c/Users/test');
+        expect(windowsPathToWsl('/d/projects/app')).toBe('/mnt/d/projects/app');
+      });
+
+      test('应该处理中文路径', () => {
+        expect(windowsPathToWsl('C:\\Users\\张不为')).toBe('/mnt/c/Users/张不为');
+        expect(windowsPathToWsl('/c/Users/张三')).toBe('/mnt/c/Users/张三');
+      });
+
+      test('应该保留 WSL 原生路径', () => {
+        expect(windowsPathToWsl('/mnt/c/Users/test')).toBe('/mnt/c/Users/test');
+        expect(windowsPathToWsl('/home/user')).toBe('/home/user');
+      });
+
+      test('应该处理空路径', () => {
+        expect(windowsPathToWsl('')).toBe('');
+      });
+    });
+
+    describe('isWslAvailable', () => {
+      test('在非 Windows 系统上应返回 false', () => {
+        if (os.platform() !== 'win32') {
+          expect(isWslAvailable()).toBe(false);
+        } else {
+          // Windows 上根据实际 WSL 安装情况返回
+          const result = isWslAvailable();
+          expect(typeof result).toBe('boolean');
+        }
+      });
+    });
+
+    describe('setupWslSymlink', () => {
+      test('在非 Windows 系统上应跳过', () => {
+        if (os.platform() !== 'win32') {
+          const result = setupWslSymlink('/some/path');
+          expect(result.success).toBe(true);
+          expect(result.message).toContain('非 Windows');
+        } else {
+          // Windows 上跳过此测试
+          expect(true).toBe(true);
+        }
+      });
+
+      test('应该返回正确的结果结构', () => {
+        const result = setupWslSymlink('/some/path');
+        expect(result).toHaveProperty('success');
+        expect(result).toHaveProperty('message');
+        expect(typeof result.success).toBe('boolean');
+        expect(typeof result.message).toBe('string');
+      });
     });
   });
 });

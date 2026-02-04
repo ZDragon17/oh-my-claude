@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import { VERSION, PLUGIN_NAME, PLUGIN_DIR } from './constants.js';
-import { copyPluginFiles, setHookPermissions } from './file-operations.js';
+import { copyPluginFiles, setHookPermissions, setupWslSymlink } from './file-operations.js';
 import { executeWithRollback } from './lock-manager.js';
 import { installCommands, installSkills, registerCoreAgents, getCommandsDir, getSkillsDir, registerPluginToClaudeCode, unregisterPluginFromClaudeCode } from './plugin-installer.js';
 import { success, info, warn, error, log } from '../scripts/logger.js';
@@ -177,6 +177,21 @@ export async function install(): Promise<void> {
   // 关键：注册插件到 Claude Code 的 installed_plugins.json
   // 只有注册后，Claude Code 才会加载插件的 hooks
   registerPluginToClaudeCode();
+
+  // WSL 兼容：在 Windows + WSL 环境下创建符号链接
+  // 解决 Claude Code 使用 WSL bash 执行 hooks 时路径不匹配的问题
+  info('检查跨环境兼容性...');
+  const wslResult = setupWslSymlink(pluginDir);
+  if (wslResult.success) {
+    if (wslResult.message.includes('跳过')) {
+      info(wslResult.message);
+    } else {
+      success(wslResult.message);
+    }
+  } else {
+    warn(`WSL 配置警告: ${wslResult.message}`);
+    warn('如果使用 WSL，hooks 可能无法正常工作');
+  }
 
   const { verifyInstallation } = await import('./verifier.js');
   verifyInstallation();

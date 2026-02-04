@@ -293,3 +293,153 @@ export function setHookPermissions(pluginDir: string): void {
 
   setPermissionsRecursive(hooksDir);
 }
+
+// ==================== WSL 跨环境兼容 ====================
+
+/**
+ * 检测 WSL 是否可用
+ */
+export function isWslAvailable(): boolean {
+  if (os.platform() !== 'win32') return false;
+  
+  try {
+    const { execSync } = require('child_process');
+    // 检查 wsl 命令是否存在
+    execSync('wsl --status', { stdio: 'pipe', timeout: 5000 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * 获取 WSL 中的 HOME 目录
+ */
+export function getWslHome(): string | null {
+  try {
+    const { execSync } = require('child_process');
+    const result = execSync('wsl bash -c "echo $HOME"', { 
+      encoding: 'utf-8', 
+      stdio: ['pipe', 'pipe', 'pipe'],
+      timeout: 10000 
+    });
+    return result.trim();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 将 Windows 路径转换为 WSL 路径
+ * 例如: C:\Users\张不为 -> /mnt/c/Users/张不为
+ */
+export function windowsPathToWsl(windowsPath: string): string {
+  // 处理各种 Windows 路径格式
+  let normalizedPath = windowsPath;
+  
+  // Git Bash 格式: /c/Users/xxx -> C:/Users/xxx
+  if (/^\/[a-zA-Z]\//.test(normalizedPath)) {
+    const driveLetter = normalizedPath.charAt(1).toLowerCase();
+    normalizedPath = `${driveLetter.toUpperCase()}:${normalizedPath.substring(2)}`;
+  }
+  
+  // 标准 Windows 格式: C:\Users\xxx 或 C:/Users/xxx
+  const match = normalizedPath.match(/^([a-zA-Z]):[/\\](.*)$/);
+  if (match && match[1] && match[2] !== undefined) {
+    const driveLetter = match[1].toLowerCase();
+    const restPath = match[2].replace(/\\/g, '/');
+    return `/mnt/${driveLetter}/${restPath}`;
+  }
+  
+  return normalizedPath;
+}
+
+/**
+ * 在 WSL 中创建符号链接，使 oh-my-claude 在 WSL 环境下也能正常工作
+ * 
+ * 问题背景：
+ * - Claude Code 在 Windows 上可能使用 WSL 的 bash 执行 hooks
+ * - WSL 的 $HOME 与 Windows 的 $HOME 不同
+ * - 导致 hooks 路径找不到文件
+ * 
+ * 解决方案：
+ * - 在 WSL 的 ~/.claude/plugins/ 中创建符号链接
+ * - 链接指向 Windows 安装的 oh-my-claude 目录
+ */
+export function setupWslSymlink(windowsPluginDir: string): { success: boolean; message: string } {
+  // 仅在 Windows 上执行
+  if (os.platform() !== 'win32') {
+    return { success: true, message: '非 Windows 环境，跳过 WSL 配置' };
+  }
+
+  // 检查 WSL 是否可用
+  if (!isWslAvailable()) {
+    return { success: true, message: '未检测到 WSL，跳过配置' };
+  }
+
+  const wslHome = getWslHome();
+  if (!wslHome) {
+    return { success: false, message: '无法获取 WSL HOME 目录' };
+  }
+
+  // 转换 Windows 路径为 WSL 路径
+  const wslTargetPath = windowsPathToWsl(windowsPluginDir);
+  const wslPluginsDir = `${wslHome}/.claude/plugins`;
+  const wslLinkPath = `${wslPluginsDir}/oh-my-claude`;
+
+  try {
+    const { execSync } = require('child_process');
+    
+    // 在 WSL 中执行符号链接创建
+    const script = `
+      # 确保 plugins 目录存在
+      mkdir -p "${wslPluginsDir}"
+      
+      # 检查目标是否已经是正确的符号链接
+      if [ -L "${wslLinkPath}" ]; then
+        current_target=$(readlink "${wslLinkPath}")
+        if [ "$current_target" = "${wslTargetPath}" ]; then
+          echo "ALREADY_LINKED"
+          exit 0
+        fi
+        # 删除旧的符号链接
+        rm -f "${wslLinkPath}"
+      elif [ -d "${wslLinkPath}" ]; then
+        # 如果是目录，先备份再删除
+        mv "${wslLinkPath}" "${wslLinkPath}.backup.$(date +%s)"
+      fi
+      
+      # 创建新的符号链接
+      ln -s "${wslTargetPath}" "${wslLinkPath}"
+      
+      # 验证链接是否有效
+      if [ -d "${wslLinkPath}/hooks" ]; then
+        echo "SUCCESS"
+      else
+        echo "LINK_INVALID"
+        exit 1
+      fi
+    `;
+
+    const result = execSync(`wsl bash -c '${script.replace(/'/g, "'\"'\"'")}'`, {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+      timeout: 30000
+    }).trim();
+
+    if (result === 'ALREADY_LINKED') {
+      return { success: true, message: 'WSL 符号链接已存在且正确' };
+    } else if (result === 'SUCCESS') {
+      return { success: true, message: 'WSL 符号链接创建成功' };
+    } else {
+      return { success: false, message: `WSL 符号链接创建失败: ${result}` };
+    }
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    // 如果是超时或 WSL 未运行，不算失败
+    if (errorMessage.includes('ETIMEDOUT') || errorMessage.includes('not running')) {
+      return { success: true, message: 'WSL 未运行，跳过符号链接配置' };
+    }
+    return { success: false, message: `WSL 配置失败: ${errorMessage}` };
+  }
+}

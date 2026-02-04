@@ -376,6 +376,27 @@ rm ~/.claude.json
 
 在 Claude Code 中输入 `/help`，查看是否显示 `yishan`、`zhuge` 等命令。
 
+#### 5. Windows + WSL 环境问题 (v2.2.19 新增)
+
+如果你在 Windows 上使用 Claude Code，且遇到 hooks 执行错误（如 `No such file or directory`），可能是 WSL 路径不兼容问题：
+
+**症状**：
+```
+Stop hook error: /home/xxx/.claude/plugins/oh-my-claude/hooks/xxx.sh: No such file or directory
+```
+
+**原因**：Windows 的 `$HOME` 与 WSL 的 `$HOME` 路径不同。
+
+**解决方案**：
+
+v2.2.19 已自动处理此问题。如果仍有问题，可手动创建符号链接：
+
+```bash
+# 在 WSL 中执行
+mkdir -p ~/.claude/plugins
+ln -sf /mnt/c/Users/你的用户名/.claude/plugins/oh-my-claude ~/.claude/plugins/oh-my-claude
+```
+
 ## 🚀 快速开始
 
 ### 🆕 场景化快速开始 (v2.1.12 新增)

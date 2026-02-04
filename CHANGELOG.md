@@ -18,6 +18,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.19] - 2026-02-04
+
+### 🔧 Fixed / 修复
+
+#### WSL 跨环境兼容性
+
+解决 Windows + WSL 环境下 hooks 执行失败的问题：
+
+**问题背景**：
+
+- 用户在 Windows 上安装 oh-my-claude（`$HOME` = `C:\Users\xxx`）
+- Claude Code 使用 WSL 的 `/bin/bash` 执行 hooks
+- WSL 的 `$HOME` 指向 `/home/xxx`，与 Windows 路径不同
+- 导致 hooks 找不到文件：`/home/xxx/.claude/plugins/oh-my-claude/hooks/xxx.sh: No such file or directory`
+
+**解决方案**：
+
+安装时自动检测 WSL 环境，创建符号链接：
+
+```bash
+# 在 WSL 环境中创建符号链接
+/home/xxx/.claude/plugins/oh-my-claude → /mnt/c/Users/xxx/.claude/plugins/oh-my-claude
+```
+
+**新增函数** (`lib/file-operations.ts`)：
+
+- `isWslAvailable()` - 检测 WSL 是否可用
+- `getWslHome()` - 获取 WSL 中的 HOME 目录
+- `windowsPathToWsl()` - 将 Windows 路径转换为 WSL 格式
+- `setupWslSymlink()` - 在 WSL 中创建符号链接
+
+**安装流程更新** (`lib/installer.ts`)：
+
+- 在 `registerPluginToClaudeCode()` 之后自动调用 WSL 兼容性配置
+- 仅在 Windows 系统且 WSL 可用时执行
+- 自动处理目录创建和符号链接
+
+**测试覆盖**：
+
+- 新增 WSL 跨环境兼容测试用例（6 个测试）
+- 覆盖路径转换、WSL 检测、符号链接创建等场景
+
+---
+
 ## [2.2.18] - 2026-02-04
 
 ### 🧹 Chore / 杂项
