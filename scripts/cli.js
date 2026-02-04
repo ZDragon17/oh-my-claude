@@ -383,7 +383,7 @@ function copyPluginFiles(packageDir, pluginDir, showProgress = true) {
 }
 
 /**
- * 设置 hook 脚本权限（Unix）
+ * 设置 hook 脚本权限（Unix）- 递归处理所有子目录
  * @param {string} pluginDir - 插件目录
  */
 function setHookPermissions(pluginDir) {
@@ -396,14 +396,24 @@ function setHookPermissions(pluginDir) {
     return;
   }
 
-  const hookFiles = fs.readdirSync(hooksDir).filter(f => f.endsWith('.sh'));
-  for (const hookFile of hookFiles) {
-    try {
-      fs.chmodSync(path.join(hooksDir, hookFile), '755');
-    } catch (err) {
-      warn(`设置权限失败: ${hookFile}`);
+  // 递归设置权限
+  function setPermissionsRecursive(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        setPermissionsRecursive(fullPath);
+      } else if (entry.name.endsWith('.sh')) {
+        try {
+          fs.chmodSync(fullPath, '755');
+        } catch (err) {
+          warn(`设置权限失败: ${entry.name}`);
+        }
+      }
     }
   }
+
+  setPermissionsRecursive(hooksDir);
 }
 
 /**
@@ -547,6 +557,7 @@ function installSkills(packageDir) {
 function verifyInstallation() {
   info('验证安装...');
   const commandsDir = getCommandsDir();
+  const pluginDir = getPluginDir();
   const result = { success: true, errors: [] };
 
   // 检查关键命令文件
@@ -575,8 +586,37 @@ function verifyInstallation() {
     result.success = false;
   }
 
+  // 检查 hooks 目录和关键 hook 文件
+  const hooksDir = path.join(pluginDir, 'hooks');
+  if (fs.existsSync(hooksDir)) {
+    const hookFiles = fs.readdirSync(hooksDir).filter(f => f.endsWith('.sh'));
+    if (hookFiles.length > 0) {
+      success(`✓ 已安装 ${hookFiles.length} 个 hooks`);
+    } else {
+      warn('✗ hooks 目录为空');
+      result.errors.push('hooks 目录为空');
+      result.success = false;
+    }
+
+    // 检查关键 hook 文件
+    const criticalHooks = ['todo-continuation.sh', 'ralph-loop.sh', 'keyword-detector.sh', 'hooks.json'];
+    for (const hook of criticalHooks) {
+      const hookPath = path.join(hooksDir, hook);
+      if (!fs.existsSync(hookPath)) {
+        warn(`✗ 缺少关键 hook: ${hook}`);
+        result.errors.push(`缺少关键 hook: ${hook}`);
+        result.success = false;
+      }
+    }
+  } else {
+    warn('✗ hooks 目录不存在');
+    result.errors.push('hooks 目录不存在');
+    result.success = false;
+  }
+
   if (!result.success) {
     warn('安装可能不完整，请检查上述警告');
+    warn('建议重新安装: npx claude-pangu@latest install');
   }
 
   return result;
@@ -1075,9 +1115,9 @@ function verify() {
   }
   success(`插件目录存在: ${pluginDir}`);
 
-  // 检查必需目录
-  const requiredDirs = ['agents', 'commands', 'skills', '.claude-plugin'];
-  const optionalDirs = ['hooks'];
+  // 检查必需目录 - hooks 是核心功能，必须存在
+  const requiredDirs = ['agents', 'commands', 'skills', '.claude-plugin', 'hooks'];
+  const optionalDirs = [];
 
   info('\n检查目录结构...');
   for (const dir of requiredDirs) {
@@ -1127,6 +1167,20 @@ function verify() {
       success(`agents/${agent}`);
     } else {
       error(`缺少核心 Agent: ${agent}`);
+      hasErrors = true;
+    }
+  }
+
+  // 检查关键 Hook 文件
+  info('\n检查核心 Hooks...');
+  const coreHooks = ['todo-continuation.sh', 'ralph-loop.sh', 'keyword-detector.sh', 'hooks.json'];
+  const hooksDir = path.join(pluginDir, 'hooks');
+  for (const hook of coreHooks) {
+    const hookPath = path.join(hooksDir, hook);
+    if (fs.existsSync(hookPath)) {
+      success(`hooks/${hook}`);
+    } else {
+      error(`缺少核心 Hook: ${hook}`);
       hasErrors = true;
     }
   }
