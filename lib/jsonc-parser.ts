@@ -3,6 +3,8 @@
  * 支持单行注释 (//) 和多行注释
  */
 
+import * as fs from 'fs';
+
 /**
  * JSONC 解析选项
  */
@@ -217,7 +219,6 @@ export function readJsoncFileSync<T = unknown>(
   filePath: string,
   options: JsoncParseOptions = {}
 ): T {
-  const fs = require('fs') as typeof import('fs');
   const content = fs.readFileSync(filePath, 'utf8');
   return parseJsonc<T>(content, options);
 }

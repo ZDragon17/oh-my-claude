@@ -16,8 +16,26 @@ import { execSync } from 'child_process';
 // Hook 优先级类型（用于将来扩展）
 export type HookPriority = 'critical' | 'high' | 'normal' | 'low';
 
+// Hook 类型定义
+interface HookConfig {
+  type?: string;
+  command: string;
+  windows_compatible?: boolean;
+  priority?: HookPriority;
+  timeout?: number;
+  continueOnError?: boolean;
+  description?: string;
+  [key: string]: unknown;
+}
+
+interface HooksJson {
+  hooks: {
+    [hookType: string]: HookConfig[];
+  };
+}
+
 // 从 hooks.json 读取配置
-function loadHooksConfig(): any {
+function loadHooksConfig(): HooksJson {
   const hooksPath = path.join(__dirname, '..', 'hooks', 'hooks.json');
   if (!fs.existsSync(hooksPath)) {
     console.error('❌ hooks.json 不存在');
@@ -70,7 +88,7 @@ function extractHookName(command: string | undefined): string {
 
 // 检查单个 Hook 的兼容性
 function checkHookCompatibility(
-  hook: any,
+  hook: HookConfig,
   env: ReturnType<typeof detectEnvironment>
 ): {
   name: string;
@@ -148,7 +166,7 @@ function main(): void {
 
   // 加载并检查 Hooks
   const config = loadHooksConfig();
-  const allHooks: any[] = [
+  const allHooks: HookConfig[] = [
     ...(config.hooks.Stop || []),
     ...(config.hooks.UserPromptSubmit || []),
     ...(config.hooks.PostToolUse || []),

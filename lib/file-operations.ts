@@ -6,6 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { execSync } from 'child_process';
 import { z } from 'zod';
 import {
   LARGE_FILE_THRESHOLD_BYTES,
@@ -303,7 +304,6 @@ export function isWslAvailable(): boolean {
   if (os.platform() !== 'win32') return false;
   
   try {
-    const { execSync } = require('child_process');
     // 检查 wsl 命令是否存在
     execSync('wsl --status', { stdio: 'pipe', timeout: 5000 });
     return true;
@@ -317,7 +317,6 @@ export function isWslAvailable(): boolean {
  */
 export function getWslHome(): string | null {
   try {
-    const { execSync } = require('child_process');
     const result = execSync('wsl bash -c "echo $HOME"', { 
       encoding: 'utf-8', 
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -388,8 +387,6 @@ export function setupWslSymlink(windowsPluginDir: string): { success: boolean; m
   const wslLinkPath = `${wslPluginsDir}/oh-my-claude`;
 
   try {
-    const { execSync } = require('child_process');
-    
     // 在 WSL 中执行符号链接创建
     const script = `
       # 确保 plugins 目录存在
