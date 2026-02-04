@@ -202,6 +202,10 @@ export function copyPluginFiles(packageDir: string, pluginDir: string, showProgr
   const validatedPackageDir = FilePathSchema.parse(packageDir);
   const validatedPluginDir = FilePathSchema.parse(pluginDir);
 
+  // 调试信息：显示源目录和目标目录
+  console.log(`\x1b[36m源目录:\x1b[0m ${validatedPackageDir}`);
+  console.log(`\x1b[36m目标目录:\x1b[0m ${validatedPluginDir}`);
+
   const stats: CopyResult = { dirs: 0, files: 0, errors: [] };
   const totalSteps = PLUGIN_DIRS.length + PLUGIN_FILES.length;
   const progress = showProgress ? new ProgressIndicator(totalSteps, '复制文件') : null;
@@ -212,7 +216,9 @@ export function copyPluginFiles(packageDir: string, pluginDir: string, showProgr
     const dest = path.join(validatedPluginDir, dir);
 
     if (!fs.existsSync(src)) {
-      // 源目录不存在时静默跳过，这不是错误（可能是可选目录）
+      // 源目录不存在时记录警告，帮助调试
+      console.warn(`\x1b[33m警告: 源目录不存在，跳过 ${dir}/\x1b[0m`);
+      console.warn(`\x1b[33m  完整路径: ${src}\x1b[0m`);
       if (progress) progress.update(`跳过 ${dir}/`);
       continue;
     }
