@@ -66,12 +66,45 @@ docs: update README with new examples
 
 ```
 oh-my-claude/
+├── lib/             # TypeScript 源码（核心逻辑）
+├── scripts/         # CLI 和工具脚本（TypeScript）
+├── dist/            # TypeScript 编译输出（npm 入口）
 ├── agents/          # Agent 定义文件
 ├── commands/        # 斜杠命令定义
 ├── hooks/           # Hook 脚本
 ├── skills/          # 技能定义
 └── .claude-plugin/  # 插件配置
 ```
+
+### 🛠️ 开发流程
+
+本项目使用 **TypeScript** 开发，npm 包入口是 `dist/scripts/cli.js`。
+
+**开发前准备：**
+
+```bash
+# 安装依赖
+npm install
+
+# 编译 TypeScript
+npm run build
+
+# 或使用监听模式（开发时推荐）
+npm run build:watch
+```
+
+**重要说明：**
+
+- **源码位置**：`lib/*.ts` 和 `scripts/*.ts`
+- **编译输出**：`dist/lib/*.js` 和 `dist/scripts/*.js`
+- **npm 入口**：`dist/scripts/cli.js`（由 `package.json` 的 `bin` 字段指定）
+
+**修改代码后：**
+
+1. 运行 `npm run build` 重新编译
+2. 运行 `npm run type-check` 检查类型
+3. 运行 `npm run lint` 检查代码风格
+4. 运行 `npm test` 运行测试
 
 ### 🎭 添加新 Agent
 
@@ -189,6 +222,36 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 | `refactor` | Refactoring |
 | `test` | Testing |
 | `chore` | Miscellaneous |
+
+### 🛠️ Development Workflow
+
+This project uses **TypeScript**. The npm package entry point is `dist/scripts/cli.js`.
+
+**Setup:**
+
+```bash
+# Install dependencies
+npm install
+
+# Compile TypeScript
+npm run build
+
+# Or use watch mode (recommended for development)
+npm run build:watch
+```
+
+**Important Notes:**
+
+- **Source code**: `lib/*.ts` and `scripts/*.ts`
+- **Compiled output**: `dist/lib/*.js` and `dist/scripts/*.js`
+- **npm entry**: `dist/scripts/cli.js` (specified in `package.json` `bin` field)
+
+**After making changes:**
+
+1. Run `npm run build` to recompile
+2. Run `npm run type-check` for type checking
+3. Run `npm run lint` for code style
+4. Run `npm test` to run tests
 
 ### 🎭 Adding a New Agent
 

@@ -18,6 +18,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.18] - 2026-02-04
+
+### 🧹 Chore / 杂项
+
+#### 代码清理与文档改进
+
+**删除废弃的 JavaScript 文件**：
+
+清理了不再使用的旧版 JavaScript 文件，避免与 TypeScript 版本混淆：
+
+- `scripts/cli.js` - 旧版 CommonJS 入口 (v1.0.9, 45KB)，已被 TypeScript 版本取代
+- `scripts/install.js` - 依赖已删除的 cli.js
+- `scripts/uninstall.js` - 依赖已删除的 cli.js
+- `scripts/sync-version.js` - 已有 `sync-version.cjs` 替代
+- `scripts/show-agent-allocation.js` - 未被使用的调试脚本
+
+**文档更新**：
+
+- `CONTRIBUTING.md` 新增 **开发流程** 章节（中英双语）：
+  - TypeScript 编译流程说明
+  - 源码与编译输出位置说明
+  - npm 入口点 (`dist/scripts/cli.js`) 说明
+
+---
+
+## [2.2.17] - 2026-02-04
+
+### 🐛 Fixed / 修复
+
+#### Hooks 安装验证增强
+
+修复 hooks 文件安装后未正确验证的问题：
+
+**问题**：
+
+- hooks 目录在安装时被视为可选目录
+- 验证输出不显示 hooks 安装状态
+- 用户无法确认 hooks 是否正确安装
+
+**修复**：
+
+- `lib/constants.ts`: hooks 从 `OPTIONAL_DIRS` 移至 `REQUIRED_DIRS`
+- `lib/constants.ts`: 新增 `CORE_HOOK_FILES` 常量定义核心 hook 文件
+- `lib/verifier.ts`: `verifyInstallation()` 新增 hooks 验证逻辑
+
+**验证输出改进**：
+
+```
+✅ yishan.md 已安装
+✅ 已安装 111 个命令
+✅ 已安装 45 个 hooks    ← 新增
+```
+
+---
+
 ## [2.2.11] - 2026-02-03
 
 ### 🐛 Fixed / 修复
