@@ -618,6 +618,21 @@ export async function update(): Promise<void> {
   const { registerPluginToClaudeCode } = await import('./plugin-installer.js');
   registerPluginToClaudeCode();
 
+  // WSL 兼容：在 Windows + WSL 环境下创建符号链接（v2.2.20 修复）
+  // 解决 Claude Code 使用 WSL bash 执行 hooks 时路径不匹配的问题
+  info('检查跨环境兼容性...');
+  const wslResult = setupWslSymlink(pluginDir);
+  if (wslResult.success) {
+    if (wslResult.message.includes('跳过')) {
+      info(wslResult.message);
+    } else {
+      success(wslResult.message);
+    }
+  } else {
+    warn(`WSL 配置警告: ${wslResult.message}`);
+    warn('如果使用 WSL，hooks 可能无法正常工作');
+  }
+
   const { verifyInstallation } = await import('./verifier.js');
   verifyInstallation();
 

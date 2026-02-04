@@ -18,6 +18,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.20] - 2026-02-04
+
+### 🐛 Fixed / 修复
+
+#### WSL 兼容性修复 - update 流程
+
+修复 `npx claude-pangu update` 命令未执行 WSL 符号链接设置的问题：
+
+**问题**：
+- v2.2.19 添加了 WSL 兼容性功能，但只在 `install()` 流程中调用
+- 通过 `update` 更新的用户不会执行 WSL 设置
+- 导致已安装用户更新后 hooks 仍可能无法工作
+
+**修复**：
+- 在 `update()` 函数中添加 `setupWslSymlink()` 调用
+- 确保更新流程与安装流程一致
+
+---
+
 ## [2.2.19] - 2026-02-04
 
 ### 🔧 Fixed / 修复
