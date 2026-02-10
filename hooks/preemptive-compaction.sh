@@ -440,5 +440,18 @@ main() {
     exit 0
 }
 
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+_STDIN_INPUT=$(cat 2>/dev/null) || _STDIN_INPUT=""
+if [ -z "$_STDIN_INPUT" ]; then
+    exit 0
+fi
+
+# 解析 stdin JSON 的 prompt 字段
+if command -v jq > /dev/null 2>&1; then
+    _STDIN_PROMPT=$(echo "$_STDIN_INPUT" | jq -r '.prompt // empty' 2>/dev/null) || _STDIN_PROMPT=""
+else
+    _STDIN_PROMPT=$(echo "$_STDIN_INPUT" | grep -o '"prompt"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"prompt"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || _STDIN_PROMPT=""
+fi
+
 # 执行主函数
-main "$@"
+main "$_STDIN_PROMPT"

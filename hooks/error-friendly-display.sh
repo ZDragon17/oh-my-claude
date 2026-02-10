@@ -7,14 +7,24 @@
 #
 # 兼容性: macOS (bash 3.2+), Linux (bash 4.0+), Windows (Git Bash)
 
-# 遇到错误静默退出，不影响主流程
-set -e
-trap 'exit 0' ERR
+# PostToolUse Hook 必须容错 —— 任何内部错误应静默退出 0，不影响主流程
+# 注意：不使用 set -e，因为 PostToolUse Hook 应该安静失败
 
-# 获取输入
-TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
-TOOL_OUTPUT="${CLAUDE_TOOL_OUTPUT:-}"
-EXIT_CODE="${CLAUDE_EXIT_CODE:-0}"
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+_STDIN_INPUT=$(cat 2>/dev/null) || _STDIN_INPUT=""
+if [ -z "$_STDIN_INPUT" ]; then
+    exit 0
+fi
+
+# 解析 stdin JSON 字段
+if command -v jq > /dev/null 2>&1; then
+    TOOL_NAME=$(echo "$_STDIN_INPUT" | jq -r '.tool_name // empty' 2>/dev/null) || TOOL_NAME=""
+    TOOL_OUTPUT=$(echo "$_STDIN_INPUT" | jq -r '(.tool_output // empty) | if type == "object" then tostring else . end' 2>/dev/null) || TOOL_OUTPUT=""
+else
+    TOOL_NAME=$(echo "$_STDIN_INPUT" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_NAME=""
+    TOOL_OUTPUT=$(echo "$_STDIN_INPUT" | grep -o '"tool_output"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_output"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_OUTPUT=""
+fi
+EXIT_CODE="0"
 
 # 状态文件
 STATE_DIR="${HOME}/.oh-my-claude"

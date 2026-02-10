@@ -151,8 +151,23 @@ if ! check_tmux; then
     exit 0
 fi
 
-# 读取工具输出
-tool_output=$(cat)
+# 读取 stdin JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+_stdin_input=$(cat 2>/dev/null) || _stdin_input=""
+if [ -z "$_stdin_input" ]; then
+    exit 0
+fi
+
+# 解析 tool_output 字段
+if command -v jq > /dev/null 2>&1; then
+    tool_output=$(echo "$_stdin_input" | jq -r '.tool_output // empty' 2>/dev/null) || tool_output=""
+else
+    tool_output=$(echo "$_stdin_input" | grep -o '"tool_output"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_output"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || tool_output=""
+fi
+
+# 如果 tool_output 为空，尝试使用整个 stdin（兼容旧格式）
+if [ -z "$tool_output" ]; then
+    tool_output="$_stdin_input"
+fi
 
 # 检测是否是后台任务启动
 if echo "$tool_output" | grep -qE 'run_in_background.*true|background.*task.*started'; then

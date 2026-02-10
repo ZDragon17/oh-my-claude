@@ -3,7 +3,7 @@
 # 追踪各 Hook 的执行时间，识别性能瓶颈
 # 触发时机: PostToolUse (周期性检查)
 
-set -eu
+# PostToolUse Hook 必须容错 —— 不使用 set -e/set -u，避免意外非 0 退出
 
 # 性能日志目录
 PERF_LOG_DIR="${HOME}/.oh-my-claude/performance"

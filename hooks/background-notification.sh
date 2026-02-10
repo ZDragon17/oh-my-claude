@@ -25,7 +25,7 @@ failed_count=0
 completed_tasks=""
 
 # 遍历状态文件
-for state_file in "$BACKGROUND_STATE_DIR"/*.state 2>/dev/null; do
+for state_file in "$BACKGROUND_STATE_DIR"/*.state; do
     [ -f "$state_file" ] || continue
     
     task_id=$(basename "$state_file" .state)

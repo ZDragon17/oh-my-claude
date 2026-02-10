@@ -18,6 +18,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.22] - 2026-02-10
+
+### 🐛 Fixed / 修复
+
+#### Hook stdin 数据读取修复
+
+修复所有 Hook 脚本无法从 Claude Code 接收事件数据的根本性 Bug：
+
+**问题**：
+- 所有 Hook 脚本使用 `$CLAUDE_TOOL_NAME`、`$CLAUDE_STOP_REASON` 等环境变量读取数据
+- Claude Code 的 Hook API **不提供这些环境变量**，而是通过 **stdin JSON** 传递数据
+- 导致所有 Hook 功能完全失效（关键词检测、错误恢复、进度通知等）
+
+**修复**：
+- 36 个 Hook 文件从环境变量读取改为通过 `cat` 从 stdin 读取 JSON
+- 使用 `jq`（如可用）或 bash 内置字符串操作解析 JSON 字段
+- 所有 Hook 包含 jq 不存在时的 fallback 逻辑
+
+**影响范围**：35 个现有 Hook + 3 个新增 Hook = 38 个文件
+
+#### PostToolUse Hook 执行崩溃修复
+
+修复 PostToolUse Hook 处理 Grep 工具输出时报错的问题：
+
+**问题**：
+- `error-friendly-display.sh` 使用 `set -e` + `trap 'exit 0' ERR`，且被 `sh` 调用而非 `bash`
+- `hook-performance-monitor.sh` 使用 `set -eu`
+- Grep 工具返回大量输出时，脚本内部命令返回非 0 导致整个脚本崩溃
+
+**修复**：
+- `hooks.json` 第 400 行：`sh` → `bash`（`trap` 是 bash 特有功能）
+- `error-friendly-display.sh`：移除 `set -e` 和 `trap 'exit 0' ERR`
+- `hook-performance-monitor.sh`：移除 `set -eu`
+
+#### Stop Hook "No such file or directory" 修复
+
+修复测试用例破坏 WSL 符号链接导致 Stop Hook 执行失败的问题：
+
+**问题**：
+- `tests/file-operations.test.ts` 在 Windows 环境下调用 `setupWslSymlink('/some/path')`
+- 此操作**真正执行 WSL 命令**，将符号链接覆盖为无效路径 `/some/path`
+- 每次 `npm test`（包括更新后自动执行）都会破坏 WSL 符号链接
+- 导致所有 Hook 报错：`No such file or directory`
+
+**修复**：
+- 测试在 Windows 上不再用假路径调用 `setupWslSymlink`，改为仅验证函数签名
+- 手动修复被破坏的 WSL 符号链接
+
+#### 新增 Hook 脚本
+
+| 脚本 | 类型 | 功能 |
+|------|------|------|
+| `compaction-context-injector.sh` | Stop | 上下文压缩时注入关键信息 |
+| `empty-message-sanitizer.sh` | PreToolUse | 空消息清理 |
+| `non-interactive-env.sh` | PreToolUse | 非交互环境检测 |
+
+### ✅ Verified / 验证
+
+- 48 个 Hook 文件 `bash -n` 语法验证全部通过
+- 367 个测试用例全部通过
+- WSL 本地安装模拟测试：41 个 Hook 全部 exit code 0
+  - SessionStart: 1/1 ✅
+  - PreToolUse: 2/2 ✅
+  - UserPromptSubmit: 16/16 ✅
+  - PostToolUse: 18/18 ✅
+  - Stop: 4/4 ✅
+
+---
+
 ## [2.2.21] - 2026-02-04
 
 ### 🐛 Fixed / 修复

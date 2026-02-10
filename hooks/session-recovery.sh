@@ -16,8 +16,18 @@ STATE_DIR=".claude"
 RECOVERY_STATE_FILE="$STATE_DIR/recovery-state.json"
 TODO_FILE="$STATE_DIR/todos.json"
 
-# 获取用户输入
-user_input="${CLAUDE_USER_PROMPT:-}"
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+_STDIN_INPUT=$(cat 2>/dev/null) || _STDIN_INPUT=""
+if [ -z "$_STDIN_INPUT" ]; then
+    exit 0
+fi
+
+# 解析 stdin JSON 字段
+if command -v jq > /dev/null 2>&1; then
+    user_input=$(echo "$_STDIN_INPUT" | jq -r '.prompt // empty' 2>/dev/null) || user_input=""
+else
+    user_input=$(echo "$_STDIN_INPUT" | grep -o '"prompt"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"prompt"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || user_input=""
+fi
 
 # 错误模式检测
 thinking_block_error=false

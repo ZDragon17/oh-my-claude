@@ -10,9 +10,20 @@
 # 3. 提供错误恢复建议
 # ============================================================================
 
-# 获取工具调用结果
-tool_result="${CLAUDE_TOOL_RESULT:-}"
-tool_name="${CLAUDE_TOOL_NAME:-}"
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+_STDIN_INPUT=$(cat 2>/dev/null) || _STDIN_INPUT=""
+if [ -z "$_STDIN_INPUT" ]; then
+    exit 0
+fi
+
+# 解析 stdin JSON 字段
+if command -v jq > /dev/null 2>&1; then
+    tool_name=$(echo "$_STDIN_INPUT" | jq -r '.tool_name // empty' 2>/dev/null) || tool_name=""
+    tool_result=$(echo "$_STDIN_INPUT" | jq -r '(.tool_output // empty) | if type == "object" then tostring else . end' 2>/dev/null) || tool_result=""
+else
+    tool_name=$(echo "$_STDIN_INPUT" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || tool_name=""
+    tool_result=$(echo "$_STDIN_INPUT" | grep -o '"tool_output"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_output"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || tool_result=""
+fi
 
 # 如果没有结果，直接退出
 if [ -z "$tool_result" ]; then

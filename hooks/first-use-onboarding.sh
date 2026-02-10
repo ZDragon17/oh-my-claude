@@ -53,10 +53,7 @@ else
     user_prompt=""
 fi
 
-# 如果无法从 JSON 获取，使用环境变量
-if [ -z "$user_prompt" ]; then
-    user_prompt="${CLAUDE_PROMPT:-}"
-fi
+# stdin JSON 已解析，不再依赖不存在的环境变量
 
 # 如果仍然为空，静默退出
 if [ -z "$user_prompt" ]; then

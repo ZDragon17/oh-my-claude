@@ -6,8 +6,19 @@
 
 # 环境变量
 HOOK_NAME="agent-ready-notification"
-STOP_REASON="${CLAUDE_STOP_REASON:-}"
-SESSION_ID="${CLAUDE_SESSION_ID:-}"
+
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+_STDIN_INPUT=$(cat 2>/dev/null) || _STDIN_INPUT=""
+
+# 解析 stdin JSON 字段（Stop 事件提供 session_id, transcript_path, cwd）
+if command -v jq > /dev/null 2>&1; then
+    SESSION_ID=$(echo "$_STDIN_INPUT" | jq -r '.session_id // empty' 2>/dev/null) || SESSION_ID=""
+else
+    SESSION_ID=$(echo "$_STDIN_INPUT" | grep -o '"session_id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"session_id"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || SESSION_ID=""
+fi
+
+# Stop 事件没有 stop_reason 字段
+STOP_REASON=""
 
 # 配置 - 可通过环境变量自定义
 NOTIFICATION_ENABLED="${OH_MY_CLAUDE_NOTIFICATIONS:-true}"

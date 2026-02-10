@@ -28,12 +28,12 @@ fi
 
 # 提取工具输出
 if [ "$has_jq" -eq 1 ]; then
-    tool_name=$(echo "$input" | jq -r '.tool // empty' 2>/dev/null) || tool_name=""
-    tool_output=$(echo "$input" | jq -r '.output // empty' 2>/dev/null) || tool_output=""
+    tool_name=$(echo "$input" | jq -r '.tool_name // empty' 2>/dev/null) || tool_name=""
+    tool_output=$(echo "$input" | jq -r '(.tool_output // empty) | if type == "object" then tostring else . end' 2>/dev/null) || tool_output=""
 else
     # 简单的字符串提取
-    tool_name=$(echo "$input" | sed -n 's/.*"tool"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' 2>/dev/null) || tool_name=""
-    tool_output=$(echo "$input" | sed -n 's/.*"output"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' 2>/dev/null) || tool_output=""
+    tool_name=$(echo "$input" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || tool_name=""
+    tool_output=$(echo "$input" | grep -o '"tool_output"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_output"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || tool_output=""
 fi
 
 # 只处理 Task 相关工具

@@ -77,12 +77,24 @@ generate_progress_bar() {
     printf '%s' "$bar"
 }
 
-# 获取用户输入长度
-user_input="${CLAUDE_USER_PROMPT:-}"
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+_STDIN_INPUT=$(cat 2>/dev/null) || _STDIN_INPUT=""
+if [ -z "$_STDIN_INPUT" ]; then
+    exit 0
+fi
+
+# 解析 stdin JSON 字段
+if command -v jq > /dev/null 2>&1; then
+    user_input=$(echo "$_STDIN_INPUT" | jq -c '.tool_input // empty' 2>/dev/null) || user_input=""
+    tool_result=$(echo "$_STDIN_INPUT" | jq -r '(.tool_output // empty) | if type == "object" then tostring else . end' 2>/dev/null) || tool_result=""
+else
+    user_input=$(echo "$_STDIN_INPUT" | grep -o '"tool_input"[[:space:]]*:[[:space:]]*{[^}]*}' | head -1 2>/dev/null) || user_input=""
+    tool_result=$(echo "$_STDIN_INPUT" | grep -o '"tool_output"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_output"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || tool_result=""
+fi
+
 input_length=${#user_input}
 
 # 获取工具调用结果长度
-tool_result="${CLAUDE_TOOL_RESULT:-}"
 tool_result_length=${#tool_result}
 
 # 获取或初始化累积上下文估算

@@ -5,9 +5,23 @@
 
 # 环境变量
 HOOK_NAME="edit-error-recovery"
-TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
-TOOL_OUTPUT="${CLAUDE_TOOL_OUTPUT:-}"
-TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
+
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+INPUT=$(cat 2>/dev/null) || INPUT=""
+if [ -z "$INPUT" ]; then
+    exit 0
+fi
+
+# 解析 stdin JSON 字段
+if command -v jq > /dev/null 2>&1; then
+    TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty' 2>/dev/null) || TOOL_NAME=""
+    TOOL_OUTPUT=$(echo "$INPUT" | jq -r '(.tool_output // empty) | if type == "object" then tostring else . end' 2>/dev/null) || TOOL_OUTPUT=""
+    TOOL_INPUT=$(echo "$INPUT" | jq -c '.tool_input // empty' 2>/dev/null) || TOOL_INPUT=""
+else
+    TOOL_NAME=$(echo "$INPUT" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_NAME=""
+    TOOL_OUTPUT=$(echo "$INPUT" | grep -o '"tool_output"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_output"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_OUTPUT=""
+    TOOL_INPUT=$(echo "$INPUT" | grep -o '"tool_input"[[:space:]]*:[[:space:]]*{[^}]*}' | head -1 2>/dev/null) || TOOL_INPUT=""
+fi
 
 # ============================================================================
 # 错误检测函数

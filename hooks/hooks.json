@@ -11,6 +11,26 @@
         "description": "启动时自动检查更新 - 后台静默检查和更新"
       }
     ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/empty-message-sanitizer.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "空消息清理器 - 防止空输入/空参数导致 API 错误"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/non-interactive-env.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "非交互式环境处理 - 在 CI/Docker/SSH 无头环境中阻止交互式工具"
+      }
+    ],
     "Stop": [
       {
         "type": "command",
@@ -36,6 +56,15 @@
         "priority": "low",
         "windows_compatible": true,
         "description": "Agent 就绪通知 - Agent 停止时发送 OS 级通知（类似 OpenCode）"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/compaction-context-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "压缩上下文注入 - 压缩时保留 TODO/循环状态/Git 分支等关键上下文"
       }
     ],
     "UserPromptSubmit": [
@@ -368,7 +397,7 @@
       },
       {
         "type": "command",
-        "command": "sh ~/.claude/plugins/oh-my-claude/hooks/error-friendly-display.sh",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/error-friendly-display.sh",
         "timeout": 2000,
         "continueOnError": true,
         "priority": "normal",

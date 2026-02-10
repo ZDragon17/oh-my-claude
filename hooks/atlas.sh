@@ -5,10 +5,19 @@
 
 # 环境变量
 HOOK_NAME="atlas"
-PROMPT="${CLAUDE_PROMPT:-}"
-TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
-TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
-TOOL_OUTPUT="${CLAUDE_TOOL_OUTPUT:-}"
+
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+INPUT=$(cat 2>/dev/null) || INPUT=""
+if [ -z "$INPUT" ]; then
+    exit 0
+fi
+
+# 解析 stdin JSON 字段
+if command -v jq > /dev/null 2>&1; then
+    PROMPT=$(echo "$INPUT" | jq -r '.prompt // empty' 2>/dev/null) || PROMPT=""
+else
+    PROMPT=$(echo "$INPUT" | grep -o '"prompt"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"prompt"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || PROMPT=""
+fi
 
 # 配置
 CONFIG_DIR="${HOME}/.oh-my-claude"

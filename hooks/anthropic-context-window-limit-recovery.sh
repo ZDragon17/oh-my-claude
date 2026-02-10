@@ -5,8 +5,20 @@
 
 # 环境变量
 HOOK_NAME="anthropic-context-window-limit-recovery"
-TOOL_OUTPUT="${CLAUDE_TOOL_OUTPUT:-}"
-ERROR_MESSAGE="${CLAUDE_ERROR:-}"
+
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+_STDIN_INPUT=$(cat 2>/dev/null) || _STDIN_INPUT=""
+if [ -z "$_STDIN_INPUT" ]; then
+    exit 0
+fi
+
+# 解析 stdin JSON 字段
+if command -v jq > /dev/null 2>&1; then
+    TOOL_OUTPUT=$(echo "$_STDIN_INPUT" | jq -r '(.tool_output // empty) | if type == "object" then tostring else . end' 2>/dev/null) || TOOL_OUTPUT=""
+else
+    TOOL_OUTPUT=$(echo "$_STDIN_INPUT" | grep -o '"tool_output"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_output"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_OUTPUT=""
+fi
+ERROR_MESSAGE=""
 
 # 配置
 RECOVERY_STATE_FILE="${HOME}/.oh-my-claude/context-recovery.state"

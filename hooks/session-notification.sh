@@ -5,9 +5,23 @@
 
 # 环境变量
 HOOK_NAME="session-notification"
-TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
-TOOL_OUTPUT="${CLAUDE_TOOL_OUTPUT:-}"
-SESSION_ID="${CLAUDE_SESSION_ID:-}"
+
+# 从 stdin 读取 JSON 数据（Claude Code Hook API 通过 stdin 传递事件数据）
+_STDIN_INPUT=$(cat 2>/dev/null) || _STDIN_INPUT=""
+if [ -z "$_STDIN_INPUT" ]; then
+    exit 0
+fi
+
+# 解析 stdin JSON 字段
+if command -v jq > /dev/null 2>&1; then
+    TOOL_NAME=$(echo "$_STDIN_INPUT" | jq -r '.tool_name // empty' 2>/dev/null) || TOOL_NAME=""
+    TOOL_OUTPUT=$(echo "$_STDIN_INPUT" | jq -r '(.tool_output // empty) | if type == "object" then tostring else . end' 2>/dev/null) || TOOL_OUTPUT=""
+    SESSION_ID=$(echo "$_STDIN_INPUT" | jq -r '.session_id // empty' 2>/dev/null) || SESSION_ID=""
+else
+    TOOL_NAME=$(echo "$_STDIN_INPUT" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_NAME=""
+    TOOL_OUTPUT=$(echo "$_STDIN_INPUT" | grep -o '"tool_output"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_output"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_OUTPUT=""
+    SESSION_ID=$(echo "$_STDIN_INPUT" | grep -o '"session_id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"session_id"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || SESSION_ID=""
+fi
 
 # 配置
 NOTIFICATION_ENABLED="${OH_MY_CLAUDE_NOTIFICATIONS:-true}"

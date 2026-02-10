@@ -241,17 +241,24 @@ describe('文件操作模块', () => {
     describe('setupWslSymlink', () => {
       test('在非 Windows 系统上应跳过', () => {
         if (os.platform() !== 'win32') {
-          const result = setupWslSymlink('/some/path');
+          const result = setupWslSymlink('/tmp/test-oh-my-claude-dummy');
           expect(result.success).toBe(true);
           expect(result.message).toContain('非 Windows');
         } else {
-          // Windows 上跳过此测试
+          // Windows 上跳过此测试——不能用假路径调用，会破坏真实的 WSL 符号链接
           expect(true).toBe(true);
         }
       });
 
       test('应该返回正确的结果结构', () => {
-        const result = setupWslSymlink('/some/path');
+        if (os.platform() === 'win32') {
+          // Windows 上：setupWslSymlink 会真正执行 WSL 命令创建符号链接
+          // 不能用假路径（如 '/some/path'）调用，否则会覆盖真实的 WSL 符号链接
+          // 只验证函数签名存在
+          expect(typeof setupWslSymlink).toBe('function');
+          return;
+        }
+        const result = setupWslSymlink('/tmp/test-oh-my-claude-dummy');
         expect(result).toHaveProperty('success');
         expect(result).toHaveProperty('message');
         expect(typeof result.success).toBe('boolean');
