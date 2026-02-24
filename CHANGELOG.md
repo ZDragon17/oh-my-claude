@@ -19,6 +19,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 
+
+
+## [2.3.1] - 2026-02-24
+
+### 🐛 Fixed / 修复
+
+#### syncHooksToSettings Hook 注册完善
+
+- **修复**: `syncHooksToSettings()` 仅注册 4 个旧版 Hook 到 `settings.json`，遗漏了 v2.3.0 新增的 6 个 Hook 脚本
+- **新增注册**: PreToolUse (`write-existing-file-guard`)、PostToolUse (`category-skill-reminder`、`comment-checker`、`json-error-recovery`)、Stop (`stop-continuation-guard`、`todo-continuation-enforcer`)
+- **影响**: 使用 `settings.json` 回退通道的用户现在可以正确加载所有 Wave 2 Hook
+- **测试**: 新增 4 个测试用例验证 Hook 注册完整性（总测试数 367→371）
+
+---
+
 ## [2.3.0] - 2026-02-24
 
 ### 🚀 Major / 重大更新
