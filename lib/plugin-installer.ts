@@ -299,7 +299,7 @@ interface SettingsFile {
  * 同步 hooks 配置到 settings.json
  * Claude Code 需要在 settings.json 中配置 hooks 才能生效
  */
-function syncHooksToSettings(): void {
+export function syncHooksToSettings(): void {
   info('正在同步 hooks 到 settings.json...');
 
   try {
@@ -325,6 +325,18 @@ function syncHooksToSettings(): void {
     // 这样可以兼容 Git Bash、WSL 等不同环境
     const hooksBasePath = '$HOME/.claude/plugins/oh-my-claude/hooks';
     const coreHooks: Record<string, HookEntry[]> = {
+      PreToolUse: [
+        {
+          matcher: '*',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${hooksBasePath}/write-existing-file-guard.sh"'`,
+              timeout: 2000
+            }
+          ]
+        }
+      ],
       PostToolUse: [
         {
           matcher: 'TodoWrite',
@@ -342,6 +354,36 @@ function syncHooksToSettings(): void {
             {
               type: 'command',
               command: `bash -c '. "${hooksBasePath}/context-smart-alert.sh"'`,
+              timeout: 2000
+            }
+          ]
+        },
+        {
+          matcher: '*',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${hooksBasePath}/category-skill-reminder.sh"'`,
+              timeout: 2000
+            }
+          ]
+        },
+        {
+          matcher: '*',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${hooksBasePath}/comment-checker.sh"'`,
+              timeout: 2000
+            }
+          ]
+        },
+        {
+          matcher: '*',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${hooksBasePath}/json-error-recovery.sh"'`,
               timeout: 2000
             }
           ]
@@ -367,6 +409,26 @@ function syncHooksToSettings(): void {
               timeout: 3000
             }
           ]
+        },
+        {
+          matcher: '*',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${hooksBasePath}/stop-continuation-guard.sh"'`,
+              timeout: 3000
+            }
+          ]
+        },
+        {
+          matcher: '*',
+          hooks: [
+            {
+              type: 'command',
+              command: `bash -c '. "${hooksBasePath}/todo-continuation-enforcer.sh"'`,
+              timeout: 3000
+            }
+          ]
         }
       ]
     };
@@ -380,7 +442,7 @@ function syncHooksToSettings(): void {
     let hooksUpdated = 0;
 
     // 需要更新的脚本名列表
-    const scriptsToManage = ['progress-notifier.sh', 'context-smart-alert.sh', 'todo-continuation.sh', 'ralph-loop.sh'];
+    const scriptsToManage = ['progress-notifier.sh', 'context-smart-alert.sh', 'todo-continuation.sh', 'ralph-loop.sh', 'write-existing-file-guard.sh', 'category-skill-reminder.sh', 'comment-checker.sh', 'json-error-recovery.sh', 'stop-continuation-guard.sh', 'todo-continuation-enforcer.sh'];
 
     for (const [hookType, hookEntries] of Object.entries(coreHooks)) {
       if (!settings.hooks[hookType]) {

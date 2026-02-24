@@ -11,7 +11,8 @@ import {
   getSkillsDir,
   installCommands,
   installSkills,
-  registerCoreAgents
+  registerCoreAgents,
+  syncHooksToSettings
 } from '../lib/plugin-installer';
 
 describe('插件组件安装器', () => {
@@ -161,5 +162,129 @@ describe('插件组件安装器', () => {
       // 第二次注册（会尝试重复注册，但不应该崩溃）
       expect(() => registerCoreAgents()).not.toThrow();
     });
+  });
+});
+
+describe('syncHooksToSettings', () => {
+  const SETTINGS_PATH = path.join(os.homedir(), '.claude', 'settings.json');
+  let originalContent: string | null = null;
+  let settingsExisted: boolean;
+
+  beforeEach(() => {
+    settingsExisted = fs.existsSync(SETTINGS_PATH);
+    if (settingsExisted) {
+      originalContent = fs.readFileSync(SETTINGS_PATH, 'utf-8');
+    }
+  });
+
+  afterEach(() => {
+    if (settingsExisted && originalContent !== null) {
+      fs.writeFileSync(SETTINGS_PATH, originalContent, 'utf-8');
+    }
+  });
+
+  const EXPECTED_HOOK_SCRIPTS = [
+    'progress-notifier.sh',
+    'context-smart-alert.sh',
+    'todo-continuation.sh',
+    'ralph-loop.sh',
+    'write-existing-file-guard.sh',
+    'category-skill-reminder.sh',
+    'comment-checker.sh',
+    'json-error-recovery.sh',
+    'stop-continuation-guard.sh',
+    'todo-continuation-enforcer.sh'
+  ];
+
+  test('应该将所有 10 个核心 hook 注册到 settings.json', () => {
+    const emptySettings = originalContent ? JSON.parse(originalContent) : {};
+    delete emptySettings.hooks;
+    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(emptySettings), 'utf-8');
+
+    syncHooksToSettings();
+
+    const updated = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf-8'));
+    expect(updated.hooks).toBeDefined();
+
+    const registeredScripts: string[] = [];
+    for (const entries of Object.values(updated.hooks) as Array<Array<{ hooks: Array<{ command: string }> }>>) {
+      for (const entry of entries) {
+        if (entry.hooks) {
+          for (const h of entry.hooks) {
+            const scriptName = h.command.split('/').pop()?.replace(/["']/g, '') || '';
+            registeredScripts.push(scriptName);
+          }
+        }
+      }
+    }
+
+    for (const script of EXPECTED_HOOK_SCRIPTS) {
+      expect(registeredScripts).toEqual(
+        expect.arrayContaining([expect.stringContaining(script)])
+      );
+    }
+    expect(registeredScripts.length).toBeGreaterThanOrEqual(EXPECTED_HOOK_SCRIPTS.length);
+  });
+
+  test('应该包含 PreToolUse、PostToolUse 和 Stop 三个事件类型', () => {
+    const emptySettings = originalContent ? JSON.parse(originalContent) : {};
+    delete emptySettings.hooks;
+    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(emptySettings), 'utf-8');
+
+    syncHooksToSettings();
+
+    const updated = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf-8'));
+    expect(updated.hooks.PreToolUse).toBeDefined();
+    expect(updated.hooks.PostToolUse).toBeDefined();
+    expect(updated.hooks.Stop).toBeDefined();
+    expect(updated.hooks.PreToolUse.length).toBeGreaterThanOrEqual(1);
+    expect(updated.hooks.PostToolUse.length).toBeGreaterThanOrEqual(4);
+    expect(updated.hooks.Stop.length).toBeGreaterThanOrEqual(4);
+  });
+
+  test('重复调用不应产生重复 hook 条目', () => {
+    const emptySettings = originalContent ? JSON.parse(originalContent) : {};
+    delete emptySettings.hooks;
+    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(emptySettings), 'utf-8');
+
+    syncHooksToSettings();
+    syncHooksToSettings();
+
+    const updated = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf-8'));
+
+    const allScripts: string[] = [];
+    for (const entries of Object.values(updated.hooks) as Array<Array<{ hooks: Array<{ command: string }> }>>) {
+      for (const entry of entries) {
+        if (entry.hooks) {
+          for (const h of entry.hooks) {
+            allScripts.push(h.command);
+          }
+        }
+      }
+    }
+
+    const uniqueScripts = [...new Set(allScripts)];
+    expect(allScripts.length).toBe(uniqueScripts.length);
+  });
+
+  test('应该使用 $HOME 路径格式以兼容跨平台', () => {
+    const emptySettings = originalContent ? JSON.parse(originalContent) : {};
+    delete emptySettings.hooks;
+    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(emptySettings), 'utf-8');
+
+    syncHooksToSettings();
+
+    const updated = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf-8'));
+
+    for (const entries of Object.values(updated.hooks) as Array<Array<{ hooks: Array<{ command: string }> }>>) {
+      for (const entry of entries) {
+        if (entry.hooks) {
+          for (const h of entry.hooks) {
+            expect(h.command).toContain('$HOME');
+            expect(h.command).not.toMatch(/\/home\/|C:\\Users\\/);
+          }
+        }
+      }
+    }
   });
 });
