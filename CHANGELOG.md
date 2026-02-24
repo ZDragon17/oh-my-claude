@@ -23,6 +23,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [2.3.3] - 2026-02-24
+
+### 🐛 Fixed / 修复
+
+#### Hook 逻辑修复（第二轮本地测试）
+
+- **json-error-recovery**: 修复 `detect_specific_error()` 模式排序问题——STRING 类错误（如 "Unterminated string at column 15"）被 POSITION 模式的 `at (column|position)` 抢先匹配，导致错误类型误分类。现将 STRING/TRAILING_COMMA 检查提前到 POSITION 之前
+- **write-existing-file-guard**: 修复路径排除模式 `*/oh-my-claude/*` 过于宽泛的问题——该模式会匹配任何名为 "oh-my-claude" 的项目目录（如 `D:/projects/oh-my-claude/`），导致 Write Guard 对该项目下所有文件失效。现缩窄为仅匹配 `*/.claude/*`、`*/.oh-my-claude/*`、`*/.sisyphus/*`
+
+---
+
 ## [2.3.2] - 2026-02-24
 
 ### 🐛 Fixed / 修复

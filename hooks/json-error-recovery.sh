@@ -67,27 +67,23 @@ detect_json_parse_error() {
 # 检测具体的 JSON 错误类型
 detect_specific_error() {
     local output="$1"
-    
-    if echo "$output" | grep -qiE 'Unexpected token.*position|at (column|position)|position [0-9]'; then
-        echo "POSITION"
-        return
-    fi
-    
+    # STRING 检查必须在 POSITION 之前（POSITION 的 'at (column|position)' 会误匹配 STRING 类错误）
     if echo "$output" | grep -qiE 'Unterminated string|unclosed.*string'; then
         echo "STRING"
         return
     fi
-    
     if echo "$output" | grep -qiE 'trailing comma|Expected.*}.*got.*,'; then
         echo "TRAILING_COMMA"
         return
     fi
-    
+    if echo "$output" | grep -qiE 'Unexpected token.*position|at (column|position)|position [0-9]'; then
+        echo "POSITION"
+        return
+    fi
     if echo "$output" | grep -qiE 'Unexpected end|unexpected eof|incomplete'; then
         echo "INCOMPLETE"
         return
     fi
-    
     echo "GENERIC"
 }
 

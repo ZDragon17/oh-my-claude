@@ -78,7 +78,7 @@ fi
 
 # 允许对特定目录的文件覆写（内部管理文件）
 case "$FILE_PATH" in
-    */.claude/*|*/oh-my-claude/*|*/.oh-my-claude/*|*/.sisyphus/*)
+    */.claude/*|*/.oh-my-claude/*|*/.sisyphus/*)
         exit 0
         ;;
 esac
