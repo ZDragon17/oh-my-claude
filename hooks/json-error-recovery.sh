@@ -52,7 +52,7 @@ detect_json_parse_error() {
     fi
     
     # 模式2: 工具特定的 JSON 错误
-    if echo "$output" | grep -qiE '(Expected.*but got|Unexpected end of JSON|Unterminated string|Bad control character)'; then
+    if echo "$output" | grep -qiE '(Expected.*but got|Unexpected end of JSON|Unterminated string|unclosed.*string|Bad control character)'; then
         return 0
     fi
     

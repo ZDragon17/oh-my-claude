@@ -922,6 +922,7 @@ model: sonnet
 - [x] v2.3.1 - **Hook 注册修复** 🐛（syncHooksToSettings 完善 Wave 2 Hook 注册，新增 4 测试用例）
 - [x] v2.3.2 - **Hook 无 jq 回退修复** 🐛（4 个 Hook 的 Windows/无 jq 环境兼容性修复）
 - [x] v2.3.3 - **Hook 逻辑修复** 🐛（json-error-recovery 模式排序 + write-existing-file-guard 路径排除修复）
+- [x] v2.3.4 - **JSON 错误检测增强** \uD83D\uDC1B（json-error-recovery 增加 "unclosed string" 模式匹配）
 
 ### v2.2.2 核心更新
 

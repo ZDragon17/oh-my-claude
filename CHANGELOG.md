@@ -23,6 +23,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [2.3.4] - 2026-02-24
+
+### \uD83D\uDC1B Fixed / 修复
+
+#### json-error-recovery 检测增强（第三轮本地测试）
+
+- **json-error-recovery**: 修复 `detect_json_parse_error()` 模式2未能检测 "unclosed string" 类错误的问题。原正则仅包含 `Unterminated string`，但部分 JSON 解析器（如 Python json 模块）使用 "unclosed string" 表述，导致漏检。现增加 `unclosed.*string` 模式匹配
+
+---
+
 ## [2.3.3] - 2026-02-24
 
 ### 🐛 Fixed / 修复
