@@ -918,6 +918,7 @@ model: sonnet
 - [x] v2.2.17 - **Hooks 验证增强** ✅（安装验证显示 hooks 状态）
 - [x] v2.2.18 - **代码清理** 🧹（删除废弃 JS 文件，更新开发文档）
 - [x] v2.2.22 - **Hook 系统根本性修复** 🔧（stdin JSON 读取、PostToolUse 崩溃修复、WSL 符号链接保护）
+- [x] v2.3.0 - **oh-my-opencode v3.8.4 全面移植** 🚀（9 Agent 重写 + 6 新 Hook + 5 命令更新 + 4 技能升级）
 
 ### v2.2.2 核心更新
 

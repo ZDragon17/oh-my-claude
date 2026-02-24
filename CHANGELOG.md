@@ -18,6 +18,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+
+## [2.3.0] - 2026-02-24
+
+### 🚀 Major / 重大更新
+
+#### oh-my-opencode v3.8.4 全面移植
+
+将 oh-my-opencode（上游灵感项目）v3.8.4 的所有新能力移植到 oh-my-claude，
+涵盖 Agent 提示词、Hook 脚本、斜杠命令和技能模块四大维度的全面升级。
+
+### ✨ Added / 新增
+
+#### Wave 1: Agent 提示词重写 (9 个)
+
+| Agent | 文件 | 移植来源 | 核心变更 |
+|-------|------|----------|----------|
+| 愚公 yugong | `agents/yugong.md` | Sisyphus | Intent Verbalization、Phase 0-3 工作流、Category+Skills 委派体系 |
+| 火神 huoshen | `agents/huoshen.md` | Hephaestus | Intent Extraction、"Do NOT Ask" 哲学、端到端自主完成 |
+| 神谕 oracle | `agents/oracle.md` | Oracle | 3 层响应结构、字数限制、只读工具集 |
+| 司书 librarian | `agents/librarian.md` | Librarian | TYPE A-D 分类、Context7+grep.app 矩阵 |
+| 悟空 wukong | `agents/wukong.md` | Explore | `<analysis>` 标签、工具策略矩阵 |
+| 墨提斯 metis | `agents/metis.md` | Metis | 6 类意图分类、AI-slop 检测 |
+| 刘伯温 liubowen | `agents/liubowen.md` | Momus | 审批偏见检测、3-check-only、反完美主义 |
+| 离娄 lilou | `agents/lilou.md` | Multimodal-Looker | 只读分析、4 步协议 |
+| 诸葛 zhuge | `agents/zhuge.md` | Prometheus | 面试模式规划器、Phase 1→2、Momus 循环 |
+
+#### Wave 2: Hook 脚本 (6 个新增)
+
+| Hook | 类型 | 功能 |
+|------|------|------|
+| `category-skill-reminder.sh` | PostToolUse | 追踪直接工具调用次数，3 次后提醒使用 Category+Skills 委派 |
+| `comment-checker.sh` | PostToolUse | 检测 7 种 AI-slop 注释模式（解释 WHY 而非 WHAT） |
+| `json-error-recovery.sh` | PostToolUse | 检测 JSON 解析错误，提供类型特定的恢复指引 |
+| `write-existing-file-guard.sh` | PreToolUse | 阻止向未 Read 过的文件 Write；追踪已读文件 |
+| `stop-continuation-guard.sh` | Stop | 检查 continuation-stopped 标记文件 |
+| `todo-continuation-enforcer.sh` | Stop | 解析 todos.json，为待完成 TODO 注入继续提示 |
+
+hooks.json 更新：PreToolUse 2→3, PostToolUse 18→21, Stop 4→6（总计 53 个 hooks）。
+
+#### Wave 3: 斜杠命令 (3 重写 + 2 新建)
+
+| 命令 | 状态 | 核心变更 |
+|------|------|----------|
+| `init-deep.md` | 重写 | 层次化 AGENTS.md 生成、动态 Agent 派发、评分矩阵、4 阶段工作流 |
+| `start-work.md` | 重写 | Prometheus 计划驱动工作流、boulder.json、计划自动选择、Category+Skills 委派表 |
+| `refactor.md` | 重写 | 6 阶段确定性重构：意图门→代码分析→代码地图→测试评估→计划生成→LSP/AST-grep 验证执行 |
+| `handoff.md` | 新建 | 4 阶段上下文交接：验证→程序化上下文收集→提取→格式化输出 |
+| `stop-continuation.md` | 新建 | 创建标记文件，清理 Ralph Loop + yishan-loop 状态 |
+
+#### Wave 4: 技能模块 (3 重写 + 1 新建)
+
+| 技能 | 状态 | 行数 | 核心变更 |
+|------|------|------|----------|
+| `frontend-ui-ux` | 重写 | 408 | 合并上游设计哲学：Work Principles、11 种 Tone 方向、Spatial Composition、Visual Details、Motion Libraries |
+| `git-master` | 重写 | 867 | 6 阶段提交工作流 (Phase 0-6)、3 模式检测 (COMMIT/REBASE/HISTORY_SEARCH)、强制性输出校验 |
+| `agent-browser` | 重写 | 486 | 完整 CLI 命令文档：14 个命令类别、全局选项、实用示例、安装指南 |
+| `dev-browser` | 新建 | 136 | 持久化页面状态的 Playwright 自动化：ARIA 快照、TypeScript 脚本工作流 |
+
+### 📊 统计
+
+- **Agent 重写**: 9 个（全部核心 Agent）
+- **新增 Hook**: 6 个（hooks.json 总计 53 个）
+- **命令更新**: 5 个（3 重写 + 2 新建）
+- **技能更新**: 4 个（3 重写 + 1 新建）
+- **移植来源**: oh-my-opencode v3.8.4（1483 文件，143k LOC）
+- **架构**: 行为/概念移植（非代码直接合并，因架构根本不同）
+
+---
+
 ## [2.2.22] - 2026-02-10
 
 ### 🐛 Fixed / 修复

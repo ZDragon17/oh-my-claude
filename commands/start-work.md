@@ -1,31 +1,99 @@
 ---
 name: start-work
 description: |
-  开始工作流命令 - 从 GitHub Issue 或任务描述开始完整工作流程。
-  自动分析需求、创建 TODO、执行实现、验证结果。
+  开始工作流命令 - 从 Prometheus 计划或 GitHub Issue 开始完整工作流程。
+  自动分析需求、加载计划、创建 TODO、执行实现、验证结果。
   别名：/work, /begin
 ---
 
-# 🚀 开始工作流
+# 开始工作会话
 
-你正在启动 **开始工作流** 模式。这是一个完整的从需求到交付的工作流程。
+你正在启动一个 Sisyphus 工作会话。
 
-## 工作流程
+## 执行步骤
 
-### 阶段 1: 需求分析
+### 1. 查找可用计划
 
-**理解任务**:
+搜索 Prometheus 生成的计划文件：
 
 ```
-1. 解析用户提供的任务描述或 GitHub Issue
-2. 识别：
-   - 核心需求是什么？
-   - 成功标准是什么？
-   - 有什么约束条件？
-   - 涉及哪些文件/模块？
+查找 .sisyphus/plans/ 目录
+查找 .claude/plans/ 目录
+查找任何 *-plan.md 文件
 ```
 
-**如果是 GitHub Issue**:
+### 2. 检查活跃状态
+
+读取 `.sisyphus/boulder.json`（如果存在）。
+
+### 3. 决策逻辑
+
+- 如果 `boulder.json` 存在且计划未完成（有未勾选项）：
+  - 继续现有计划的工作
+- 如果没有活跃计划或计划已完成：
+  - 列出可用计划文件
+  - 如果只有一个计划：自动选择
+  - 如果有多个计划：显示列表让用户选择
+- 如果没有任何计划文件：
+  - 解析用户提供的任务描述或 GitHub Issue
+  - 创建新的 TODO 列表
+
+### 4. 创建/更新状态
+
+```json
+{
+  "active_plan": "/absolute/path/to/plan.md",
+  "started_at": "ISO_TIMESTAMP",
+  "plan_name": "plan-name"
+}
+```
+
+### 5. 读取计划并开始执行
+
+读取完整计划文件，按照 atlas 工作流开始执行任务。
+
+---
+
+## 输出格式
+
+### 列出计划时
+
+```
+可用工作计划
+
+当前时间: {ISO timestamp}
+
+1. [plan-name-1.md] - 修改: {date} - 进度: 3/10 任务
+2. [plan-name-2.md] - 修改: {date} - 进度: 0/5 任务
+
+选择要执行的计划？（输入编号或计划名）
+```
+
+### 恢复现有工作时
+
+```
+恢复工作会话
+
+活跃计划: {plan-name}
+进度: {completed}/{total} 任务
+
+读取计划并从上次未完成的任务继续...
+```
+
+### 自动选择单一计划时
+
+```
+启动工作会话
+
+计划: {plan-name}
+开始时间: {timestamp}
+
+读取计划并开始执行...
+```
+
+---
+
+## 如果是 GitHub Issue
 
 ```bash
 # 获取 Issue 详情
@@ -35,70 +103,28 @@ gh issue view <issue_number>
 gh issue view <issue_number> --comments
 ```
 
-### 阶段 2: 探索现有代码
+---
 
-**并行发起探索**:
+## 任务分派参考
 
-```
-# 探索相关代码
-background_task(agent="explore", prompt="找到与 [需求] 相关的现有代码...")
+| 任务类型 | 分派建议 | 说明 |
+|----------|----------|------|
+| 架构设计 | oracle | 只读咨询，设计方案评审 |
+| 前端实现 | visual-engineering | 带 frontend-ui-ux 技能 |
+| 后端实现 | deep/unspecified-high | 带相关技能 |
+| 测试编写 | unspecified-high | 带 tdd-workflow 技能 |
+| 文档更新 | writing | 带相关技能 |
+| 简单修改 | quick | 快速任务 |
 
-# 探索测试模式
-background_task(agent="explore", prompt="找到类似功能的测试模式...")
+---
 
-# 如果涉及外部库，探索文档
-background_task(agent="librarian", prompt="获取 [库名] 的最佳实践...")
-```
+## 关键规则
 
-### 阶段 3: 创建工作计划
-
-**使用 TodoWrite 创建详细计划**:
-
-```
-TodoWrite([
-  { id: "1", content: "分析需求和现有代码", status: "pending", priority: "high" },
-  { id: "2", content: "设计实现方案", status: "pending", priority: "high" },
-  { id: "3", content: "实现核心功能", status: "pending", priority: "high" },
-  { id: "4", content: "添加测试", status: "pending", priority: "medium" },
-  { id: "5", content: "验证和文档", status: "pending", priority: "medium" }
-])
-```
-
-### 阶段 4: 执行实现
-
-**根据任务类型分派**:
-
-| 任务类型 | 分派给 | 行动 |
-|----------|--------|------|
-| 架构设计 | 诸葛 (oracle) | 设计方案评审 |
-| 代码实现 | 鲁班 (general) | 核心实现 |
-| UI/UX | 顾恺之 (frontend) | 界面设计实现 |
-| 测试 | 包拯 (test-engineer) | 测试编写 |
-| 文档 | 司马迁 (document-writer) | 文档更新 |
-
-### 阶段 5: 验证
-
-**验证清单**:
-
-```
-□ 代码编译/构建通过
-□ lsp_diagnostics 无错误
-□ 测试通过（如有）
-□ 满足成功标准
-□ 无回归问题
-```
-
-### 阶段 6: 交付
-
-**根据需求交付**:
-
-- 如果需要 PR → 创建 PR
-- 如果是本地任务 → 报告完成
-- 如果涉及 Issue → 引用 Issue 编号
+- 读取完整计划文件后再委派任何任务
+- 始终在开始工作前更新状态文件
+- 遵循 Category+Skills 委派协议
 
 ## 输入格式
-
-支持多种输入格式：
 
 ```bash
 # GitHub Issue
@@ -110,8 +136,8 @@ TodoWrite([
 # 任务描述
 /start-work 实现用户登录功能
 
-# 详细需求
-/start-work 添加一个 REST API 端点 /api/users，支持 CRUD 操作
+# 无参数（查找现有计划）
+/start-work
 ```
 
 ## 用户的任务
@@ -119,16 +145,5 @@ TodoWrite([
 $ARGUMENTS
 
 ---
-
-## 开始执行
-
-现在我将：
-
-1. **分析需求** - 理解你想要什么
-2. **探索代码** - 了解现有实现
-3. **创建计划** - 使用 TodoWrite 分解任务
-4. **执行实现** - 逐步完成子任务
-5. **验证结果** - 确保质量和正确性
-6. **交付成果** - 完成 PR 或报告
 
 **工作流启动...**

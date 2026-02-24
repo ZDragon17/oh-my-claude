@@ -1,155 +1,203 @@
 ---
 name: init-deep
 description: |
-  深度项目初始化命令 - 全面分析项目结构，生成详细的工作计划。
-  扫描技术栈、依赖关系、架构模式，创建上下文文档。
+  深度项目初始化命令 - 生成层级化 AGENTS.md 知识库。
+  根目录 + 复杂度评分子目录，全面分析项目结构。
   别名：/deep-init, /analyze-project
 ---
 
-# 🔍 深度项目初始化
+# /init-deep
 
-你正在执行 **深度项目初始化**。这是一个全面的项目分析流程，用于建立完整的项目上下文。
+生成层级化 AGENTS.md 文件。根目录 + 复杂度评分子目录。
 
-## 分析流程
-
-### 阶段 1: 项目结构扫描
-
-**并行执行以下探索任务**:
+## 用法
 
 ```
-# 探索 1: 目录结构
-background_task(agent="explore", prompt="分析项目的顶层目录结构，识别：
-- 源代码目录
-- 测试目录
-- 配置目录
-- 文档目录
-- 构建产物目录")
-
-# 探索 2: 技术栈识别
-background_task(agent="explore", prompt="识别项目的技术栈：
-- 编程语言
-- 框架（前端/后端）
-- 数据库
-- 构建工具
-- 包管理器")
-
-# 探索 3: 依赖分析
-background_task(agent="explore", prompt="分析项目依赖：
-- 核心依赖
-- 开发依赖
-- 可选依赖
-- 依赖版本状况")
+/init-deep                      # 更新模式：修改现有 + 在需要处创建新的
+/init-deep --create-new         # 读取现有 → 删除全部 → 从头重新生成
+/init-deep --max-depth=2        # 限制目录深度（默认：3）
 ```
 
-### 阶段 2: 架构分析
+---
 
-**检查关键文件**:
+## 工作流（高层视图）
 
-```
-并行读取以下文件（如存在）:
-- package.json / requirements.txt / Cargo.toml / go.mod
-- tsconfig.json / .eslintrc / .prettierrc
-- docker-compose.yml / Dockerfile
-- .github/workflows/*.yml
-- README.md / CONTRIBUTING.md
-```
+1. **发现 + 分析**（并行） — 启动后台探索 Agent + bash 结构分析 + 读取现有 AGENTS.md
+2. **评分 & 决策** — 从合并结果确定 AGENTS.md 位置
+3. **生成** — 先根目录，然后子目录并行
+4. **审查** — 去重、裁剪、验证
 
-### 阶段 3: 代码模式识别
-
-**分析代码模式**:
+**必须使用 TodoWrite 跟踪所有阶段，实时标记 in_progress → completed。**
 
 ```
-# 识别设计模式
-background_task(agent="explore", prompt="识别项目中使用的设计模式：
-- 架构模式（MVC, MVVM, Clean Architecture 等）
-- 代码组织模式
-- 状态管理模式
-- API 设计模式")
+TodoWrite([
+  { id: "discovery", content: "启动探索 Agent + 结构分析 + 读取现有", status: "pending", priority: "high" },
+  { id: "scoring", content: "评分目录，确定 AGENTS.md 位置", status: "pending", priority: "high" },
+  { id: "generate", content: "生成 AGENTS.md 文件（根目录 + 子目录）", status: "pending", priority: "high" },
+  { id: "review", content: "去重、验证、裁剪", status: "pending", priority: "medium" }
+])
 ```
 
-### 阶段 4: 生成报告
+---
 
-**输出格式**:
+## 阶段 1: 发现 + 分析（并行）
+
+**将 "discovery" 标记为 in_progress。**
+
+### 立即启动后台探索 Agent
+
+不要等待 — 这些异步运行，同时主会话继续工作。
+
+```
+task(subagent_type="explore", load_skills=[], description="项目结构探索", run_in_background=true, prompt="项目结构：预测检测到的语言的标准模式 → 仅报告偏差")
+task(subagent_type="explore", load_skills=[], description="入口点查找", run_in_background=true, prompt="入口点：查找 main 文件 → 报告非标准组织")
+task(subagent_type="explore", load_skills=[], description="约定查找", run_in_background=true, prompt="约定：查找配置文件 → 报告项目特定规则")
+task(subagent_type="explore", load_skills=[], description="反模式查找", run_in_background=true, prompt="反模式：查找 'DO NOT', 'NEVER', 'ALWAYS', 'DEPRECATED' 注释 → 列出禁止的模式")
+task(subagent_type="explore", load_skills=[], description="构建/CI 探索", run_in_background=true, prompt="构建/CI：查找 workflows, Makefile → 报告非标准模式")
+task(subagent_type="explore", load_skills=[], description="测试模式探索", run_in_background=true, prompt="测试模式：查找测试配置、测试结构 → 报告独特约定")
+```
+
+### 动态 Agent 生成
+
+bash 分析后，根据项目规模生成额外探索 Agent：
+
+| 因素 | 阈值 | 额外 Agent |
+|------|------|-----------|
+| 文件总数 | >100 | 每 100 文件 +1 |
+| 代码行数 | >10k | 每 10k 行 +1 |
+| 目录深度 | ≥4 | +2 深度探索 |
+| 大文件(>500行) | >10 | +1 复杂度热点 |
+| Monorepo | 检测到 | 每个包/工作区 +1 |
+
+### 主会话：并行分析
+
+**后台 Agent 运行时**，主会话执行：
+
+1. **Bash 结构分析** — 目录深度、文件计数、代码集中度、现有 AGENTS.md
+2. **读取现有 AGENTS.md** — 提取关键信息、约定、反模式
+3. **LSP 代码地图**（如可用）— 入口点、符号密度、引用中心度
+
+收集所有后台 Agent 结果后，合并 bash + LSP + 现有 + 探索发现。**将 "discovery" 标记为 completed。**
+
+---
+
+## 阶段 2: 评分 & 位置决策
+
+**将 "scoring" 标记为 in_progress。**
+
+### 评分矩阵
+
+| 因素 | 权重 | 高阈值 | 来源 |
+|------|------|--------|------|
+| 文件数 | 3x | >20 | bash |
+| 子目录数 | 2x | >5 | bash |
+| 代码比例 | 2x | >70% | bash |
+| 独特模式 | 1x | 有自己的配置 | explore |
+| 模块边界 | 2x | 有 index.ts/__init__.py | bash |
+| 符号密度 | 2x | >30 符号 | LSP |
+| 引用中心度 | 3x | >20 引用 | LSP |
+
+### 决策规则
+
+| 评分 | 操作 |
+|------|------|
+| **根目录 (.)** | 始终创建 |
+| **>15** | 创建 AGENTS.md |
+| **8-15** | 如果是不同领域则创建 |
+| **<8** | 跳过（父目录覆盖） |
+
+**将 "scoring" 标记为 completed。**
+
+---
+
+## 阶段 3: 生成 AGENTS.md
+
+**将 "generate" 标记为 in_progress。**
+
+**文件写入规则**: 如果 AGENTS.md 已存在 → 使用 Edit 工具。如果不存在 → 使用 Write 工具。
+
+### 根 AGENTS.md 模板
 
 ```markdown
-# 项目分析报告
+# PROJECT KNOWLEDGE BASE
 
-## 基本信息
-- 项目名称: xxx
-- 主要语言: xxx
-- 框架: xxx
-- 包管理器: xxx
+**Generated:** {TIMESTAMP}
+**Commit:** {SHORT_SHA}
 
-## 目录结构
-```
-project/
-├── src/          # 源代码
-├── tests/        # 测试
-├── docs/         # 文档
-└── ...
-```
+## OVERVIEW
+{1-2 句话: 做什么 + 核心技术栈}
 
-## 技术栈
-| 类别 | 技术 | 版本 |
+## STRUCTURE
+{目录树，仅标注非显而易见的用途}
+
+## WHERE TO LOOK
+| 任务 | 位置 | 备注 |
 |------|------|------|
-| 语言 | TypeScript | 5.x |
-| 框架 | React | 18.x |
-| ... | ... | ... |
 
-## 依赖分析
-### 核心依赖
-- xxx: 用途
-- yyy: 用途
+## CONVENTIONS
+{仅标准之外的偏差}
 
-### 开发依赖
-- ...
+## ANTI-PATTERNS (THIS PROJECT)
+{此项目中明确禁止的}
 
-## 架构模式
-- 使用 xxx 架构
-- 状态管理: xxx
-- API 设计: xxx
+## COMMANDS
+{dev/test/build 命令}
 
-## 代码质量指标
-- Linter: xxx
-- Formatter: xxx
-- 测试覆盖: xxx%
-
-## 建议事项
-1. ...
-2. ...
-3. ...
+## NOTES
+{陷阱和注意事项}
 ```
 
-## 选项
+质量关卡：50-150 行，无泛化建议，无显而易见的信息。
 
-| 参数 | 描述 | 默认值 |
-|------|------|--------|
-| `--create-new` | 创建新项目结构 | false |
-| `--max-depth=N` | 最大扫描深度 | 3 |
-| `--output=FILE` | 输出到文件 | stdout |
+### 子目录 AGENTS.md（并行）
 
-## 使用示例
+为每个位置启动写入任务，30-80 行，绝不重复父目录内容。
 
-```bash
-/init-deep                      # 分析当前项目
-/init-deep --max-depth=5        # 深度扫描
-/init-deep --output=ANALYSIS.md # 输出到文件
+**将 "generate" 标记为 completed。**
+
+---
+
+## 阶段 4: 审查 & 去重
+
+**将 "review" 标记为 in_progress。**
+
+对每个生成的文件：
+- 删除泛化建议
+- 删除父目录重复内容
+- 裁剪到尺寸限制
+- 验证电报风格
+
+**将 "review" 标记为 completed。**
+
+---
+
+## 最终报告
+
 ```
+=== init-deep 完成 ===
+
+模式: {update | create-new}
+
+文件:
+  [OK] ./AGENTS.md (root, {N} 行)
+  [OK] ./src/hooks/AGENTS.md ({N} 行)
+
+分析目录: {N}
+创建 AGENTS.md: {N}
+更新 AGENTS.md: {N}
+```
+
+---
+
+## 反模式
+
+- **固定 Agent 数量**: 必须根据项目规模/深度调整
+- **串行执行**: 必须并行（explore + LSP 并发）
+- **忽略现有**: 始终先读取现有，即使 --create-new
+- **过度文档化**: 不是每个目录都需要 AGENTS.md
+- **冗余**: 子目录绝不重复父目录
+- **泛化内容**: 删除适用于所有项目的内容
 
 ## 用户的请求
 
 $ARGUMENTS
-
----
-
-## 开始分析
-
-现在我将：
-
-1. **扫描项目结构** - 识别目录和文件组织
-2. **识别技术栈** - 确定语言、框架、工具
-3. **分析依赖** - 理解项目依赖关系
-4. **识别模式** - 发现架构和代码模式
-5. **生成报告** - 输出结构化分析结果
-
-**深度分析开始...**

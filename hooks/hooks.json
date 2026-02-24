@@ -29,6 +29,15 @@
         "priority": "normal",
         "windows_compatible": true,
         "description": "非交互式环境处理 - 在 CI/Docker/SSH 无头环境中阻止交互式工具"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/write-existing-file-guard.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "写入保护 - 阻止对已存在文件使用 Write，建议使用 Edit (对标 oh-my-opencode write-existing-file-guard)"
       }
     ],
     "Stop": [
@@ -47,6 +56,24 @@
         "continueOnError": true,
         "priority": "critical",
         "description": "TODO 续航检查 - 如果有活跃循环则阻止停止"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/stop-continuation-guard.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "critical",
+        "windows_compatible": true,
+        "description": "停止续航守护 - 检查 /stop-continuation 标记阻止循环重启 (对标 oh-my-opencode stop-continuation-guard)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/todo-continuation-enforcer.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "TODO 强制续航 - 检测未完成 TODO 并注入继续提示 (对标 oh-my-opencode todo-continuation-enforcer)"
       },
       {
         "type": "command",
@@ -403,6 +430,33 @@
         "priority": "normal",
         "windows_compatible": true,
         "description": "友好错误显示 - 检测错误并提供分层的用户友好信息"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/category-skill-reminder.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "Category+Skill 提醒 - 编排 Agent 直接实现时提醒使用委派系统 (对标 oh-my-opencode category-skill-reminder)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/comment-checker.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "注释质量检查 - 检测 AI-slop 注释，建议解释 WHY 而非 WHAT (对标 oh-my-opencode comment-checker)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/json-error-recovery.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "JSON 错误恢复 - 检测 JSON 解析错误并提供具体修复建议 (对标 oh-my-opencode json-error-recovery)"
       }
     ]
   },

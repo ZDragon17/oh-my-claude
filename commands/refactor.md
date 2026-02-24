@@ -1,8 +1,8 @@
 ---
 name: refactor
 description: |
-  重构命令 - 安全、系统化的代码重构模板。
-  支持重命名、提取、移动等重构操作，带并行分析和验证。
+  智能重构命令 - LSP + AST-grep + 架构分析 + 测试验证的系统化重构。
+  支持重命名、提取、移动等重构操作，带确定性执行和持续验证。
 aliases:
   - /重构
   - /rf
@@ -12,278 +12,280 @@ allowed-tools:
   - Grep
   - Task
   - Edit
+  - Write
+  - Bash
   - TodoWrite
-  - mcp__jetbrains__*
+  - mcp_lsp_goto_definition
+  - mcp_lsp_find_references
+  - mcp_lsp_symbols
+  - mcp_lsp_diagnostics
+  - mcp_lsp_prepare_rename
+  - mcp_lsp_rename
+  - mcp_ast_grep_search
+  - mcp_ast_grep_replace
 model: sonnet
 ---
 
 <command-name>/refactor</command-name>
 
-# 🔧 重构模式
+# 智能重构命令
 
-你正在执行 **安全重构** 模式。这是一个系统化的代码重构流程，确保重构安全可靠。
-
-## 重构原则
-
-### 安全第一
-
-1. **先理解，后重构** - 不要盲目重构
-2. **小步前进** - 每次只做一个小改动
-3. **持续验证** - 每步都运行测试
-4. **保持功能** - 重构不改变行为
-
-### 黄金规则
-
-> **Bug 修复时不要重构，重构时不要修复 Bug**
-
----
-
-## 重构类型
-
-### 1. 重命名 (Rename)
-
-**目标**: 改善命名，提高可读性
+## 用法
 
 ```
-# 阶段 1: 找到所有出现位置
-background_task(
-  agent="explore",
-  prompt="找到 [TARGET] 的所有定义和使用位置。
-  报告: 文件路径、行号、使用模式。"
-)
+/refactor <重构目标> [--scope=<file|module|project>] [--strategy=<safe|aggressive>]
 
-# 阶段 2: 找到依赖
-background_task(
-  agent="explore", 
-  prompt="找到所有导入、使用或依赖 [TARGET] 的代码。
-  报告: 依赖链、导入图。"
-)
+参数:
+  重构目标: 可以是文件路径、符号名、模式或描述
 
-# 阶段 3: 执行重命名
-使用 LSP rename 或全局搜索替换
-
-# 阶段 4: 验证
-lsp_diagnostics 检查
-运行测试
-```
-
-### 2. 提取 (Extract)
-
-**目标**: 提取函数、类、模块
-
-```
-# 提取函数
-1. 识别要提取的代码块
-2. 确定输入参数和返回值
-3. 创建新函数
-4. 替换原代码为函数调用
-5. 验证行为不变
-
-# 提取类/模块
-1. 识别相关的功能集
-2. 设计新类/模块接口
-3. 移动代码
-4. 更新导入
-5. 验证
-```
-
-### 3. 移动 (Move)
-
-**目标**: 改善代码组织
-
-```
-# 阶段 1: 分析依赖
-background_task(
-  agent="explore",
-  prompt="分析 [TARGET] 的所有依赖和被依赖关系。
-  确定移动的影响范围。"
-)
-
-# 阶段 2: 执行移动
-1. 在新位置创建代码
-2. 更新所有导入路径
-3. 删除旧位置代码
-4. 验证
-```
-
-### 4. 简化 (Simplify)
-
-**目标**: 减少复杂度
-
-```
-# 召唤老子进行简化
-Task(
-  subagent_type="general",
-  prompt="作为老子（简洁之道），请简化以下代码：
-  - 消除重复
-  - 简化条件
-  - 减少嵌套
-  - 提高可读性
-  
-  文件: [FILE]
-  范围: [RANGE]"
-)
+选项:
+  --scope: 重构范围（默认: module）
+  --strategy: 风险容忍度（默认: safe）
 ```
 
 ---
 
-## 并行分析模板
+# 阶段 0: 意图门控（必须首先执行）
 
-对于大型重构，使用并行 Agent 分析：
+## 步骤 0.1: 解析请求类型
 
-```
-# Agent 1: 找到重构目标
-background_task(
-  agent="explore",
-  prompt="找到 [TARGET] 的所有出现位置和定义。
-  报告: 文件路径、行号、使用模式。"
-)
+| 信号 | 分类 | 操作 |
+|------|------|------|
+| 具体文件/符号 | 明确 | 进入代码库分析 |
+| "将 X 重构为 Y" | 清晰转换 | 进入代码库分析 |
+| "改进"、"清理" | 开放式 | **必须询问**: "具体改进什么？" |
+| 范围模糊 | 不确定 | **必须询问**: "哪些模块/文件？" |
 
-# Agent 2: 找到相关代码
-background_task(
-  agent="explore", 
-  prompt="找到所有导入、使用或依赖 [TARGET] 的代码。
-  报告: 依赖链、导入图。"
-)
+## 步骤 0.2: 验证理解
 
-# Agent 3: 找到类似模式
-background_task(
-  agent="explore",
-  prompt="找到代码库中与 [TARGET] 类似的模式。
-  报告: 相似代码、可能的统一机会。"
-)
+确认以下各项：
+- [ ] 目标已明确识别
+- [ ] 期望结果已理解
+- [ ] 范围已定义
+- [ ] 成功标准可以阐述
 
-# Agent 4: 检查测试覆盖
-background_task(
-  agent="explore",
-  prompt="找到覆盖 [TARGET] 的测试。
-  报告: 测试文件、测试用例、覆盖范围。"
-)
-```
+**如果有任何不清楚，询问澄清问题。**
 
----
-
-## 验证清单
-
-每次重构后验证：
+## 步骤 0.3: 创建初始 Todos
 
 ```
-□ lsp_diagnostics 无新错误
-□ 所有测试通过
-□ 行为没有改变
-□ 代码质量提升
-□ 没有引入新的依赖问题
+TodoWrite([
+  {"id": "phase-1", "content": "阶段 1: 代码库分析 - 启动并行探索 Agent", "status": "pending", "priority": "high"},
+  {"id": "phase-2", "content": "阶段 2: 构建代码地图 - 映射依赖和影响区域", "status": "pending", "priority": "high"},
+  {"id": "phase-3", "content": "阶段 3: 测试评估 - 分析测试覆盖和验证策略", "status": "pending", "priority": "high"},
+  {"id": "phase-4", "content": "阶段 4: 计划生成 - 调用诸葛生成详细重构计划", "status": "pending", "priority": "high"},
+  {"id": "phase-5", "content": "阶段 5: 执行重构 - 逐步执行并持续验证", "status": "pending", "priority": "high"},
+  {"id": "phase-6", "content": "阶段 6: 最终验证 - 完整测试套件和回归检查", "status": "pending", "priority": "high"}
+])
 ```
 
 ---
 
-## 常见重构场景
+# 阶段 1: 代码库分析（并行探索）
 
-| 场景 | 建议操作 |
-|------|----------|
-| 函数太长 | 提取子函数 |
-| 重复代码 | 提取公共函数/组件 |
-| 命名不清 | 重命名 |
-| 文件太大 | 拆分模块 |
-| 依赖混乱 | 重组导入、提取接口 |
-| 嵌套太深 | 提前返回、提取函数 |
-| 魔术数字 | 提取常量 |
+**将 phase-1 标记为 in_progress。**
+
+## 1.1: 启动并行探索 Agent（后台）
+
+同时启动所有探索：
+
+```
+// Agent 1: 查找重构目标
+task(subagent_type="explore", run_in_background=true, load_skills=[], description="查找重构目标", prompt="查找 [TARGET] 的所有出现和定义。报告: 文件路径、行号、使用模式。")
+
+// Agent 2: 查找相关代码
+task(subagent_type="explore", run_in_background=true, load_skills=[], description="查找依赖", prompt="查找所有导入、使用或依赖 [TARGET] 的代码。报告: 依赖链、导入图。")
+
+// Agent 3: 查找类似模式
+task(subagent_type="explore", run_in_background=true, load_skills=[], description="查找类似模式", prompt="查找代码库中与 [TARGET] 类似的模式。报告: 类似实现、已建立的约定。")
+
+// Agent 4: 查找测试
+task(subagent_type="explore", run_in_background=true, load_skills=[], description="查找测试", prompt="查找与 [TARGET] 相关的所有测试文件。报告: 测试文件路径、测试用例名、覆盖指标。")
+```
+
+## 1.2: 直接工具探索（Agent 运行同时）
+
+### LSP 工具精确分析
+
+```
+mcp_lsp_goto_definition — 跳转到定义
+mcp_lsp_find_references — 查找所有引用
+mcp_lsp_symbols — 文件/工作区符号
+mcp_lsp_diagnostics — 当前诊断基线
+```
+
+### AST-Grep 模式分析
+
+```
+mcp_ast_grep_search — 结构化模式搜索
+mcp_ast_grep_replace(dryRun=true) — 预览重构（始终先预览）
+```
+
+## 1.3: 收集后台结果
+
+所有结果收集后，**将 phase-1 标记为 completed。**
 
 ---
 
-## 使用示例
+# 阶段 2: 构建代码地图
 
-```bash
-# 重命名
-/refactor rename getUserById -> findUserById
+**将 phase-2 标记为 in_progress。**
 
-# 提取函数
-/refactor extract calculateTotal from OrderService.processOrder
+基于阶段 1 结果构建：
 
-# 移动
-/refactor move utils/helpers.ts -> lib/helpers/
-
-# 简化
-/refactor simplify src/components/Dashboard.tsx
-
-# 智能建议
-/refactor suggest src/services/
-/refactor suggest --file src/components/Dashboard.tsx
 ```
+## CODEMAP: [TARGET]
+
+### 核心文件（直接影响）
+### 依赖图
+### 影响区域
+| 区域 | 风险等级 | 影响文件 | 测试覆盖 |
+|------|----------|----------|----------|
+```
+
+识别重构约束：
+- **必须遵循**: 已识别的现有模式
+- **不能破坏**: 关键依赖
+- **安全可改**: 隔离的代码区域
+
+**将 phase-2 标记为 completed。**
 
 ---
 
-## 智能重构建议 (`/refactor suggest`)
+# 阶段 3: 测试评估
 
-自动分析代码并推荐重构机会：
+**将 phase-3 标记为 in_progress。**
 
-### 分析维度
+| 覆盖等级 | 策略 |
+|----------|------|
+| 高 (>80%) | 每步后运行现有测试 |
+| 中 (50-80%) | 运行测试 + 添加安全断言 |
+| 低 (<50%) | **暂停**: 建议先添加测试 |
+| 无 | **阻止**: 拒绝激进重构 |
 
-| 维度 | 检测内容 | 建议操作 |
-|------|----------|----------|
-| 📏 **长度** | 函数 > 50 行，文件 > 300 行 | 提取函数/拆分模块 |
-| 🔄 **重复** | 相似代码块 > 10 行 | 提取公共函数 |
-| 🌀 **复杂度** | 圈复杂度 > 10，嵌套 > 3 | 简化逻辑 |
-| 🏷️ **命名** | 不符合规范、含义模糊 | 重命名 |
-| 📦 **耦合** | 过多依赖、循环导入 | 解耦/重组 |
-| 🧪 **可测试性** | 难以单元测试 | 依赖注入 |
+**将 phase-3 标记为 completed。**
 
-### 建议报告格式
+---
 
-```text
-🔍 重构机会分析报告
-═══════════════════════════════════════════════════════════════
+# 阶段 4: 计划生成
 
-📁 src/services/UserService.ts
-   ├─ ⚠️ [长度] processUser() 函数 78 行 → 建议提取子函数
-   ├─ ⚠️ [重复] 与 OrderService.ts 有 15 行相似代码
-   └─ 💡 [命名] `data` 变量名不够语义化
+**将 phase-4 标记为 in_progress。**
 
-📁 src/components/Dashboard.tsx
-   ├─ ❌ [复杂度] 圈复杂度 15，建议拆分
-   └─ ⚠️ [嵌套] 条件嵌套 4 层，建议提前返回
+调用诸葛 (plan agent) 生成详细重构计划：
 
-📊 汇总
-   • 严重: 1  • 警告: 3  • 建议: 1
-   • 推荐优先修复: Dashboard.tsx 的复杂度问题
-
-💡 快速操作:
-   /refactor simplify src/components/Dashboard.tsx
-   /refactor extract processUserData from UserService.processUser
-═══════════════════════════════════════════════════════════════
+```
+task(subagent_type="plan", load_skills=[], run_in_background=false, description="重构计划",
+  prompt="创建详细重构计划:
+  ## 重构目标: [用户原始请求]
+  ## 代码地图: [阶段 2 结果]
+  ## 测试覆盖: [阶段 3 结果]
+  ## 要求: 原子步骤、可独立验证、按依赖排序")
 ```
 
-### 使用方式
+将计划转换为细粒度 todos。
 
-```bash
-# 分析目录
-/refactor suggest src/services/
+**将 phase-4 标记为 completed。**
 
-# 分析单文件
-/refactor suggest --file src/components/Dashboard.tsx
+---
 
-# 分析整个项目
-/refactor suggest --all
+# 阶段 5: 执行重构（确定性执行）
 
-# 只看严重问题
-/refactor suggest --severity critical
+**将 phase-5 标记为 in_progress。**
+
+对每个重构步骤：
+
+### 执行前
+1. 标记步骤 todo 为 `in_progress`
+2. 读取当前文件状态
+3. 验证 lsp_diagnostics 基线
+
+### 执行
+根据类型选择工具：
+- **符号重命名**: `mcp_lsp_prepare_rename` → `mcp_lsp_rename`
+- **模式转换**: `mcp_ast_grep_replace(dryRun=true)` 预览 → 执行
+- **结构变更**: Edit 工具精确修改
+
+### 执行后验证（强制）
+
 ```
+1. mcp_lsp_diagnostics — 必须干净或与基线相同
+2. 运行测试命令
+3. 类型检查
+```
+
+### 失败恢复协议
+
+如果任何验证失败：
+1. **停止** — 立即
+2. **回滚** — 撤销失败的变更
+3. **诊断** — 分析出了什么问题
+4. **决定** — 修复重试、跳过、或咨询 Oracle
+
+**绝不在测试失败的情况下继续下一步。**
+
+**将 phase-5 标记为 completed。**
+
+---
+
+# 阶段 6: 最终验证
+
+**将 phase-6 标记为 in_progress。**
+
+1. 完整测试套件
+2. 类型检查
+3. Lint 检查
+4. 构建验证（如适用）
+5. 所有变更文件的 lsp_diagnostics
+
+### 生成摘要
+
+```
+## 重构完成
+
+### 变更内容
+- [变更列表]
+
+### 验证结果
+- 测试: 通过 (X/Y)
+- 类型检查: 干净
+- 构建: 成功
+
+### 无回归检测
+所有现有测试通过。未引入新错误。
+```
+
+**将 phase-6 标记为 completed。**
+
+---
+
+# 关键规则
+
+## 绝不
+- 跳过 lsp_diagnostics 检查
+- 在测试失败时继续
+- 使用 `as any`、`@ts-ignore`、`@ts-expect-error`
+- 删除测试使其通过
+- 不理解现有模式就重构
+
+## 始终
+- 先理解再修改
+- 先预览再应用 (ast_grep dryRun=true)
+- 每次变更后验证
+- 遵循现有代码库模式
+- 实时更新 todos
+- 发现问题立即报告
+
+## 中止条件
+- 目标代码测试覆盖为零
+- 变更将破坏公共 API
+- 3 次连续验证失败
+
+---
 
 ## 用户的请求
 
 $ARGUMENTS
 
 ---
-
-## 开始重构
-
-现在我将：
-
-1. **分析目标** - 理解要重构什么
-2. **并行探索** - 找到所有相关代码
-3. **评估影响** - 确定重构范围
-4. **制定计划** - 创建重构步骤
-5. **执行重构** - 小步安全重构
-6. **验证结果** - 确保没有破坏
 
 **安全重构开始...**
