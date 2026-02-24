@@ -47,7 +47,7 @@ detect_json_parse_error() {
     local output="$1"
     
     # 模式1: 标准 JSON 解析错误
-    if echo "$output" | grep -qiE '(JSON\.parse|SyntaxError.*JSON|Unexpected token|JSON parse error|invalid json|json.*syntax)'; then
+    if echo "$output" | grep -qiE '(JSON\.parse|SyntaxError.*JSON|Unexpected token|JSON parse error|invalid json|json.*syntax|trailing comma|duplicate key)'; then
         return 0
     fi
     
@@ -68,7 +68,7 @@ detect_json_parse_error() {
 detect_specific_error() {
     local output="$1"
     
-    if echo "$output" | grep -qiE 'Unexpected token.*position|at column'; then
+    if echo "$output" | grep -qiE 'Unexpected token.*position|at (column|position)|position [0-9]'; then
         echo "POSITION"
         return
     fi

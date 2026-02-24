@@ -41,6 +41,17 @@ CONTENT=""
 if command -v jq > /dev/null 2>&1; then
     # Write 工具: content 字段; Edit 工具: new_text/newString 字段
     CONTENT=$(echo "$INPUT" | jq -r '(.tool_input.content // .tool_input.new_text // .tool_input.newString // .tool_input.text // empty)' 2>/dev/null) || CONTENT=""
+else
+    # 无 jq 时从 JSON 原文提取 content/text 字段
+    CONTENT=$(echo "$INPUT" | grep -o '"content"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"content"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || CONTENT=""
+    if [ -z "$CONTENT" ]; then
+        CONTENT=$(echo "$INPUT" | grep -o '"new_text"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"new_text"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || CONTENT=""
+    fi
+    if [ -z "$CONTENT" ]; then
+        CONTENT=$(echo "$INPUT" | grep -o '"text"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"text"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || CONTENT=""
+    fi
+    # 将 JSON 转义的 \\n 还原为真实换行
+    CONTENT=$(printf '%b' "$CONTENT" 2>/dev/null) || true
 fi
 
 # 没有内容可检查

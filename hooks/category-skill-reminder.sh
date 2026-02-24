@@ -32,7 +32,11 @@ if command -v jq > /dev/null 2>&1; then
     TOOL_INPUT=$(echo "$INPUT" | jq -c '.tool_input // empty' 2>/dev/null) || TOOL_INPUT=""
 else
     TOOL_NAME=$(echo "$INPUT" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_NAME=""
-    TOOL_INPUT=""
+    # 无 jq 时从 INPUT 原文提取文件路径用于路径排除
+    TOOL_INPUT=$(echo "$INPUT" | grep -o '"filePath"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"filePath"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_INPUT=""
+    if [ -z "$TOOL_INPUT" ]; then
+        TOOL_INPUT=$(echo "$INPUT" | grep -o '"file_path"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"file_path"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_INPUT=""
+    fi
 fi
 
 # 只关注直接实现类工具（非探索/读取类）

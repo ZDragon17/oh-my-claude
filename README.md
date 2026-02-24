@@ -920,6 +920,7 @@ model: sonnet
 - [x] v2.2.22 - **Hook 系统根本性修复** 🔧（stdin JSON 读取、PostToolUse 崩溃修复、WSL 符号链接保护）
 - [x] v2.3.0 - **oh-my-opencode v3.8.4 全面移植** 🚀（9 Agent 重写 + 6 新 Hook + 5 命令更新 + 4 技能升级）
 - [x] v2.3.1 - **Hook 注册修复** 🐛（syncHooksToSettings 完善 Wave 2 Hook 注册，新增 4 测试用例）
+- [x] v2.3.2 - **Hook 无 jq 回退修复** 🐛（4 个 Hook 的 Windows/无 jq 环境兼容性修复）
 
 ### v2.2.2 核心更新
 

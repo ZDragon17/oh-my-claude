@@ -21,6 +21,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+
+## [2.3.2] - 2026-02-24
+
+### 🐛 Fixed / 修复
+
+#### Hook 无 jq 回退逻辑修复（Windows 兼容性）
+
+- **category-skill-reminder**: 无 jq 时添加 grep 回退提取 filePath，修复 `hooks/`/`.claude/` 路径排除失效问题
+- **comment-checker**: 无 jq 时添加 grep 回退提取 content/new_text/text，修复整个 hook 在无 jq 环境下完全失效
+- **json-error-recovery**: 扩展正则模式，新增 `trailing comma`/`duplicate key` 检测；修复 POSITION 类型识别过窄
+- **todo-continuation-enforcer**: 无 jq 时改用 `grep -o | wc -l` 统计出现次数，修复单行 JSON 计数错误
+
+---
+
 ## [2.3.1] - 2026-02-24
 
 ### 🐛 Fixed / 修复

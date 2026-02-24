@@ -61,11 +61,11 @@ if command -v jq > /dev/null 2>&1; then
     # 获取未完成任务描述
     PENDING_TASKS=$(jq -r '[.todos // [] | .[] | select(.status == "pending" or .status == "in_progress") | .content] | join("\n  - ")' "$TODO_FILE" 2>/dev/null) || PENDING_TASKS=""
 else
-    # 无 jq 时使用 grep 粗略统计
-    TOTAL_COUNT=$(grep -c '"status"' "$TODO_FILE" 2>/dev/null) || TOTAL_COUNT=0
-    PENDING_COUNT=$(grep -c '"pending"' "$TODO_FILE" 2>/dev/null) || PENDING_COUNT=0
-    IN_PROGRESS_COUNT=$(grep -c '"in_progress"' "$TODO_FILE" 2>/dev/null) || IN_PROGRESS_COUNT=0
-    COMPLETED_COUNT=$(grep -c '"completed"' "$TODO_FILE" 2>/dev/null) || COMPLETED_COUNT=0
+    # 无 jq 时使用 grep -o 统计出现次数（而非 grep -c 统计行数，避免单行 JSON 计数错误）
+    TOTAL_COUNT=$(grep -o '"status"' "$TODO_FILE" 2>/dev/null | wc -l | tr -d ' ') || TOTAL_COUNT=0
+    PENDING_COUNT=$(grep -o '"pending"' "$TODO_FILE" 2>/dev/null | wc -l | tr -d ' ') || PENDING_COUNT=0
+    IN_PROGRESS_COUNT=$(grep -o '"in_progress"' "$TODO_FILE" 2>/dev/null | wc -l | tr -d ' ') || IN_PROGRESS_COUNT=0
+    COMPLETED_COUNT=$(grep -o '"completed"' "$TODO_FILE" 2>/dev/null | wc -l | tr -d ' ') || COMPLETED_COUNT=0
 fi
 
 # 计算未完成总数
