@@ -39,6 +39,15 @@
         "windows_compatible": true,
         "description": "写入保护 - 阻止对已存在文件使用 Write，建议使用 Edit (对标 oh-my-opencode write-existing-file-guard)"
       }
+      ,{
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/question-label-truncator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "标签截断 - 截断过长的问题选项标签至 30 字符 (对标 oh-my-opencode question-label-truncator)"
+      }
     ],
     "Stop": [
       {
@@ -457,6 +466,24 @@
         "priority": "high",
         "windows_compatible": true,
         "description": "JSON 错误恢复 - 检测 JSON 解析错误并提供具体修复建议 (对标 oh-my-opencode json-error-recovery)"
+      }
+      ,{
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/session-todo-status.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "TODO 状态摘要 - TodoWrite 后显示进度统计 (对标 oh-my-opencode session-todo-status)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/task-reminder.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "任务追踪提醒 - 连续多轮未使用 task/todo 工具时提醒 (对标 oh-my-opencode task-reminder)"
       }
     ]
   },
