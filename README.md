@@ -812,6 +812,331 @@ model: sonnet
 
 编辑 `hooks/keyword-detector.sh` 自定义触发关键词。
 
+## 📱 Telegram 远程控制集成
+
+oh-my-claude 支持通过 Telegram Bot 进行远程控制，让你可以随时随地调度 Agent、执行任务和接收通知。
+
+### ✨ 核心功能
+
+- 🤖 **远程执行命令** - 通过 Telegram 发送消息触发任何 oh-my-claude 命令
+- 📊 **实时状态更新** - 自动推送任务进度、错误信息和完成通知
+- 🎯 **Agent 调度** - 远程启动愚公、诸葛、鲁班等任何 Agent
+- 📁 **文件传输** - 接收日志文件、代码片段和执行结果
+- 🔐 **安全认证** - 基于用户 ID 白名单的访问控制
+
+### 🚀 快速开始
+
+#### 1. 创建 Telegram Bot
+
+1. 在 Telegram 中搜索 [@BotFather](https://t.me/botfather)
+2. 发送 `/newbot` 命令创建新 Bot
+3. 按提示设置 Bot 名称和用户名
+4. 保存 BotFather 返回的 **Bot Token**（格式：`1234567890:ABCdefGHIjklMNOpqrsTUVwxyz`）
+
+#### 2. 获取你的 Telegram User ID
+
+1. 在 Telegram 中搜索 [@userinfobot](https://t.me/userinfobot)
+2. 向它发送任意消息
+3. 记录返回的 **User ID**（纯数字，如：`123456789`）
+
+#### 3. 配置 oh-my-claude
+
+创建或编辑配置文件 `~/.oh-my-claude/config.json`：
+
+```json
+{
+  "telegram": {
+    "enabled": true,
+    "botToken": "你的Bot Token",
+    "allowedUsers": [123456789],
+    "notifications": {
+      "taskStart": true,
+      "taskComplete": true,
+      "taskError": true,
+      "progress": true
+    },
+    "maxMessageLength": 4096,
+    "timeout": 300000
+  }
+}
+```
+
+或使用命令行配置：
+
+```bash
+# 启用 Telegram 集成
+oh-my-claude config set telegram.enabled true
+
+# 设置 Bot Token
+oh-my-claude config set telegram.botToken "你的Bot Token"
+
+# 添加允许的用户 ID（支持多个用户）
+oh-my-claude config set telegram.allowedUsers '[123456789, 987654321]'
+
+# 保存配置
+oh-my-claude config save
+```
+
+#### 4. 启动 Telegram Bot
+
+```bash
+# 启动 Bot 服务
+oh-my-claude telegram start
+
+# 或作为守护进程运行
+oh-my-claude telegram start --daemon
+
+# 查看 Bot 状态
+oh-my-claude telegram status
+
+# 停止 Bot
+oh-my-claude telegram stop
+```
+
+### 📖 使用指南
+
+#### 基本命令
+
+在 Telegram 中向你的 Bot 发送以下命令：
+
+```
+# 查看帮助
+/help
+
+# 查看状态
+/status
+
+# 执行 oh-my-claude 命令（自动添加前缀 /）
+yugong 重构用户模块
+wukong 查找登录相关的代码
+bianque 诊断这个错误：Cannot read property 'id' of undefined
+
+# 查看正在运行的任务
+/tasks
+
+# 取消任务
+/cancel <task_id>
+
+# 查看 Agent 列表
+/agents
+
+# 查看项目信息
+/project
+```
+
+#### 远程执行示例
+
+**启动愚公移山模式：**
+```
+/yishan 实现用户认证功能，包括登录、注册和找回密码
+```
+
+Bot 会实时推送：
+- ✅ 任务已接收
+- 📋 任务分解结果
+- 🔄 每个子任务的进度
+- ✅ 完成通知和结果摘要
+
+**快速代码查找：**
+```
+/wukong 找出所有数据库查询相关的文件
+```
+
+**Bug 诊断：**
+```
+/bianque 用户登录后页面空白，控制台报错 TypeError
+```
+
+#### 文件传输
+
+Bot 支持发送执行结果文件：
+
+```
+# 请求日志文件
+/logs
+
+# 请求特定文件内容
+/file src/utils/auth.ts
+
+# 获取执行结果
+/result <task_id>
+```
+
+### ⚙️ 高级配置
+
+#### 通知设置
+
+精细控制通知类型：
+
+```json
+{
+  "telegram": {
+    "notifications": {
+      "taskStart": true,        // 任务开始通知
+      "taskComplete": true,     // 任务完成通知
+      "taskError": true,        // 错误通知（推荐开启）
+      "progress": true,         // 进度更新（可能较频繁）
+      "agentSwitch": false,     // Agent 切换通知
+      "fileOperation": false    // 文件操作通知
+    },
+    "quietHours": {
+      "enabled": true,
+      "start": "22:00",         // 安静时段开始
+      "end": "08:00",           // 安静时段结束
+      "timezone": "Asia/Shanghai"
+    }
+  }
+}
+```
+
+#### 安全设置
+
+```json
+{
+  "telegram": {
+    "security": {
+      "allowedUsers": [123456789],       // 白名单用户
+      "requireConfirmation": true,       // 危险操作需确认
+      "dangerousCommands": [             // 需要确认的命令
+        "/yishan",
+        "/chaoji", 
+        "git push",
+        "rm -rf"
+      ],
+      "rateLimiting": {
+        "enabled": true,
+        "maxRequestsPerMinute": 10       // 每分钟最多请求数
+      },
+      "logAllCommands": true              // 记录所有命令（审计）
+    }
+  }
+}
+```
+
+#### 代理设置
+
+如果你的服务器需要代理访问 Telegram API：
+
+```bash
+# 设置 HTTP 代理
+export HTTP_PROXY=http://proxy.example.com:8080
+export HTTPS_PROXY=http://proxy.example.com:8080
+
+# 或在配置文件中设置
+oh-my-claude config set telegram.proxy "http://proxy.example.com:8080"
+```
+
+### 🔐 安全最佳实践
+
+1. **保护 Bot Token**
+   - 永远不要公开或提交到 Git
+   - 使用环境变量：`export OH_MY_CLAUDE_TELEGRAM_TOKEN="your_token"`
+   - 定期轮换 Token（在 @BotFather 中重新生成）
+
+2. **限制访问权限**
+   - 仅添加信任的用户 ID 到白名单
+   - 启用 `requireConfirmation` 防止误操作
+   - 定期审查 `~/.oh-my-claude/logs/telegram.log`
+
+3. **网络安全**
+   - 在生产环境使用 HTTPS 代理
+   - 考虑使用 Telegram Webhook 而非轮询模式
+   - 启用速率限制防止滥用
+
+4. **文件访问控制**
+   ```json
+   {
+     "telegram": {
+       "fileAccess": {
+         "allowRead": true,
+         "allowWrite": false,        // 禁止远程写入
+         "restrictedPaths": [        // 禁止访问的路径
+           "/etc",
+           "~/.ssh",
+           "~/.aws"
+         ],
+         "maxFileSize": 10485760     // 最大文件大小 10MB
+       }
+     }
+   }
+   ```
+
+### 🐛 故障排查
+
+#### Bot 无响应
+
+```bash
+# 检查 Bot 状态
+oh-my-claude telegram status
+
+# 查看日志
+tail -f ~/.oh-my-claude/logs/telegram.log
+
+# 测试 Token 是否有效
+curl https://api.telegram.org/bot<YOUR_TOKEN>/getMe
+
+# 重启 Bot
+oh-my-claude telegram restart
+```
+
+#### 无法接收消息
+
+1. 确认你的 User ID 在白名单中
+2. 检查 Bot 是否被阻止（在 Telegram 中点击 Bot 头像查看）
+3. 确认 Bot Token 正确且未过期
+
+#### 命令执行失败
+
+1. 检查 oh-my-claude 主进程是否运行
+2. 查看详细错误日志：`oh-my-claude logs --level debug`
+3. 确认有足够的系统资源和权限
+
+### 🎯 使用场景
+
+**场景 1：通勤路上处理紧急 Bug**
+```
+你：@YourBot /bianque 生产环境用户登录失败，日志显示 JWT token 验证错误
+
+Bot：🩺 扁鹊开始诊断...
+     📊 分析了 12 个相关文件
+     🔍 发现问题：token 过期时间配置错误
+     💊 建议修复：更新 config/jwt.ts 中的 expiresIn 配置
+     ✅ 已生成修复 PR #123
+```
+
+**场景 2：会议中快速查找信息**
+```
+你：@YourBot /wukong 支付模块的退款逻辑在哪里
+
+Bot：🔍 悟空侦察完成
+     📁 找到 3 个关键文件：
+        - src/services/payment/refund.service.ts
+        - src/controllers/refund.controller.ts  
+        - src/models/refund.model.ts
+     📤 [发送文件内容]
+```
+
+**场景 3：深夜自动化任务**
+```
+你：@YourBot /yishan 生成本周的代码统计报告并发送给团队
+
+Bot：🏔️ 愚公开始工作...
+     ✅ 任务1: 收集 Git 提交数据
+     ✅ 任务2: 分析代码变更统计
+     ✅ 任务3: 生成可视化图表
+     ✅ 任务4: 编写报告文档
+     ✅ 任务5: 发送邮件通知
+     🎉 全部完成！[查看报告]
+```
+
+### 🌟 提示与技巧
+
+- 💡 使用 `/agents` 命令快速查看所有可用 Agent 及其专长
+- 💡 为常用命令创建 Telegram 快捷回复
+- 💡 在 Bot 描述中添加常用命令列表（通过 @BotFather 的 `/setcommands`）
+- 💡 启用安静时段避免深夜被打扰
+- 💡 配合 Telegram 群组使用，实现团队协作通知
+
 ## 📖 文化背景
 
 ### 愚公 (YuGong)
