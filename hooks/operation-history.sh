@@ -139,8 +139,12 @@ update_history() {
     else
         # 降级方案：简单追加（格式化较差但可用）
         if [ -f "$HISTORY_FILE" ]; then
-            # 在数组开头插入新条目
-            sed -i "s/^\[/[{\"tool\":\"$tool_name\",\"has_error\":$has_error,\"timestamp\":\"$iso_time\"},/" "$HISTORY_FILE" 2>/dev/null || \
+            # 在数组开头插入新条目（不依赖 sed -i 跨平台兼容性）
+            local tmp="${HISTORY_FILE}.tmp.$$"
+            printf '[{"tool":"%s","has_error":%s,"timestamp":"%s"},' \
+                "$tool_name" "$has_error" "$iso_time" > "$tmp" 2>/dev/null && \
+            tail -c +2 "$HISTORY_FILE" >> "$tmp" 2>/dev/null && \
+            mv "$tmp" "$HISTORY_FILE" 2>/dev/null || \
             echo "[{\"tool\":\"$tool_name\",\"has_error\":$has_error,\"timestamp\":\"$iso_time\"}]" > "$HISTORY_FILE"
         else
             echo "[{\"tool\":\"$tool_name\",\"has_error\":$has_error,\"timestamp\":\"$iso_time\"}]" > "$HISTORY_FILE"

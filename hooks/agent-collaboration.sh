@@ -16,7 +16,7 @@ detect_agent_calls() {
 
     # 查找所有 @agent 模式
     # 支持: @zhuge, @luban 请..., @鲁班 等等
-    local agent_calls=$(echo "$input" | grep -o '@[a-zA-Z\u4e00-\u9fa5]\+[[:space:]]*[^@]*' | sed 's/^@//')
+    local agent_calls=$(echo "$input" | grep -o '@[^[:space:]]\+' 2>/dev/null | sed 's/^@//')
 
     if [ -n "$agent_calls" ]; then
         log "检测到 Agent 调用: $agent_calls"

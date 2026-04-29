@@ -42,7 +42,11 @@ init_state() {
 # 读取活跃任务数
 get_active_tasks() {
     if [ -f "$STATE_FILE" ]; then
-        grep -o '"active_tasks": *[0-9]*' "$STATE_FILE" | grep -o '[0-9]*' || echo "0"
+        if command -v jq >/dev/null 2>&1; then
+            jq -r '.active_tasks // 0' "$STATE_FILE" 2>/dev/null || echo "0"
+        else
+            grep -o '"active_tasks": *[0-9]*' "$STATE_FILE" 2>/dev/null | grep -o '[0-9]*' || echo "0"
+        fi
     else
         echo "0"
     fi
@@ -51,15 +55,35 @@ get_active_tasks() {
 # 读取已完成任务数
 get_completed_tasks() {
     if [ -f "$STATE_FILE" ]; then
-        grep -o '"completed_tasks": *[0-9]*' "$STATE_FILE" | grep -o '[0-9]*' || echo "0"
+        if command -v jq >/dev/null 2>&1; then
+            jq -r '.completed_tasks // 0' "$STATE_FILE" 2>/dev/null || echo "0"
+        else
+            grep -o '"completed_tasks": *[0-9]*' "$STATE_FILE" 2>/dev/null | grep -o '[0-9]*' || echo "0"
+        fi
     else
         echo "0"
+    fi
+}
+
+# 原子更新状态文件中的字段（使用 jq）
+_atomic_jq_update() {
+    local field="$1" value="$2"
+    if command -v jq >/dev/null 2>&1; then
+        if [ -f "$STATE_FILE" ]; then
+            local tmp="${STATE_FILE}.tmp.$$"
+            jq --argjson val "$value" ".${field} = \$val" "$STATE_FILE" > "$tmp" 2>/dev/null && \
+            mv "$tmp" "$STATE_FILE" 2>/dev/null
+        fi
     fi
 }
 
 # 更新活跃任务数
 update_active_tasks() {
     local count="$1"
+    if _atomic_jq_update "active_tasks" "$count"; then
+        return 0
+    fi
+    # 降级：使用 sed
     if [ -f "$STATE_FILE" ]; then
         sed -i "s/\"active_tasks\": *[0-9]*/\"active_tasks\": $count/" "$STATE_FILE" 2>/dev/null || \
         sed -i '' "s/\"active_tasks\": *[0-9]*/\"active_tasks\": $count/" "$STATE_FILE" 2>/dev/null
@@ -69,6 +93,10 @@ update_active_tasks() {
 # 更新已完成任务数
 update_completed_tasks() {
     local count="$1"
+    if _atomic_jq_update "completed_tasks" "$count"; then
+        return 0
+    fi
+    # 降级：使用 sed
     if [ -f "$STATE_FILE" ]; then
         sed -i "s/\"completed_tasks\": *[0-9]*/\"completed_tasks\": $count/" "$STATE_FILE" 2>/dev/null || \
         sed -i '' "s/\"completed_tasks\": *[0-9]*/\"completed_tasks\": $count/" "$STATE_FILE" 2>/dev/null
@@ -79,7 +107,12 @@ update_completed_tasks() {
 reset_counters() {
     update_active_tasks 0
     update_completed_tasks 0
-    local timestamp=$(date -Iseconds 2>/dev/null || date +%Y-%m-%dT%H:%M:%S)
+    local timestamp
+    timestamp=$(date -Iseconds 2>/dev/null || date "+%Y-%m-%dT%H:%M:%S%z" 2>/dev/null || date "+%Y-%m-%dT%H:%M:%S")
+    if _atomic_jq_update "last_compaction" "\"$timestamp\""; then
+        return 0
+    fi
+    # 降级：使用 sed
     sed -i "s/\"last_compaction\": *\"[^\"]*\"/\"last_compaction\": \"$timestamp\"/" "$STATE_FILE" 2>/dev/null || \
     sed -i '' "s/\"last_compaction\": *\"[^\"]*\"/\"last_compaction\": \"$timestamp\"/" "$STATE_FILE" 2>/dev/null
 }
@@ -132,6 +165,19 @@ detect_cancel_all() {
 # ============================================================================
 
 main() {
+    # 获取文件锁，防止并发读写状态文件
+    local lock_dir="${HOME}/.oh-my-claude/locks/background-compaction.lock"
+    mkdir -p "$(dirname "$lock_dir")" 2>/dev/null
+    local waited=0
+    while ! mkdir "$lock_dir" 2>/dev/null; do
+        if [ "$waited" -ge 30 ]; then
+            return 0  # 超时退出，避免无限阻塞
+        fi
+        sleep 0.1 2>/dev/null || sleep 1
+        waited=$((waited + 1))
+    done
+    # 确保退出时释放锁
+    trap "rm -rf \"$lock_dir\" 2>/dev/null" EXIT
     # 初始化状态
     init_state
     

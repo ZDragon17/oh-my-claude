@@ -213,7 +213,7 @@ main() {
     
     # 输出提示（如果有）
     if [ -n "$output" ]; then
-        echo -e "\n$output"
+        printf "\n%b\n" "$output"
     fi
 }
 

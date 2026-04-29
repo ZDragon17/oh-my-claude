@@ -411,7 +411,7 @@ const DEFAULT_CONFIG: OhMyClaudeConfig = {
 // ==================== 配置管理器 ====================
 
 export class ConfigManager {
-  private config: OhMyClaudeConfig = { ...DEFAULT_CONFIG };
+  private config: OhMyClaudeConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
   private configFiles: string[] = [];
   private watchers: Map<string, fs.FSWatcher> = new Map();
   private listeners: Set<(config: OhMyClaudeConfig) => void> = new Set();
@@ -448,7 +448,7 @@ export class ConfigManager {
    * 使用同步方式加载，因为配置通常在应用启动时加载
    */
   loadConfig(): void {
-    let mergedConfig = { ...DEFAULT_CONFIG };
+    let mergedConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
 
     // 1. 加载环境变量
     mergedConfig = this.loadFromEnv(mergedConfig);
@@ -568,7 +568,7 @@ export class ConfigManager {
    * 获取当前配置
    */
   getConfig(): OhMyClaudeConfig {
-    return { ...this.config };
+    return JSON.parse(JSON.stringify(this.config));
   }
 
   /**
@@ -642,23 +642,22 @@ export class ConfigManager {
     const compareObjects = (
       current: Record<string, unknown>,
       default_: Record<string, unknown>,
-      _path: string[] = []
+      target: Record<string, unknown>
     ): void => {
       for (const key in current) {
         const currentValue = current[key];
         const defaultValue = default_[key];
 
         if (JSON.stringify(currentValue) !== JSON.stringify(defaultValue)) {
-          // 值不同，保留
           if (this.isPlainObject(currentValue) && this.isPlainObject(defaultValue)) {
-            result[key] = {};
+            target[key] = {};
             compareObjects(
               currentValue as Record<string, unknown>,
               defaultValue as Record<string, unknown>,
-              [..._path, key]
+              target[key] as Record<string, unknown>
             );
           } else {
-            result[key] = currentValue;
+            target[key] = currentValue;
           }
         }
       }
@@ -666,7 +665,8 @@ export class ConfigManager {
 
     compareObjects(
       config as unknown as Record<string, unknown>,
-      DEFAULT_CONFIG as unknown as Record<string, unknown>
+      DEFAULT_CONFIG as unknown as Record<string, unknown>,
+      result
     );
     return result as Partial<OhMyClaudeConfig>;
   }
@@ -736,7 +736,7 @@ export class ConfigManager {
    * 重置为默认配置
    */
   resetToDefaults(): void {
-    this.config = { ...DEFAULT_CONFIG };
+    this.config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
     this.notifyListeners();
   }
 

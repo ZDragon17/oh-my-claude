@@ -74,7 +74,15 @@ fi
 BAR_WIDTH=20
 FILLED=$((PERCENT * BAR_WIDTH / 100))
 EMPTY=$((BAR_WIDTH - FILLED))
-BAR=$(printf '%0.s█' $(seq 1 $FILLED 2>/dev/null) 2>/dev/null)$(printf '%0.s░' $(seq 1 $EMPTY 2>/dev/null) 2>/dev/null)
+# 安全生成进度条：限制 FILLED/EMPTY 范围防止无限循环
+BAR=""
+local _i
+if [ "$FILLED" -gt 0 ] 2>/dev/null && [ "$FILLED" -le 100 ]; then
+  for _i in $(seq 1 "$FILLED" 2>/dev/null || jot "$FILLED" 2>/dev/null); do BAR="${BAR}█"; done
+fi
+if [ "$EMPTY" -gt 0 ] 2>/dev/null && [ "$EMPTY" -le 100 ]; then
+  for _i in $(seq 1 "$EMPTY" 2>/dev/null || jot "$EMPTY" 2>/dev/null); do BAR="${BAR}░"; done
+fi
 
 # 选择状态 emoji
 if [ "$PERCENT" -eq 100 ]; then

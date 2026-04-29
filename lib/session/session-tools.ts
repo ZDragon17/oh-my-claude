@@ -278,9 +278,9 @@ export class SessionTools {
     const { sessionId, caseSensitive = false, limit = 20 } = options;
     const results: SearchResult[] = [];
     
-    const searchPattern = caseSensitive 
-      ? new RegExp(this.escapeRegExp(query), 'g')
-      : new RegExp(this.escapeRegExp(query), 'gi');
+    const searchPattern = caseSensitive
+      ? new RegExp(this.escapeRegExp(query))
+      : new RegExp(this.escapeRegExp(query), 'i');
 
     const sessionsToSearch = sessionId 
       ? [sessionId]

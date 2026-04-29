@@ -463,7 +463,7 @@ main() {
 }
 
 # 移除 EXIT trap 以允许正常输出
-trap - EXIT
+trap - ERR EXIT 2>/dev/null || trap - EXIT
 
 # 执行主函数
 main

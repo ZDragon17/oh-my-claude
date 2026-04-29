@@ -192,7 +192,7 @@ save_update_state() {
   "current_version": "$current",
   "latest_version": "$latest",
   "status": "$status",
-  "last_check": "$(date -Iseconds)",
+  "last_check": "$(date -Iseconds 2>/dev/null || date \"+%Y-%m-%dT%H:%M:%S%z\" 2>/dev/null || date \"+%Y-%m-%dT%H:%M:%S\")",
   "check_interval_hours": $CHECK_INTERVAL_HOURS
 }
 EOF

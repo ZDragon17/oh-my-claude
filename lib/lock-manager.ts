@@ -5,7 +5,6 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { execSync } from 'child_process';
 import { z } from 'zod';
 import { LOCK_TIMEOUT_MS, LOCK_STALE_MS, LOCK_RETRY_INTERVAL_MS } from './constants.js';
 import { warn, info, error, success } from '../scripts/logger.js';
@@ -140,20 +139,20 @@ export function releaseLock(lockFile: string): void {
 
 /**
  * 同步等待指定毫秒数
+ * 使用 Atomics.wait 实现高效阻塞等待，无需产生子进程
  */
 function sleepSync(ms: number): void {
+  if (ms <= 0) return;
   try {
-    if (process.platform === 'win32') {
-      // Windows: 使用 ping localhost 实现延时
-      execSync(`ping -n 2 127.0.0.1`, { stdio: 'ignore', timeout: ms + 1000 });
-    } else {
-      // Unix: 使用 sleep 命令
-      execSync(`sleep ${(ms / 1000).toFixed(1)}`, { stdio: 'ignore', timeout: ms + 1000 });
-    }
+    // Atomics.wait 是最高效的同步等待方式
+    // 在 x64 架构和 Node.js >= 16 上可用
+    const sab = new SharedArrayBuffer(4);
+    const view = new Int32Array(sab);
+    Atomics.wait(view, 0, 0, Math.min(ms, 60000));
   } catch {
-    // 如果 sleep 失败，使用短暂的忙等待作为后备
-    const endWait = Date.now() + Math.min(ms, 100);
-    while (Date.now() < endWait) { /* 短暂等待 */ }
+    // 降级：使用简单的自旋等待（限制最大 100ms 避免长时间 CPU 占用）
+    const end = Date.now() + Math.min(ms, 100);
+    while (Date.now() < end) { /* wait */ }
   }
 }
 

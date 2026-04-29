@@ -224,19 +224,30 @@ export function formatEnhancedError(error: EnhancedError): string {
 
 // ==================== 脱敏处理 ====================
 
+// 预编译正则表达式以避免每次调用时重建
+const buildSanitizePattern = (str: string): RegExp => {
+  const escaped = str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(escaped, 'g');
+};
+
+let _homeRegex: RegExp | null = null;
+let _usernameRegex: RegExp | null = null;
+
 /**
  * 脱敏处理堆栈跟踪中的敏感路径信息
  */
 export function sanitizeStackTrace(stack: string): string {
   if (!stack) return '';
 
-  const home = os.homedir();
-  const username = os.userInfo().username;
+  if (!_homeRegex) {
+    _homeRegex = buildSanitizePattern(os.homedir());
+    _usernameRegex = buildSanitizePattern(os.userInfo().username);
+  }
 
   // 替换用户主目录路径
   let sanitized = stack
-    .replace(new RegExp(home.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '~')
-    .replace(new RegExp(username.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '<user>');
+    .replace(_homeRegex!, '~')
+    .replace(_usernameRegex!, '<user>');
 
   // 替换 Windows 风格的用户路径
   sanitized = sanitized.replace(/[A-Za-z]:\\Users\\[^\\]+\\/gi, '<user-home>\\');

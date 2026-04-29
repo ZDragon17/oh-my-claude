@@ -84,7 +84,7 @@ create_tmux_pane() {
         tmux select-layout main-vertical 2>/dev/null
 
         # 记录窗格信息（用于后续清理）
-        echo "{\"pane_id\": \"$new_pane\", \"task_id\": \"$task_id\", \"agent_type\": \"$agent_type\", \"output_file\": \"$output_file\", \"created_at\": \"$(date -Iseconds)\"}" >> "$PANE_TRACKER"
+        echo "{\"pane_id\": \"$new_pane\", \"task_id\": \"$task_id\", \"agent_type\": \"$agent_type\", \"output_file\": \"$output_file\", \"created_at\": "$(date -Iseconds 2>/dev/null || date \"+%Y-%m-%dT%H:%M:%S%z\" 2>/dev/null || date \"+%Y-%m-%dT%H:%M:%S\")"}" >> "$PANE_TRACKER"
 
         log "Created pane $new_pane for $agent_type (task: $task_id)"
 

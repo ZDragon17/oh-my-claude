@@ -19,7 +19,14 @@ HOOK_NAME="write-existing-file-guard"
 STATE_DIR="$HOME/.oh-my-claude/state"
 READ_TRACKER="$STATE_DIR/read-files-tracker"
 
-# 确保状态目录存在
+# 限制 READ_TRACKER 文件大小（超过 1000 行则截断为最近 500 行）
+if [ -f "$READ_TRACKER" ]; then
+    line_count=$(wc -l < "$READ_TRACKER" 2>/dev/null) || line_count=0
+    if [ "$line_count" -gt 1000 ]; then
+        tail -n 500 "$READ_TRACKER" > "${READ_TRACKER}.tmp" 2>/dev/null
+        mv "${READ_TRACKER}.tmp" "$READ_TRACKER" 2>/dev/null
+    fi
+fi
 mkdir -p "$STATE_DIR" 2>/dev/null
 
 # 从 stdin 读取 JSON 数据

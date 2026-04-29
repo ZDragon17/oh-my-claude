@@ -36,11 +36,17 @@ send_macos_notification() {
     local title="$1"
     local message="$2"
     local sound=""
-    
+
     if [ "$NOTIFICATION_SOUND" = "true" ]; then
         sound='sound name "default"'
     fi
-    
+
+    # 转义双引号和反斜杠以防止 osascript 命令注入
+    title="${title//\\/\\\\}"
+    title="${title//\"/\\\"}"
+    message="${message//\\/\\\\}"
+    message="${message//\"/\\\"}"
+
     osascript -e "display notification \"$message\" with title \"$title\" $sound" 2>/dev/null
 }
 

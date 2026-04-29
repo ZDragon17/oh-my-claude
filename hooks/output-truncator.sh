@@ -292,7 +292,7 @@ aggressive_truncate() {
         summary="${summary}📄 内容片段:\n${content:0:$head_size}\n...\n${content: -$tail_size}"
     fi
 
-    echo -e "---
+    printf "%b\n" "---
 🗜️ 激进截断模式
 📊 原始大小: $content_length 字符
 📊 目标大小: $target_size 字符

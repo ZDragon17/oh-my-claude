@@ -97,7 +97,7 @@ check_comments() {
     echo "📝 注释检查: $(basename "$file")"
 
     if [ -n "$issues" ]; then
-        echo -e "$issues"
+        printf "%b\n" "$issues"
     else
         echo "   ✅ 注释检查通过"
     fi

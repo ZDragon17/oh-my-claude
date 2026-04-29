@@ -283,15 +283,18 @@ setup_hooks() {
     fi
 
     # 使用 Python 脚本合并 hooks 配置
-    $PYTHON_CMD << PYTHON_SCRIPT
+    # 安全：通过环境变量传参，使用 quoted heredoc 防止 shell 注入
+    export _OH_MY_CLAUDE_SETTINGS_FILE="$SETTINGS_FILE"
+    export _OH_MY_CLAUDE_INSTALL_DIR="$INSTALL_DIR"
+    $PYTHON_CMD << 'PYTHON_SCRIPT'
 import json
 import sys
 import os
 import platform
 import re
 
-settings_file = "$SETTINGS_FILE"
-install_dir = "$INSTALL_DIR"
+settings_file = os.environ.get('_OH_MY_CLAUDE_SETTINGS_FILE', '')
+install_dir = os.environ.get('_OH_MY_CLAUDE_INSTALL_DIR', '')
 
 # Windows 兼容性：确保路径格式正确
 # Claude Code 在 Windows 上执行 bash 命令时需要 Unix 风格路径

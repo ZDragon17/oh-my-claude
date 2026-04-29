@@ -88,8 +88,8 @@ fi
 
 # 如果检测到错误，返回修复建议
 if [ -n "$fix_hint" ]; then
-    # 转义特殊字符用于 JSON
-    fix_hint_escaped=$(echo "$fix_hint" | sed 's/"/\\"/g' | sed 's/\\/\\\\/g')
+    # 转义特殊字符用于 JSON（必须先转义反斜杠，再转义引号）
+    fix_hint_escaped=$(echo "$fix_hint" | sed 's/\\/\\\\/g; s/"/\\"/g')
     
     printf '{"systemMessage":"\\n\\n⚠️ **任务委派错误检测**\\n\\n检测到 Task 工具调用失败。\\n\\n**修复建议**: %s\\n\\n**正确格式示例**:\\n```\\nTask(\\n  subagent_type=\\"explore\\",\\n  description=\\"简短描述\\",\\n  prompt=\\"详细任务描述...\\",\\n  run_in_background=true\\n)\\n```\\n"}\n' "$fix_hint_escaped"
     exit 0

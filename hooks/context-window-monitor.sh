@@ -11,8 +11,8 @@
 # ============================================================================
 
 # 配置
-CONTEXT_WARNING_THRESHOLD=70  # 警告阈值（百分比）
-CONTEXT_CRITICAL_THRESHOLD=85 # 严重警告阈值（百分比）
+CONTEXT_WARNING_THRESHOLD="${OH_MY_CLAUDE_CONTEXT_WARNING_THRESHOLD:-70}"
+CONTEXT_CRITICAL_THRESHOLD="${OH_MY_CLAUDE_CONTEXT_CRITICAL_THRESHOLD:-85}"
 STATE_DIR=".claude"
 CONTEXT_STATE_FILE="$STATE_DIR/context-state.json"
 
@@ -48,7 +48,8 @@ new_tokens=$((input_length / 4 + tool_result_length / 4))
 accumulated_tokens=$((accumulated_tokens + new_tokens))
 
 # Claude 的上下文窗口大约 200k tokens
-MAX_CONTEXT_TOKENS=200000
+# Claude 的上下文窗口大小（可通过环境变量覆盖）
+MAX_CONTEXT_TOKENS="${OH_MY_CLAUDE_MAX_CONTEXT_TOKENS:-200000}"
 usage_percent=$((accumulated_tokens * 100 / MAX_CONTEXT_TOKENS))
 
 # 保存状态

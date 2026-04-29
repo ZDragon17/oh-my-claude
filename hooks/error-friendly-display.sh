@@ -24,7 +24,7 @@ else
     TOOL_NAME=$(echo "$_STDIN_INPUT" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_NAME=""
     TOOL_OUTPUT=$(echo "$_STDIN_INPUT" | grep -o '"tool_output"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_output"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/' 2>/dev/null) || TOOL_OUTPUT=""
 fi
-EXIT_CODE="0"
+# EXIT_CODE 已弃用：hook API 不传递工具退出码，改用输出检测
 
 # 状态文件
 STATE_DIR="${HOME}/.oh-my-claude"
@@ -255,7 +255,7 @@ main() {
     if [ "$EXIT_CODE" = "0" ]; then
         # 检查输出中是否包含错误信息（使用多个 grep 替代 -E）
         has_error=false
-        if echo "$TOOL_OUTPUT" | grep -qi "error"; then
+        if echo "$TOOL_OUTPUT" | grep -qi -E "(fatal error|critical error|unhandled error|error:)" 2>/dev/null; then
             has_error=true
         elif echo "$TOOL_OUTPUT" | grep -qi "failed"; then
             has_error=true

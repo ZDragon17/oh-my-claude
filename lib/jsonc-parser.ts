@@ -204,8 +204,8 @@ export async function readJsoncFile<T = unknown>(
   filePath: string,
   options: JsoncParseOptions = {}
 ): Promise<T> {
-  const fs = await import('fs');
-  const content = fs.readFileSync(filePath, 'utf8');
+  const { readFile } = await import('fs/promises');
+  const content = await readFile(filePath, 'utf8');
   return parseJsonc<T>(content, options);
 }
 

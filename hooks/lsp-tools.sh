@@ -34,6 +34,12 @@ LSP_SERVERS["ruby"]="solargraph stdio"
 LSP_SERVERS["php"]="phpactor language-server"
 
 # 文件扩展名到语言映射
+# bash 4+ 版本检测（declare -A 需要 bash 4.0+）
+if [[ "${BASH_VERSION%%.*}" -lt 4 ]] 2>/dev/null; then
+    echo '{"systemMessage":"ast-grep hook 需要 bash 4.0+，当前版本: '"$BASH_VERSION"'"}' 2>/dev/null
+    exit 0
+fi
+
 declare -A EXT_TO_LANG
 EXT_TO_LANG["ts"]="typescript"
 EXT_TO_LANG["tsx"]="typescript"

@@ -58,7 +58,7 @@ update_context_size() {
     cat > "$COMPACTION_STATE" << EOF
 {
   "current_tokens": $total_tokens,
-  "last_update": "$(date -Iseconds)",
+  "last_update": "$(date -Iseconds 2>/dev/null || date "+%Y-%m-%dT%H:%M:%S%z" 2>/dev/null || date "+%Y-%m-%dT%H:%M:%S")",
   "threshold": $COMPACTION_THRESHOLD,
   "max_tokens": $MAX_CONTEXT_TOKENS
 }
@@ -73,7 +73,7 @@ EOF
 # 计算上下文使用率
 calculate_usage_ratio() {
     local current=$(get_current_context_size)
-    local ratio=$(echo "scale=4; $current / $MAX_CONTEXT_TOKENS" | bc 2>/dev/null || echo "0")
+    local ratio=$(awk "BEGIN {printf \"%.4f\", ${current} / ${MAX_CONTEXT_TOKENS}}" 2>/dev/null || echo "0")
     echo "$ratio"
 }
 
@@ -133,7 +133,7 @@ generate_summary() {
         summary="${summary:0:$max_length}..."
     fi
 
-    echo -e "$summary"
+    printf "%b\n" "$summary"
 }
 
 # 执行轻度压缩
@@ -305,7 +305,7 @@ do_compaction() {
 
     # 更新状态
     local new_tokens=$(estimate_tokens "$compressed")
-    echo "{\"current_tokens\": $new_tokens, \"last_compaction\": \"$(date -Iseconds)\"}" > "$COMPACTION_STATE"
+    echo "{\"current_tokens\": $new_tokens, \"last_compaction\": "$(date -Iseconds 2>/dev/null || date \"+%Y-%m-%dT%H:%M:%S%z\" 2>/dev/null || date \"+%Y-%m-%dT%H:%M:%S\")"}" > "$COMPACTION_STATE"
 
     echo "$compressed"
 }

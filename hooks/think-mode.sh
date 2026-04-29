@@ -40,7 +40,7 @@ set_think_mode_state() {
 {
   "enabled": $enabled,
   "depth": "$depth",
-  "last_updated": "$(date -Iseconds)"
+  "last_updated": "$(date -Iseconds 2>/dev/null || date \"+%Y-%m-%dT%H:%M:%S%z\" 2>/dev/null || date \"+%Y-%m-%dT%H:%M:%S\")"
 }
 EOF
 

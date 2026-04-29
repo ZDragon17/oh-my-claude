@@ -36,7 +36,7 @@ mkdir -p "$CACHE_DIR"
 # 计算目录哈希（用于缓存）
 get_dir_hash() {
     local dir="$1"
-    echo "$dir" | md5sum 2>/dev/null | cut -d' ' -f1 || echo "$(echo "$dir" | shasum | cut -d' ' -f1)"
+    (echo "$dir" | md5sum 2>/dev/null || echo "$dir" | md5 2>/dev/null || echo "$dir" | shasum -a 256 2>/dev/null) | cut -d' ' -f1
 }
 
 # 检测项目类型
@@ -59,7 +59,7 @@ detect_project_type() {
         project_type="python"
     elif [ -f "$dir/pom.xml" ] || [ -f "$dir/build.gradle" ]; then
         project_type="java"
-    elif [ -f "$dir/*.csproj" ] || [ -f "$dir/*.sln" ]; then
+    elif ls "$dir"/*.csproj >/dev/null 2>&1 || ls "$dir"/*.sln >/dev/null 2>&1; then
         project_type="dotnet"
     fi
     
@@ -210,8 +210,8 @@ main() {
     
     # 缓存结果
     if [ -n "$output" ]; then
-        echo -e "$output" > "$cache_file"
-        echo -e "$output"
+        printf "%b\n" "$output" > "$cache_file"
+        printf "%b\n" "$output"
     fi
 }
 

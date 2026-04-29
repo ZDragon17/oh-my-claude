@@ -78,10 +78,10 @@ update_usage_record() {
         # 使用 jq 更新 JSON
         if [ -f "$USAGE_FILE" ]; then
             # 读取现有记录，添加新条目，保留最近 MAX_HISTORY 条
-            jq --arg agent "$agent" --arg ts "$timestamp" '
-                . + [{"agent": $agent, "timestamp": ($ts | tonumber)}] |
-                sort_by(.timestamp) | reverse | .[0:10]
-            ' "$USAGE_FILE" > "$USAGE_FILE.tmp" 2>/dev/null && \
+            jq --arg agent "$agent" --arg ts "$timestamp" --argjson max "$MAX_HISTORY" \
+                '. + [{"agent": $agent, "timestamp": ($ts | tonumber)}] |
+                sort_by(.timestamp) | reverse | .[0:$max]' \
+                "$USAGE_FILE" > "$USAGE_FILE.tmp" 2>/dev/null && \
             mv "$USAGE_FILE.tmp" "$USAGE_FILE"
         else
             # 创建新文件
@@ -91,7 +91,9 @@ update_usage_record() {
         # 降级方案：简单追加（不处理去重和限制）
         if [ -f "$USAGE_FILE" ]; then
             # 简单在数组末尾追加
-            sed -i 's/\]$/,{"agent":"'"$agent"'","timestamp":'"$timestamp"'}]/' "$USAGE_FILE" 2>/dev/null || \
+            printf "[{\"agent\":\"%s\",\"timestamp\":%s}," "$agent" "$timestamp" > "${USAGE_FILE}.tmp.$$" 2>/dev/null && \
+            tail -c +2 "$USAGE_FILE" >> "${USAGE_FILE}.tmp.$$" 2>/dev/null && \
+            mv "${USAGE_FILE}.tmp.$$" "$USAGE_FILE" 2>/dev/null || \
             printf '[{"agent":"%s","timestamp":%s}]' "$agent" "$timestamp" > "$USAGE_FILE"
         else
             printf '[{"agent":"%s","timestamp":%s}]' "$agent" "$timestamp" > "$USAGE_FILE"

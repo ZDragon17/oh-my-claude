@@ -29,6 +29,12 @@ declare -a SUPPORTED_LANGUAGES=(
 )
 
 # 文件扩展名到语言映射
+# bash 4+ 版本检测（declare -A 需要 bash 4.0+）
+if [[ "${BASH_VERSION%%.*}" -lt 4 ]] 2>/dev/null; then
+    echo '{"systemMessage":"ast-grep hook 需要 bash 4.0+，当前版本: '"$BASH_VERSION"'"}' 2>/dev/null
+    exit 0
+fi
+
 declare -A EXT_TO_LANG
 EXT_TO_LANG["c"]="c"
 EXT_TO_LANG["h"]="c"
@@ -442,13 +448,13 @@ parse_ast_command() {
     local input="$1"
 
     # 解析搜索模式
-    local pattern=$(echo "$input" | grep -oP "(?<=模式|pattern)['\"]?[^'\"]+['\"]?" | head -1 | tr -d "'\"\`")
+    local pattern=$(echo "$input" | grep -oE "['\"]?[^'\"]+['\"]?" | head -1 | tr -d "'\"\`")
 
     # 解析路径
-    local path=$(echo "$input" | grep -oP "(?<=路径|path|目录|dir)['\"]?[a-zA-Z0-9_./\\-]+['\"]?" | head -1 | tr -d "'\"\`")
+    local path=$(echo "$input" | grep -oE "['\"]?[a-zA-Z0-9_./\\-]+['\"]?" | head -1 | tr -d "'\"\`")
 
     # 解析语言
-    local lang=$(echo "$input" | grep -oP "(?<=语言|lang|language)['\"]?[a-zA-Z]+['\"]?" | head -1 | tr -d "'\"\`")
+    local lang=$(echo "$input" | grep -oE "['\"]?[a-zA-Z]+['\"]?" | head -1 | tr -d "'\"\`")
 
     echo "$pattern|$path|$lang"
 }
@@ -501,7 +507,7 @@ main() {
             ast_search "$pattern" "$path" "$lang"
         else
             # 尝试直接从输入中提取模式
-            pattern=$(echo "$input" | grep -oP "(?<=搜索|search|查找|find)['\"]?[^'\"]+['\"]?" | head -1 | tr -d "'\"\`")
+            pattern=$(echo "$input" | grep -oE "['\"]?[^'\"]+['\"]?" | head -1 | tr -d "'\"\`")
             if [ -n "$pattern" ]; then
                 ast_search "$pattern" "."
             else
