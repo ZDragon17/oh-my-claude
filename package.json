@@ -1,0 +1,38 @@
+{
+  "name": "oh-my-claude",
+  "version": "3.1.0",
+  "description": "CLI-agnostic AI agent orchestration engine",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "omc": "./bin/omc"
+  },
+  "files": [
+    "hooks/",
+    "lib/",
+    "dist/",
+    "bin/",
+    "provider/",
+    "install.sh",
+    "hooks.json",
+    "skill.json",
+    "SKILL.md",
+    "codex-plugin.json",
+    "CODEX_INTEGRATION.md",
+    "build.mjs",
+    "tsconfig.json",
+    "*.ts"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "clean": "rm -rf dist",
+    "postinstall": "bash install.sh",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "typescript": "^5.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.2"
+  }
+}

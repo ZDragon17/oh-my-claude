@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.tgz
+oh-my-opencode/
+.telegram_bot/
+batch_*.json
+oh-my-claude-files.json
+demo-any-cli.sh

@@ -1,0 +1,37 @@
+{
+  "name": "oh-my-claude",
+  "version": "3.1.0",
+  "description": "CLI-agnostic AI agent orchestration engine (Codex provider)",
+  "provider": "codex",
+  "hooks": {
+    "before_tool": [
+      "bash ~/.codex/plugins/oh-my-claude/hooks/hashline-edit-validator.sh",
+      "bash ~/.codex/plugins/oh-my-claude/hooks/read-image-resizer.sh",
+      "bash ~/.codex/plugins/oh-my-claude/hooks/tasks-todowrite-disabler.sh"
+    ],
+    "after_tool": [
+      "bash ~/.codex/plugins/oh-my-claude/hooks/model-fallback.sh",
+      "bash ~/.codex/plugins/oh-my-claude/hooks/background-notification.sh",
+      "bash ~/.codex/plugins/oh-my-claude/hooks/background-task-tracker.sh",
+      "bash ~/.codex/plugins/oh-my-claude/hooks/tool-pair-validator.sh"
+    ],
+    "on_message": [
+      "bash ~/.codex/plugins/oh-my-claude/hooks/atlas.sh"
+    ],
+    "on_start": [],
+    "on_stop": [
+      "bash ~/.codex/plugins/oh-my-claude/hooks/todo-continuation-enforcer.sh"
+    ]
+  },
+  "tools": {
+    "background_output": {
+      "description": "Get output from a background task"
+    },
+    "background_status": {
+      "description": "Check status of background tasks"
+    },
+    "background_cancel": {
+      "description": "Cancel a background task"
+    }
+  }
+}

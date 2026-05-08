@@ -1,0 +1,38 @@
+{
+  "name": "work-with-pr",
+  "version": "1.0.0",
+  "description": "完整 PR 生命周期自动化 - 从实现到合并的全流程管理",
+  "keywords": [
+    "pr", "pull request", "worktree", "git worktree",
+    "创建 PR", "create pr", "提交 PR",
+    "code review", "审查", "merge", "合并",
+    "CI/CD", "自动化"
+  ],
+  "author": "ZDragon17",
+  "license": "MIT",
+  "triggers": {
+    "keywords": [
+      "work with pr", "创建 PR", "提交 PR",
+      "create pull request", "make a PR",
+      "pr workflow", "PR 工作流"
+    ],
+    "commands": ["/work-with-pr", "/pr-work"]
+  },
+  "config": {
+    "useWorktree": true,
+    "autoCleanup": true,
+    "verifyCI": true,
+    "requireReviewApproval": true,
+    "atomicCommits": true
+  },
+  "workflow": [
+    "1. git worktree add — 创建隔离工作区",
+    "2. 实现变更 — 原子提交",
+    "3. 推送到远程分支",
+    "4. 创建 PR (gh pr create)",
+    "5. 等待 CI 通过",
+    "6. 代码审查 (review-work agent)",
+    "7. 合并 (merge/squash/rebase)",
+    "8. 清理 worktree"
+  ]
+}

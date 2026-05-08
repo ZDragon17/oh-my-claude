@@ -1,0 +1,406 @@
+#!/usr/bin/env bash
+# ============================================================================
+# omc — oh-my-claude standalone CLI
+# Works with ANY AI coding tool, not just Claude Code.
+#
+# Usage:
+#   omc plan start <name>              Start a boulder plan
+#   omc plan progress                  Show plan progress
+#   omc plan continue                  Build continuation prompt
+#   omc plan done                      Mark plan complete
+#
+#   omc task launch [--agent X] [--prompt "..."]   Launch background task
+#   omc task status                    Show background task stats
+#   omc task output <id>               Get task output
+#   omc task retry <id>                Schedule retry for failed task
+#   omc task cleanup                   Cleanup stale tasks
+#
+#   omc provider detect                Detect which AI tool is active
+#   omc provider info                  Show provider configuration
+#
+#   omc enforcer check                 Run todo continuation check
+#   omc enforcer reset                 Reset enforcer state
+#
+#   omc wrap [--plan <name>] -- <cmd>  Wrap any CLI command
+# ============================================================================
+
+set -euo pipefail
+
+# Resolve real path (handles npm symlinks)
+if command -v realpath >/dev/null 2>&1; then
+    OMC_REAL="$(realpath "$0")"
+elif [ -L "$0" ]; then
+    OMC_REAL="$(cd "$(dirname "$0")" && readlink "$0")"
+    case "$OMC_REAL" in /*) ;; *) OMC_REAL="$(cd "$(dirname "$0")" && cd "$(dirname "$OMC_REAL")" && pwd)/$(basename "$OMC_REAL")" ;; esac
+else
+    OMC_REAL="$0"
+fi
+OMC_ROOT="$(cd "$(dirname "$OMC_REAL")/.." && pwd)"
+
+# Source provider adapter
+source "$OMC_ROOT/lib/provider-adapter.sh"
+
+# Resolve CLI entry points
+ATLAS_CLI="$(get_cli_entry atlas)"
+BACKGROUND_CLI="$(get_cli_entry background)"
+TODO_CLI="$(get_cli_entry todo)"
+FALLBACK_CLI="$(get_cli_entry model-fallback)"
+
+# ---- Help -------------------------------------------------------------------
+
+show_help() {
+    cat << 'EOF'
+🪨 oh-my-claude (omc) — CLI-agnostic AI agent orchestration
+
+Usage: omc <command> [options]
+
+Commands:
+  plan         Boulder plan management
+  task         Background task management
+  provider     Provider detection & info
+  enforcer     Todo continuation enforcement
+  wrap         Wrap any AI CLI with oh-my-claude features
+
+Plan subcommands:
+  start <name>             Start a new boulder plan
+  progress                 Show plan progress (completed/total/percent)
+  continue [--plan X] [--remaining N] [--total M]
+                           Build continuation prompt
+  session-add [--session X] [--origin direct|appended]
+                           Register a session in the plan
+  done                     Show completion status
+  approve                  Approve final wave
+  clear                    Clear plan state
+
+Task subcommands:
+  launch --agent X --prompt "..." [--model X] [--priority high|normal|low]
+                           Launch a background task
+  status                   Show task statistics
+  list [--session X]       List tasks for a session
+  output <task-id>         Get task output
+  retry <task-id>          Schedule retry
+  cancel <task-id>         Cancel a task
+  cleanup                  Remove stale completed/cancelled tasks
+
+Provider subcommands:
+  detect                   Detect the active AI tool
+  info                     Show provider configuration
+
+Enforcer subcommands:
+  check                    Run continuation check
+  reset                    Reset enforcer state
+
+Examples:
+  omc plan start "my-feature"
+  omc task launch --agent "builder" --prompt "Build the login page"
+  omc wrap --plan "refactor" -- aider --model gpt-4o "Refactor the auth module"
+EOF
+}
+
+# ---- Plan Commands ----------------------------------------------------------
+
+cmd_plan() {
+    local sub="${1:-}"
+    case "$sub" in
+        start)
+            local name="${2:-unnamed}"
+            if [ -f "$ATLAS_CLI" ]; then
+                node "$ATLAS_CLI" --action=start-plan --name="$name"
+            else
+                echo "{\"planName\":\"$name\",\"startedAt\":\"$(date -Iseconds)\",\"sessionIds\":[]}"
+            fi
+            ;;
+        progress)
+            if [ -f "$ATLAS_CLI" ]; then
+                node "$ATLAS_CLI" --action=progress
+            else
+                echo '{"completed":0,"total":0,"percent":0}'
+            fi
+            ;;
+        continue)
+            local plan="" remaining=0 total=0
+            while [[ $# -gt 1 ]]; do
+                case "$2" in
+                    --plan) plan="$3"; shift 2 ;;
+                    --remaining) remaining="$3"; shift 2 ;;
+                    --total) total="$3"; shift 2 ;;
+                    *) shift ;;
+                esac
+            done
+            if [ -f "$ATLAS_CLI" ]; then
+                node "$ATLAS_CLI" --action=build-continuation \
+                    --plan="$plan" --remaining="$remaining" --total="$total" \
+                    --session="$SESSION_ID"
+            else
+                echo "{\"prompt\":\"Continue with plan: $plan ($remaining/$total remaining)\"}"
+            fi
+            ;;
+        session-add)
+            local sid="$SESSION_ID" origin="direct"
+            while [[ $# -gt 1 ]]; do
+                case "$2" in
+                    --session) sid="$3"; shift 2 ;;
+                    --origin) origin="$3"; shift 2 ;;
+                    *) shift ;;
+                esac
+            done
+            if [ -f "$ATLAS_CLI" ]; then
+                node "$ATLAS_CLI" --action=add-session --session="$sid" --origin="$origin"
+            fi
+            ;;
+        done)
+            if [ -f "$ATLAS_CLI" ]; then
+                node "$ATLAS_CLI" --action=is-complete
+            else
+                echo '{"complete":false}'
+            fi
+            ;;
+        approve)
+            if [ -f "$ATLAS_CLI" ]; then
+                node "$ATLAS_CLI" --action=approve
+            fi
+            ;;
+        clear)
+            if [ -f "$ATLAS_CLI" ]; then
+                node "$ATLAS_CLI" --action=clear
+            fi
+            ;;
+        *)
+            echo "Unknown plan subcommand: $sub" >&2
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+# ---- Task Commands ----------------------------------------------------------
+
+cmd_task() {
+    local sub="${1:-}"
+    case "$sub" in
+        launch)
+            local agent="" prompt="" model="" priority="normal"
+            shift
+            while [[ $# -gt 0 ]]; do
+                case "$1" in
+                    --agent) agent="$2"; shift 2 ;;
+                    --prompt) prompt="$2"; shift 2 ;;
+                    --model) model="$2"; shift 2 ;;
+                    --priority) priority="$2"; shift 2 ;;
+                    *) shift ;;
+                esac
+            done
+            if [ -z "$agent" ] || [ -z "$prompt" ]; then
+                echo "Error: --agent and --prompt are required" >&2
+                exit 1
+            fi
+            if [ -f "$BACKGROUND_CLI" ]; then
+                node "$BACKGROUND_CLI" --action=launch \
+                    --agent="$agent" --prompt="$prompt" \
+                    --model="${model:-$DEFAULT_MODEL}" --priority="$priority"
+            else
+                local tid="bg-$(date +%s)-$(shuf -i 1000-9999 -n1)"
+                echo "{\"id\":\"$tid\",\"status\":\"pending\",\"agent\":\"$agent\"}"
+            fi
+            ;;
+        status)
+            if [ -f "$BACKGROUND_CLI" ]; then
+                node "$BACKGROUND_CLI" --action=stats
+            else
+                echo '{"pending":0,"running":0,"completed":0,"error":0,"cancelled":0}'
+            fi
+            ;;
+        list)
+            local sid="$SESSION_ID"
+            while [[ $# -gt 1 ]]; do
+                case "$2" in
+                    --session) sid="$3"; shift 2 ;;
+                    *) shift ;;
+                esac
+            done
+            if [ -f "$BACKGROUND_CLI" ]; then
+                node "$BACKGROUND_CLI" --action=parent-tasks --parent="$sid"
+            fi
+            ;;
+        output)
+            local tid="${2:-}"
+            [ -z "$tid" ] && { echo "Error: task-id required" >&2; exit 1; }
+            local task_file="$STATE_DIR/background-tasks/active/${tid}.json"
+            if [ -f "$task_file" ]; then
+                jq -r '.resultSummary // "No output yet"' "$task_file" 2>/dev/null || echo "Error reading task output"
+            else
+                echo "Task not found: $tid"
+            fi
+            ;;
+        retry)
+            local tid="${2:-}"
+            [ -z "$tid" ] && { echo "Error: task-id required" >&2; exit 1; }
+            if [ -f "$BACKGROUND_CLI" ]; then
+                node "$BACKGROUND_CLI" --action=schedule-retry --task-id="$tid"
+            fi
+            ;;
+        cancel)
+            local tid="${2:-}"
+            [ -z "$tid" ] && { echo "Error: task-id required" >&2; exit 1; }
+            if [ -f "$BACKGROUND_CLI" ]; then
+                node "$BACKGROUND_CLI" --action=cancel --task-id="$tid"
+            fi
+            ;;
+        cleanup)
+            if [ -f "$BACKGROUND_CLI" ]; then
+                node "$BACKGROUND_CLI" --action=cleanup
+            fi
+            ;;
+        *)
+            echo "Unknown task subcommand: $sub" >&2
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+# ---- Provider Commands ------------------------------------------------------
+
+cmd_provider() {
+    local sub="${1:-}"
+    case "$sub" in
+        detect)
+            echo "{\"provider\":\"$PROVIDER\",\"sessionId\":\"$SESSION_ID\"}"
+            ;;
+        info)
+            cat << EOF
+{
+  "provider": "$PROVIDER",
+  "sessionId": "$SESSION_ID",
+  "pluginDir": "$PLUGIN_DIR",
+  "stateDir": "$STATE_DIR",
+  "configDir": "$CONFIG_DIR",
+  "cacheDir": "$CACHE_DIR",
+  "defaultModel": "$DEFAULT_MODEL",
+  "hookOutputFormat": "$HOOK_OUTPUT_FORMAT"
+}
+EOF
+            ;;
+        *)
+            echo "Unknown provider subcommand: $sub" >&2
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+# ---- Enforcer Commands ------------------------------------------------------
+
+cmd_enforcer() {
+    local sub="${1:-}"
+    case "$sub" in
+        check)
+            if [ -f "$TODO_CLI" ]; then
+                node "$TODO_CLI" --action=check --session="$SESSION_ID"
+            else
+                echo '{"shouldContinue":false,"reason":"no_todos"}'
+            fi
+            ;;
+        reset)
+            if [ -f "$TODO_CLI" ]; then
+                node "$TODO_CLI" --action=reset --session="$SESSION_ID"
+            fi
+            ;;
+        *)
+            echo "Unknown enforcer subcommand: $sub" >&2
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+# ---- Wrap Command -----------------------------------------------------------
+# Wraps any AI CLI, injecting oh-my-claude plan context and session tracking.
+
+cmd_wrap() {
+    local plan_name=""
+    local cmd=()
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --plan) plan_name="$2"; shift 2 ;;
+            --) shift; cmd=("$@"); break ;;
+            *) cmd=("$@"); break ;;
+        esac
+    done
+
+    if [ ${#cmd[@]} -eq 0 ]; then
+        echo "Error: no command to wrap" >&2
+        echo "Usage: omc wrap [--plan <name>] -- <command...>" >&2
+        exit 1
+    fi
+
+    # Auto-detect provider from the command
+    local detected_provider="$PROVIDER"
+    for arg in "${cmd[@]}"; do
+        case "$arg" in
+            claude|claude-code) detected_provider="claude-code" ;;
+            codex|openai-codex) detected_provider="codex" ;;
+            aider) detected_provider="generic" ;;
+        esac
+    done
+
+    # Start plan if specified
+    if [ -n "$plan_name" ]; then
+        echo "🪨 Starting plan: $plan_name" >&2
+        cmd_plan start "$plan_name"
+        cmd_plan session-add --session="$SESSION_ID" --origin="direct"
+    fi
+
+    echo "🚀 Running: ${cmd[*]}" >&2
+    echo "📋 Provider: $detected_provider | Session: $SESSION_ID" >&2
+    echo "---" >&2
+
+    # Execute the wrapped command
+    "${cmd[@]}"
+    local exit_code=$?
+
+    echo "---" >&2
+    if [ $exit_code -eq 0 ]; then
+        echo "✅ Command completed successfully" >&2
+    else
+        echo "❌ Command failed with exit code: $exit_code" >&2
+    fi
+
+    # Show plan progress if one was started
+    if [ -n "$plan_name" ]; then
+        cmd_plan progress
+    fi
+
+    exit $exit_code
+}
+
+# ---- Main -------------------------------------------------------------------
+
+COMMAND="${1:-help}"
+
+case "$COMMAND" in
+    help|-h|--help)
+        show_help
+        ;;
+    plan)
+        shift; cmd_plan "$@"
+        ;;
+    task)
+        shift; cmd_task "$@"
+        ;;
+    provider)
+        shift; cmd_provider "$@"
+        ;;
+    enforcer)
+        shift; cmd_enforcer "$@"
+        ;;
+    wrap)
+        shift; cmd_wrap "$@"
+        ;;
+    *)
+        echo "Unknown command: $COMMAND" >&2
+        show_help
+        exit 1
+        ;;
+esac

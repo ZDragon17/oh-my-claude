@@ -1,0 +1,650 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/auto-update-checker.sh --session-start",
+        "timeout": 10000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "启动时自动检查更新 - 后台静默检查和更新"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/empty-message-sanitizer.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "空消息清理器 - 防止空输入/空参数导致 API 错误"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/non-interactive-env.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "非交互式环境处理 - 在 CI/Docker/SSH 无头环境中阻止交互式工具"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/write-existing-file-guard.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "写入保护 - 阻止对已存在文件使用 Write，建议使用 Edit (对标 oh-my-opencode write-existing-file-guard)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/question-label-truncator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "标签截断 - 截断过长的问题选项标签至 30 字符 (对标 oh-my-opencode question-label-truncator)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/hashline-edit-validator.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "Hashline 编辑验证 - Edit 前验证 LINE#ID 哈希匹配 (对标 oh-my-opencode hashline validation)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/hashline-edit-enhancer.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "Hashline 编辑增强(Pre) - 在 Write/Edit 前捕获文件旧内容"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/read-image-resizer.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": false,
+        "description": "图片裁剪 - 自动将大图裁剪到 2048px 限制 (对标 oh-my-opencode read-image-resizer)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/tasks-todowrite-disabler.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "TodoWrite 禁用 - 对已启用 Task 系统的 Agent 禁用 TodoWrite (对标 oh-my-opencode tasks-todowrite-disabler)"
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/ralph-loop.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "critical",
+        "description": "Ralph Loop - 自引用循环控制（检测完成承诺）"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/todo-continuation.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "critical",
+        "description": "TODO 续航检查 - 如果有活跃循环则阻止停止"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/stop-continuation-guard.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "critical",
+        "windows_compatible": true,
+        "description": "停止续航守护 - 检查 /stop-continuation 标记阻止循环重启 (对标 oh-my-opencode stop-continuation-guard)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/todo-continuation-enforcer.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "TODO 强制续航 - 检测未完成 TODO 并注入继续提示 (对标 oh-my-opencode todo-continuation-enforcer)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/agent-ready-notification.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "Agent 就绪通知 - Agent 停止时发送 OS 级通知（类似 OpenCode）"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/compaction-context-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "压缩上下文注入 - 压缩时保留 TODO/循环状态/Git 分支等关键上下文"
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/first-use-onboarding.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "critical",
+        "windows_compatible": true,
+        "description": "首次使用引导 - 新用户自动迷你引导和意图识别"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/keyword-detector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "critical",
+        "windows_compatible": true,
+        "description": "关键词检测 - 自动触发相关模式（包括 ultrawork/移山）"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/at-agent-summoner.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "critical",
+        "windows_compatible": true,
+        "description": "@Agent 召唤器 - 检测 @悟空 @诸葛 等语法直接召唤 Agent"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/atlas.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "Atlas 核心编排 - 任务分类、委派建议、工作流阶段检测"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/agent-collaboration.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "多 Agent 协作 - 检测和启动协作"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/error-recovery.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "错误恢复 - 自动检测和恢复策略"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/session-recovery.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "会话恢复 - 检测会话中断信号并提供恢复策略"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/task-checkpointing.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "任务检查点 - 记录任务状态用于恢复"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/context-compression.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "上下文压缩 - 智能信息压缩"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/preemptive-compaction.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "抢占式压缩 - 在达到限制前主动压缩"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/rules-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "规则注入 - 加载项目和全局规则"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/think-mode.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "思维模式 - 深度思考和推理增强"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/lsp-tools.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": false,
+        "description": "LSP 工具 - 提供 IDE 级代码分析能力"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/ast-grep.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": false,
+        "description": "AST-Grep - 结构化代码搜索"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/code-quality-checker.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "代码质量检查 - 注释和风格验证"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/output-truncator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "输出截断器 - 智能截断大型输出"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/directory-agents-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "目录代理注入 - 根据目录推荐 Agent"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/directory-readme-injector.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "目录 README 注入 - 自动提取项目文档关键信息"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/auto-slash-command.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "自动斜杠命令 - 检测意图并建议相应 Agent"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/auto-update-checker.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "自动更新检查 - 检查新版本"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/interactive-bash-session.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": false,
+        "description": "交互式 Bash 会话 - 检测长时间运行进程并建议使用 tmux"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/agent-usage-reminder.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "Agent 使用提醒 - 根据任务类型推荐合适的 Agent"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/anthropic-effort.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "推理努力调整 - 检测深度思考关键词并注入 effort 级别指令 (对标 oh-my-opencode anthropic-effort)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/background-task-launcher.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "后台任务启动器 - 检测后台任务请求，注册任务并注入委派指令 (对标 oh-my-opencode background-agent launcher)"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/progress-notifier.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "critical",
+        "windows_compatible": true,
+        "description": "进度通知器 - TodoWrite 后自动显示进度条"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/context-window-monitor.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "critical",
+        "description": "上下文窗口监控 - 监控上下文使用率并提供预警"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/context-smart-alert.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "智能上下文预警 - 多级预警和可视化进度条"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/anthropic-context-window-limit-recovery.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "critical",
+        "description": "上下文限制恢复 - 检测上下文窗口限制并提供恢复策略"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/failure-transparency.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "失败透明化 - 显示失败计数和回滚通知"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/tool-output-validator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "工具输出验证 - 检测工具执行错误并提供修复建议"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/edit-error-recovery.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "编辑错误恢复 - 检测 Edit 工具错误并提供恢复建议"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/delegate-task-retry.sh",
+        "timeout": 5000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "任务委派重试 - 检测失败的委派任务并提供重试建议"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/empty-task-response-detector.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "空任务响应检测 - 检测委派任务的空响应或无效响应"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/thinking-block-validator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "思维块验证 - 检测 extended thinking 相关错误"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/output-truncator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "description": "工具输出截断 - 处理大型工具输出"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/session-notification.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "会话通知 - 在重要事件时发送 OS 通知"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/background-notification.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "后台任务通知 - 检测完成的后台任务并发送通知"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/background-task-tracker.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "后台任务追踪器 - 监控 task 工具调用结果，更新后台任务状态 (对标 oh-my-opencode background-agent tracker)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/background-task-retry.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "后台任务重试 - 检测可重试的后台任务，实施指数退避重试 (对标 oh-my-opencode fallback-retry-handler)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/tmux-agent-visualizer.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": false,
+        "description": "Tmux 可视化 - 在 tmux 环境中自动为后台 Agent 创建可视化窗格"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/background-compaction.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "description": "后台任务压缩 - 监控后台任务数量并建议清理"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/hook-performance-monitor.sh cleanup",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "Hook 性能监控 - 定期清理旧日志"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/agent-handoff-prompt.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "Agent 交接提示 - Agent 任务完成后智能推荐下一步操作"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/error-friendly-display.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "友好错误显示 - 检测错误并提供分层的用户友好信息"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/category-skill-reminder.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "Category+Skill 提醒 - 编排 Agent 直接实现时提醒使用委派系统 (对标 oh-my-opencode category-skill-reminder)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/comment-checker.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "注释质量检查 - 检测 AI-slop 注释，建议解释 WHY 而非 WHAT (对标 oh-my-opencode comment-checker)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/json-error-recovery.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "JSON 错误恢复 - 检测 JSON 解析错误并提供具体修复建议 (对标 oh-my-opencode json-error-recovery)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/session-todo-status.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "TODO 状态摘要 - TodoWrite 后显示进度统计 (对标 oh-my-opencode session-todo-status)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/task-reminder.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "任务追踪提醒 - 连续多轮未使用 task/todo 工具时提醒 (对标 oh-my-opencode task-reminder)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/hashline-read-enhancer.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "Hashline 读取增强 - Read 输出行标注内容哈希 #hash| (对标 oh-my-openagent hashline-read-enhancer)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/hashline-edit-enhancer.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "low",
+        "windows_compatible": true,
+        "description": "Hashline 编辑增强(Post) - 在 Write/Edit 后生成结构化 diff 元数据 (对标 oh-my-openagent hashline-edit-diff-enhancer)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/model-fallback.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "high",
+        "windows_compatible": true,
+        "description": "模型回退 - 检测模型不可用错误并推荐回退链 (对标 oh-my-openagent model-fallback)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/ralph-loop.sh",
+        "timeout": 3000,
+        "continueOnError": true,
+        "priority": "high",
+        "description": "Ralph Loop (PostToolUse) - 检测完成承诺标记 (对标 oh-my-openagent ralph-loop)"
+      },
+      {
+        "type": "command",
+        "command": "bash ~/.claude/plugins/oh-my-claude/hooks/tool-pair-validator.sh",
+        "timeout": 2000,
+        "continueOnError": true,
+        "priority": "normal",
+        "windows_compatible": true,
+        "description": "工具对验证器 - 检测冲突的工具对 (Write+Edit 同文件) (对标 oh-my-opencode tool-pair-validator)"
+      }
+    ]
+  },
+  "disabled_hooks": [],
+  "hook_config": {
+    "parallel_execution": true,
+    "max_parallel_agents": 3,
+    "log_enabled": true,
+    "log_path": "$HOME/.oh-my-claude/logs/hooks.log",
+    "performance_tracking": true,
+    "performance_log_path": "$HOME/.oh-my-claude/logs/hooks-perf.log"
+  },
+  "priority_levels": {
+    "critical": {
+      "order": 1,
+      "description": "关键功能，必须执行，失败会影响核心体验"
+    },
+    "high": {
+      "order": 2,
+      "description": "重要功能，强烈建议执行"
+    },
+    "normal": {
+      "order": 3,
+      "description": "标准功能，正常执行"
+    },
+    "low": {
+      "order": 4,
+      "description": "增强功能，可选执行，可在性能敏感场景禁用"
+    }
+  },
+  "windows_mode": {
+    "enabled": "auto",
+    "skip_incompatible": true,
+    "description": "Windows 模式配置：auto=自动检测, true=强制启用, false=禁用"
+  },
+  "v2_migration": {
+    "note": "v2.0 循环机制变更说明 - 已完成迁移",
+    "status": "completed",
+    "completed_at": "2026-01-19",
+    "changes": [
+      "Stop hooks 不再使用外部脚本检测完成状态",
+      "循环机制通过 Agent System Prompt 和 Skill 规范实现",
+      "关键词触发由 keyword-detector.sh 处理",
+      "TODO 强制执行通过 Agent 行为规范确保"
+    ],
+    "deprecated_files_cleaned": true
+  }
+}
