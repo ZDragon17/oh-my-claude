@@ -3,7 +3,6 @@
   "version": "3.1.0",
   "description": "CLI-agnostic AI agent orchestration engine",
   "type": "module",
-  "main": "./dist/index.js",
   "bin": {
     "omc": "./bin/omc"
   },
